@@ -1,0 +1,63 @@
+name: test-trends
+# Temporary: live check of line movement, trends, live board and bankroll on the
+# claude/trends branch. Writes nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/trends"]
+    paths-ignore: ["e2e-out/**", "probe-ats/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Daily picks
+        run: node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Watcher dry run (real pick history, line moves + injuries)
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/w
+          git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/w/history.json || echo '{"picks":[]}' > /tmp/w/history.json
+          node tools/watch.mjs --dir /tmp/w 2>&1 | tee watch.log
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const lean = t.legs.filter((l) => l.lean);
+            const out = { legs: t.legs.length, withMove: lean.filter((l) => l.move).length, toward: lean.filter((l) => l.move?.toward).length, againstStrong: lean.filter((l) => l.move?.against && l.move.strong).length, moveCap: lean.filter((l) => l.moveCap).length,
+              moveSamples: lean.filter((l) => l.move).slice(0, 12).map((l) => `${l.league} ${l.label} [${l.grade}] ${l.move.toward ? "TOWARD" : "AGAINST"}${l.move.strong ? " strong" : ""}: ${l.move.text}`),
+              gamesWithRecords: t.games.filter((g) => g.records).length, games: t.games.length,
+              recordSamples: t.games.filter((g) => g.records).slice(0, 8).map((g) => `${g.league} ${g.matchup}: ${g.away.abbr} ATS ${g.records.away ? `${g.records.away.ats.w}-${g.records.away.ats.l}-${g.records.away.ats.p} O/U ${g.records.away.ou.o}-${g.records.away.ou.u} (${g.records.away.n}g)` : "-"} | ${g.home.abbr} ATS ${g.records.home ? `${g.records.home.ats.w}-${g.records.home.ats.l}-${g.records.home.ats.p} O/U ${g.records.home.ou.o}-${g.records.home.ou.u} (${g.records.home.n}g)` : "-"}`),
+              streakLegs: t.legs.filter((l) => l.l10 && (l.side === "OVER" ? l.l10.overs : l.l10.unders) >= 8).length,
+              picks: t.picks.map((id) => t.legs.find((l) => l.id === id)).map((l) => `${l.grade} ${l.label}${l.move ? ` | ${l.move.toward ? "toward" : "against"} ${l.move.text}` : ""}`) };
+            fs.writeFileSync("e2e-out/trends-summary.json", JSON.stringify(out, null, 1));
+            console.log(JSON.stringify(out, null, 1).slice(0, 3500));
+          ' || true
+          ls cache/closing-odds 2>/dev/null | wc -l | xargs echo "closing lines cached:" | tee -a e2e-out/trends-summary.txt
+          cp picks.log watch.log notify.json e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/trends || true
+          git push -q origin HEAD:claude/trends
