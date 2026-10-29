@@ -1,0 +1,256 @@
+[
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "223611",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "192628",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/football/college-football/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "243444",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "570240",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/baseball/mlb/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "197355",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/hockey/nhl/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "243356",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/soccer/eng.1/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "192323",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/wnba/news?limit=50",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "246181",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=5",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "22327",
+  "ranges": null
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=10&team=13",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "56371",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=10&athlete=1966",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": null,
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=50&type=Media",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": null,
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://now.core.api.espn.com/v1/sports/news?limit=20&sport=basketball&league=nba",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json",
+  "length": null,
+  "ranges": null
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/1966/news",
+  "error": "<HTTPError 404: 'Not Found'>"
+ },
+ {
+  "url": "https://content.core.api.espn.com/v1/video/clips/50312603",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json",
+  "length": null,
+  "ranges": null
+ },
+ {
+  "url": "https://content.core.api.espn.com/v1/video/clips/50314992",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json",
+  "length": null,
+  "ranges": null
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261028",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "285512",
+  "ranges": "bytes"
+ },
+ {
+  "note": "nba: 12 finished games, 12 scoreboard highlights"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909881",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "436360",
+  "ranges": "bytes"
+ },
+ {
+  "note": "nba summary 401909881: 7 videos"
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1029/b8580b89-ef49-4989-8ea9-54db072dd0a2/b8580b89-ef49-4989-8ea9-54db072dd0a2.mp4",
+  "status": 200,
+  "acao": "*",
+  "ctype": "video/mp4",
+  "length": "98791058",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1029/b8580b89-ef49-4989-8ea9-54db072dd0a2/b8580b89-ef49-4989-8ea9-54db072dd0a2.mp4",
+  "status": 206,
+  "acao": "*",
+  "ctype": "video/mp4",
+  "length": "1024",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://cmp-espn.media.dssott.com/opp/hls/espn/wsc/2026/1029/b8580b89-ef49-4989-8ea9-54db072dd0a2/b8580b89-ef49-4989-8ea9-54db072dd0a2/playlist.m3u8",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/x-mpegURL",
+  "length": "2730",
+  "ranges": null
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/common/wsc/2026/1029/b8580b89-ef49-4989-8ea9-54db072dd0a2/b8580b89-ef49-4989-8ea9-54db072dd0a2.jpg",
+  "status": 200,
+  "acao": "*",
+  "ctype": "image/jpeg",
+  "length": "94006",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates=20261028",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "122252",
+  "ranges": "bytes"
+ },
+ {
+  "note": "nhl: 4 finished games, 4 scoreboard highlights"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/hockey/nhl/summary?event=401892596",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "504453",
+  "ranges": "bytes"
+ },
+ {
+  "note": "nhl summary 401892596: 8 videos"
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1028/23906756-eb89-404d-9e3b-622428a35524/23906756-eb89-404d-9e3b-622428a35524.mp4",
+  "status": 200,
+  "acao": "*",
+  "ctype": "video/mp4",
+  "length": "36328526",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1028/23906756-eb89-404d-9e3b-622428a35524/23906756-eb89-404d-9e3b-622428a35524.mp4",
+  "status": 206,
+  "acao": "*",
+  "ctype": "video/mp4",
+  "length": "1024",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://cmp-espn.media.dssott.com/opp/hls/espn/wsc/2026/1028/23906756-eb89-404d-9e3b-622428a35524/23906756-eb89-404d-9e3b-622428a35524/playlist.m3u8",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/x-mpegURL",
+  "length": "2730",
+  "ranges": null
+ },
+ {
+  "url": "https://espnmedia-cdn.akamaized.net/espn/media/common/wsc/2026/1028/23906756-eb89-404d-9e3b-622428a35524/23906756-eb89-404d-9e3b-622428a35524.jpg",
+  "status": 200,
+  "acao": "*",
+  "ctype": "image/jpeg",
+  "length": "85608",
+  "ranges": "bytes"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "253637",
+  "ranges": "bytes"
+ },
+ {
+  "note": "nfl: 0 finished games, 0 scoreboard highlights"
+ },
+ {
+  "url": "https://site.web.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+  "status": 200,
+  "acao": "*",
+  "ctype": "application/json;charset=UTF-8",
+  "length": "342461",
+  "ranges": "bytes"
+ },
+ {
+  "note": "ncaaf: 0 finished games, 0 scoreboard highlights"
+ }
+]
