@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>PickLab</title>
   <meta name="description" content="Research player props, spreads and totals with game logs, hit rates, usage and matchup data across NBA, NFL, MLB, NHL, soccer, F1, NASCAR, golf, tennis and UFC." />
-  <meta name="theme-color" content="#0b0f17" />
+  <meta name="theme-color" content="#070a13" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -13,23 +13,33 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#/"><span class="brand-mark">◆</span>PickLab</a>
+    <a class="brand" href="#/" data-nav="home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 17l5-6 4 4 7-9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Pick<span class="brand-lab">Lab</span></span></a>
+    <nav class="topnav" aria-label="Main">
+      <a href="#/today" data-nav="today">🔥 Today</a>
+      <a href="#/live" data-nav="live">📡 Live</a>
+      <a href="#/trends" data-nav="trends">📈 Trends</a>
+      <a href="#/news" data-nav="news">📰 News</a>
+      <a href="#/picks" data-nav="picks" class="bets-link">★ My bets<span class="live-dot" hidden></span></a>
+    </nav>
     <div class="search" id="search">
-      <input id="search-input" type="search" placeholder="Search players…" autocomplete="off" aria-label="Search players" />
+      <input id="search-input" type="search" placeholder="Search any player…" autocomplete="off" aria-label="Search players" />
       <div class="search-results" id="search-results" role="listbox"></div>
     </div>
-    <a class="icon-btn" href="#/today" title="Today's picks">🔥<span class="lbl2"> Today</span></a>
-    <a class="icon-btn" href="#/live" title="Live games: win probability vs live odds">📡<span class="lbl"> Live</span></a>
-    <a class="icon-btn" href="#/news" title="News and highlights">📰<span class="lbl"> News</span></a>
-    <a class="icon-btn" id="bets-btn" href="#/picks" title="My bets (live tracker)">★<span class="lbl"> My bets</span><span class="live-dot" hidden></span></a>
-    <button class="icon-btn" id="theme-btn" title="Toggle light/dark">◐</button>
+    <button class="icon-btn" id="theme-btn" title="Toggle light/dark" aria-label="Toggle light/dark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
   </header>
   <main id="app"><div class="loading"><span class="spinner"></span>Loading…</div></main>
+  <nav class="tabbar" aria-label="Main">
+    <a href="#/today" data-nav="today"><span class="ti">🔥</span>Today</a>
+    <a href="#/live" data-nav="live"><span class="ti">📡</span>Live</a>
+    <a href="#/trends" data-nav="trends"><span class="ti">📈</span>Trends</a>
+    <a href="#/news" data-nav="news"><span class="ti">📰</span>News</a>
+    <a href="#/picks" data-nav="picks" class="bets-link"><span class="ti">★<span class="live-dot" hidden></span></span>My bets</a>
+  </nav>
   <footer>
     Stats from ESPN, NBA.com, nflverse, MLB Stats API, Jolpica-F1 and NASCAR. Projections are estimates from past data; no model guarantees a result.
     Bet only what you can afford to lose. Problem gambling help: 1-800-GAMBLER.

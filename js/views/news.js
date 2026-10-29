@@ -8,12 +8,12 @@ import { clipCard, storyRow, openPlayer } from "../video.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "nfl", "ncaaf", "ncaab"] },
-  { id: "basketball", label: "🏀 Basketball", leagues: ["nba", "ncaab"] },
-  { id: "football", label: "🏈 Football", leagues: ["nfl", "ncaaf"] },
+  { id: "basketball", label: "🏀 All basketball", leagues: ["nba", "ncaab"] },
   { id: "nba", label: "NBA", leagues: ["nba"] },
+  { id: "ncaab", label: "College BB", leagues: ["ncaab"] },
+  { id: "football", label: "🏈 All football", leagues: ["nfl", "ncaaf"] },
   { id: "nfl", label: "NFL", leagues: ["nfl"] },
   { id: "ncaaf", label: "College FB", leagues: ["ncaaf"] },
-  { id: "ncaab", label: "College BB", leagues: ["ncaab"] },
   { id: "nhl", label: "🏒 NHL", leagues: ["nhl"] },
   { id: "mlb", label: "⚾ MLB", leagues: ["mlb"] },
   { id: "soccer", label: "⚽ Soccer", leagues: ["epl", "ucl", "mls"] },

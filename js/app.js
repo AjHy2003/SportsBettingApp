@@ -30,10 +30,21 @@ function parseHash() {
   return { parts: path.split("/").filter(Boolean), q: Object.fromEntries(new URLSearchParams(qs || "")) };
 }
 
+// Highlight the header / tab bar link for the current section.
+function markNav(parts) {
+  const cur = parts.length ? parts[0] : "home";
+  for (const a of document.querySelectorAll("[data-nav]")) {
+    const on = a.dataset.nav === cur;
+    a.classList.toggle("on", on);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+}
+
 async function route() {
   const { parts, q } = parseHash();
   const ctx = context();
   window.scrollTo(0, 0);
+  markNav(parts);
   try {
     if (!parts.length) return renderHome(ctx);
     if (parts[0] === "custom") return renderCustom(ctx, q);
@@ -67,8 +78,8 @@ route();
 
 // Red dot on ★ My bets while a saved bet's game is probably in progress.
 function liveDot() {
-  const d = document.querySelector("#bets-btn .live-dot");
-  if (d) d.hidden = !liveBetsNow();
+  const live = liveBetsNow();
+  for (const d of document.querySelectorAll(".bets-link .live-dot")) d.hidden = !live;
 }
 window.addEventListener("hashchange", liveDot);
 setInterval(liveDot, 60e3);

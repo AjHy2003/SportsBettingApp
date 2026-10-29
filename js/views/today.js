@@ -19,11 +19,11 @@ import { bankroll, bankrollOk, suggestedBudget, spend, openBankrollSettings, ban
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
-  { id: "basketball", label: "🏀 Basketball", leagues: ["nba", "ncaab"] },
-  { id: "football", label: "🏈 Football", leagues: ["nfl", "ncaaf"] },
+  { id: "basketball", label: "🏀 All basketball", leagues: ["nba", "ncaab"] },
   { id: "nba", label: "NBA", leagues: ["nba"] },
-  { id: "nfl", label: "NFL", leagues: ["nfl"] },
   { id: "ncaab", label: "College BB", leagues: ["ncaab"] },
+  { id: "football", label: "🏈 All football", leagues: ["nfl", "ncaaf"] },
+  { id: "nfl", label: "NFL", leagues: ["nfl"] },
   { id: "ncaaf", label: "College FB", leagues: ["ncaaf"] },
   { id: "nhl", label: "🏒 NHL", leagues: ["nhl"] },
 ];
@@ -48,6 +48,7 @@ export async function renderToday(ctx, q) {
 
   const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, ...loadPrefs() };
   if (q.sport) prefs.sport = q.sport;
+  if (q.focus === "moon") Object.assign(prefs, { moonStake: 10, moonTarget: 10000 });
   const state = { ...prefs, mine: [], sgpGame: q.sgp || null, sgpLegs: null, sgpPicked: [] };
   const now = Date.now();
   const allLegs = (today?.legs || []).filter((l) => new Date(l.start) > now);
@@ -431,6 +432,7 @@ export async function renderToday(ctx, q) {
   renderAll();
   renderSgp();
   renderRecord();
+  if (q.focus === "moon") $("#t-moon").scrollIntoView({ block: "start" });
 }
 
 // Compact "today" teaser for the home page.
@@ -441,8 +443,8 @@ export async function todayTeaser() {
   const legs = (today.legs || []).filter((l) => new Date(l.start) > now);
   const picks = choosePicks(legs, 4);
   if (!picks.length) return "";
-  return `<div class="card" style="margin-top:6px">
-    <div class="row" style="justify-content:space-between"><h3 style="margin:0">🔥 Today's top picks</h3><a class="btn sm" href="#/today">Build my ticket ›</a></div>
-    ${picks.map((l) => `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span class="pill ${l.grade === "A" ? "gold" : ""}">${l.grade}</span><b>${esc(l.label)}</b><span class="muted small">${M.fmtOdds(l.odds)} · ${esc(leagueName(l.league))} · ${fmtTime(l.start)}</span></div>`).join("")}
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">🔥 Today's top picks</h2><a class="btn sm" href="#/today">Build my ticket ›</a></div>
+    <div style="margin-top:6px">${picks.map((l) => `<a class="tp-row" href="#/today"><span class="gbadge ${esc(l.grade)}">${esc(l.grade)}</span><span class="tp-text"><b>${esc(l.label)}</b><span class="muted small">${M.fmtOdds(l.odds)} · ${esc(leagueName(l.league))} · ${fmtTime(l.start)}</span></span></a>`).join("")}</div>
   </div>`;
 }
