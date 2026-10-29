@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PickLab</title>
+  <meta name="description" content="Research player props, spreads and totals with game logs, hit rates, usage and matchup data across NBA, NFL, MLB, NHL, soccer, F1, NASCAR, golf, tennis and UFC." />
+  <meta name="theme-color" content="#0b0f17" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><span class="brand-mark">◆</span>PickLab</a>
+    <div class="search" id="search">
+      <input id="search-input" type="search" placeholder="Search players…" autocomplete="off" aria-label="Search players" />
+      <div class="search-results" id="search-results" role="listbox"></div>
+    </div>
+    <a class="icon-btn" href="#/today" title="Today's picks">🔥 Today</a>
+    <a class="icon-btn" href="#/picks" title="Saved picks">★ Saved</a>
+    <button class="icon-btn" id="theme-btn" title="Toggle light/dark">◐</button>
+  </header>
+  <main id="app"><div class="loading"><span class="spinner"></span>Loading…</div></main>
+  <footer>
+    Stats from ESPN, NBA.com, nflverse, MLB Stats API, Jolpica-F1 and NASCAR. Projections are estimates from past data; no model guarantees a result.
+    Bet only what you can afford to lose. Problem gambling help: 1-800-GAMBLER.
+  </footer>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

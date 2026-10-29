@@ -1,0 +1,6 @@
+{
+  "name": "sports-picks",
+  "private": true,
+  "type": "module",
+  "description": "PickLab static site + data pipeline"
+}

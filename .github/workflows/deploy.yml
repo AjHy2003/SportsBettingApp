@@ -1,0 +1,82 @@
+name: Build data, daily picks and deploy
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 9 * * *"   # ~5:20am ET: last night's results, nflverse nightly update, early lines
+    - cron: "47 15 * * *"  # ~11:45am ET: most lines and props posted -> phone notification
+    - cron: "17 21 * * *"  # ~5:15pm ET: refresh for injury news and evening games
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: "Send the phone notification"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # pick history lives on the picks-data branch
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Restore data cache
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Build data
+        run: python pipeline/build.py --out _site/data --cache cache
+      - name: Load pick history
+        run: |
+          if git fetch -q origin picks-data:picks-data; then git worktree add -q picks-data picks-data
+          else git worktree add -q --orphan -b picks-data picks-data; fi
+      - name: Daily picks
+        continue-on-error: true
+        run: node tools/daily-picks.mjs --site _site --history picks-data/history.json --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+      - name: Save pick history
+        continue-on-error: true
+        run: |
+          cd picks-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history.json
+          git diff --cached --quiet || { git commit -qm "Update pick history" && git push -q origin picks-data; }
+      - name: Phone notification
+        continue-on-error: true
+        if: env.NTFY_TOPIC != '' && (github.event.schedule == '47 15 * * *' || inputs.notify)
+        run: node tools/notify.mjs
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
