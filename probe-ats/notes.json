@@ -1,0 +1,54 @@
+[
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2026/types/2/teams/9/ats",
+  "status": 200,
+  "acao": "*",
+  "len": 64
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2026/types/2/teams/9/odds-records",
+  "status": 200,
+  "acao": "*",
+  "len": 7118
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2027/types/2/teams/1/ats",
+  "status": 200,
+  "acao": "*",
+  "len": 64
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2027/types/2/teams/1/odds-records",
+  "status": 200,
+  "acao": "*",
+  "len": 7159
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/2026/types/2/teams/333/ats",
+  "status": 200,
+  "acao": "*",
+  "len": 64
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/2026/types/2/teams/333/odds-records",
+  "status": 200,
+  "acao": "*",
+  "len": 7123
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/2027/types/2/teams/1/ats",
+  "status": 200,
+  "acao": "*",
+  "len": 64
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/2027/types/2/teams/1/odds-records",
+  "error": "<HTTPError 404: 'Not Found'>"
+ },
+ {
+  "url": "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2026/types/2/teams/9/records",
+  "status": 200,
+  "acao": "*",
+  "len": 107133
+ }
+]
