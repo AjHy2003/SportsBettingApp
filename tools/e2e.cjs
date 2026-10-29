@@ -77,6 +77,13 @@ const pages = [
       if (use) { await use.click(); await pg.waitForTimeout(300); }
     });
   }
+  // Player pages for today's best props (tonight's context: Vegas total, injuries, with/without).
+  let today = null;
+  try { today = JSON.parse(fs.readFileSync(path.join(siteDir, "data/picks/today.json"), "utf8")); } catch { /* no picks */ }
+  for (const lg of ["nba", "nfl", "ncaab", "ncaaf"]) {
+    const leg = today?.legs?.filter((l) => l.kind === "prop" && l.league === lg && l.lean).sort((a, b) => (b.context?.length || 0) - (a.context?.length || 0) || b.edge - a.edge)[0];
+    if (leg) await visit(`context-${lg}`, `#/l/${lg}/p/${leg.playerId}?m=${leg.marketKey}`);
+  }
   await visit("home-with-picks", "#/");
   fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
   await browser.close();

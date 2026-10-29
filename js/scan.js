@@ -3,7 +3,8 @@
 import { api, loadGamelogs, pool } from "./espn.js";
 import { MARKETS } from "./sports.js";
 import { loadDeepPlayer, deepGameStats } from "./deep.js";
-import { marketsFor, opponentFactor, runProp, playedGames } from "./props.js";
+import { marketsFor, opponentFactor, runProp, playedGames, combineOpponent } from "./props.js";
+import { playerContext, roleChange } from "./context.js";
 
 export async function loadPeople(L, teams) {
   const people = new Map();
@@ -42,7 +43,8 @@ export function propRows(L, propsAll, people) {
   return rows;
 }
 
-// Run the prop model on every row. game = { H, A, date }.
+// Run the prop model on every row.
+// game = { H, A, date, lines?: {spreadHome, total}, report?: injuryReport() map }.
 export async function scanRows(L, rows, { game, standings, deep, concurrency = 4, onProgress } = {}) {
   const ids = [...new Set(rows.map((r) => r.aid))];
   const logs = new Map(), deepPlayers = new Map();
@@ -66,11 +68,18 @@ export async function scanRows(L, rows, { game, standings, deep, concurrency = 4
     const isHome = r.who.team && String(r.who.team.id) === String(H.id);
     const next = r.who.team ? { oppId: isHome ? A.id : H.id, opp: isHome ? A.abbreviation : H.abbreviation, home: isHome, date: game.date } : null;
     const opp = opponentFactor({ L, fam, m: r.m, next, standings, deep, athlete: { id: r.aid, position: { abbreviation: r.who.pos }, team: r.who.team } });
-    const { res, withVal } = runProp(fam, r.m, games, { line: r.p.line, oddsOver: r.p.over, oddsUnder: r.p.under, opp, posted: r.p });
+    const context = r.who.team ? await playerContext({ L, fam, m: r.m, games, teamId: r.who.team.id, teamAbbr: r.who.team.abbreviation, isHome, lines: game.lines, standings, report: game.report, playerId: r.aid }) : null;
+    if (context?.status?.out) { r.err = true; r.out = context.status.status; continue; }
+    const { res, withVal } = runProp(fam, r.m, games, { line: r.p.line, oddsOver: r.p.over, oddsUnder: r.p.under, opp, posted: r.p, context });
     if (!res.n) { r.err = true; continue; }
+    // A questionable player might sit or be limited: never more than a C.
+    if (context?.status?.maybe && ["A", "B"].includes(res.verdict?.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
+    const rc = res.verdict && roleChange(context, r.who.pos, res.verdict.lean, r.p.line, res.projection);
+    if (rc) { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.roleChange = rc; }
     r.res = res;
     r.edge = res.verdict?.edge;
-    r.opp = opp;
+    r.opp = combineOpponent(opp, context);
+    r.context = context;
     // Recent hit rate on the leaning side, for the pick write-up.
     const last10 = withVal.slice(0, 10).map((g) => g.value);
     const overs = last10.filter((v) => v > r.p.line).length, unders = last10.filter((v) => v < r.p.line).length;

@@ -263,6 +263,20 @@ def build(out, cache):
         write_json(os.path.join(pdir, f"{eid}.json"), {"id": eid, "name": last["player_display_name"], "pos": pos, "team": espn_abbr(last["team"]), "weeks": weeks})
         index[eid] = {"n": last["player_display_name"], "p": pos, "t": espn_abbr(last["team"])}
 
+    # Who played each game (any recorded stat), per team, for with/without teammate splits.
+    lineups = {}
+    for r in weekly[["team", "game_id", "player_id"]].itertuples(index=False):
+        eid = espn_of.get(r.player_id)
+        meta = game_meta.loc[r.game_id] if r.game_id in game_meta.index else None
+        if not eid or meta is None or pd.isna(meta["espn"]):
+            continue
+        g = lineups.setdefault(espn_abbr(r.team), {}).setdefault(str(int(meta["espn"])), {"d": meta["gameday"], "p": {}})
+        g["p"][eid] = 1
+    ldir = os.path.join(out, "nfl", "lineups")
+    os.makedirs(ldir, exist_ok=True)
+    for abbr, games in lineups.items():
+        write_json(os.path.join(ldir, f"{abbr}.json"), {"team": abbr, "games": games})
+
     write_json(os.path.join(out, "nfl", "teams.json"), {"season": season, "updated": dt.datetime.utcnow().isoformat() + "Z", "teams": team_out or {}, "league": league or {}})
     write_json(os.path.join(out, "nfl", "index.json"), index)
     print(f"NFL: {len(index)} players, {len(team_out or {})} teams", flush=True)

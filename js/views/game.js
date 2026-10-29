@@ -5,6 +5,7 @@ import { addPick } from "../store.js";
 import { loadDeep, deepGamePanel } from "../deep.js";
 import { gameContext, defaultLines, evaluateLines, sideOdds } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
+import { injuryReport } from "../context.js";
 
 export async function renderGame(ctx, L, ev, q) {
   const { app } = ctx;
@@ -148,7 +149,7 @@ export async function renderGame(ctx, L, ev, q) {
     }));
   }
   renderModel();
-  renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep);
+  renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, { spreadHome: odds.spreadHome, total: odds.total }, injuryReport(sum));
 }
 
 function recentTable(res) {
@@ -175,7 +176,7 @@ function h2h(sum, resH, A) {
 }
 
 // ---------- props board ----------
-async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep) {
+async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, lines, report) {
   const box = ctx.app.querySelector("#g-props");
   if (!propsAll || !propsAll.size) {
     box.innerHTML = `<h3>Player props</h3><div class="muted small">No player prop lines posted for this game yet. Open any player from search to analyze your own line.</div>`;
@@ -195,7 +196,8 @@ async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, dee
       <div class="table-wrap"><table><thead><tr><th>Player</th><th>Market</th><th class="r">Line</th><th class="r">Over</th><th class="r">Under</th><th class="r">Proj</th><th class="r">P(over)</th><th>Pick</th><th class="r">Edge</th><th class="r">Grade</th><th></th></tr></thead><tbody>
       ${rows.map((r) => {
         const v = r.res?.verdict;
-        return `<tr class="${v && v.grade !== "PASS" ? "hl" : ""}"><td>${esc(r.who.name)} <span class="faint">${esc(r.who.team?.abbreviation || "")} ${esc(r.who.pos || "")}</span></td><td>${esc(r.m.label)}</td>
+        const flag = r.out ? ` <span class="pill neg">${esc(r.out)}</span>` : r.context?.status?.maybe ? ` <span class="pill" style="color:var(--gold)">${esc(r.context.status.status)}</span>` : r.res?.verdict?.roleChange ? ` <span class="pill" style="color:var(--gold)" title="${esc(r.res.verdict.roleChange.join(", "))} out: likely a bigger role tonight">role change</span>` : r.context?.withWithout?.notes.length ? ` <span class="pill gold" title="${esc(r.context.withWithout.notes[0])}">teammate out</span>` : "";
+        return `<tr class="${v && v.grade !== "PASS" ? "hl" : ""}"><td>${esc(r.who.name)} <span class="faint">${esc(r.who.team?.abbreviation || "")} ${esc(r.who.pos || "")}</span>${flag}</td><td>${esc(r.m.label)}</td>
         <td class="r">${r.p.line}</td><td class="r">${M.fmtOdds(r.p.over)}</td><td class="r">${M.fmtOdds(r.p.under)}</td>
         <td class="r">${r.res ? fx(r.res.projection) : r.err ? "—" : ""}</td><td class="r">${r.res ? pct(r.res.pOver) : ""}</td>
         <td>${v ? `<b class="${v.lean === "OVER" ? "pos" : "neg"}">${v.lean}</b>` : ""}</td><td class="r">${v ? signed(v.edge * 100, 1) : ""}</td><td class="r"><b>${v ? v.grade : ""}</b></td>
@@ -208,7 +210,7 @@ async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, dee
     btn.disabled = true;
     btn.textContent = "Scanning…";
     await scanRows(L, rows, {
-      game: { H, A, date: comp.date }, standings, deep,
+      game: { H, A, date: comp.date, lines, report }, standings, deep,
       onProgress: (d, n) => { if (ctx.alive()) btn.textContent = `Scanning ${d}/${n}…`; },
     });
     if (ctx.alive()) draw();

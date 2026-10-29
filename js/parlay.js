@@ -110,7 +110,7 @@ export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0);
 
 // Books post TD/INT-style lines (under 2.5) at lopsided prices, so a missing price
 // can't be assumed to be -110 there.
-export const usableLeg = (l) => l.priced !== false || l.kind !== "prop" || l.line >= 2.5;
+export const usableLeg = (l) => (l.priced !== false || l.kind !== "prop" || l.line >= 2.5) && !l.questionable;
 
 // Top picks: graded legs with real edge, one per player, at most two per game.
 export function choosePicks(legs, max = 15, minEdge = 0.02) {

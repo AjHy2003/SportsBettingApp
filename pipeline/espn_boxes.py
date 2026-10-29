@@ -14,12 +14,23 @@ def season_events(path, cache_dir, key):
     sb = get(f"{SITE}/{path}/scoreboard")
     lg = sb["leagues"][0]
     start = dt.date.fromisoformat(lg["season"]["startDate"][:10])
+    return lg["season"]["year"], events_between(path, cache_dir, key, start, dt.date.today())
+
+
+def previous_season_events(path, cache_dir, key):
+    """Last season's completed events (regular season + playoffs), ~365 to ~100 days before this season began."""
+    sb = get(f"{SITE}/{path}/scoreboard")
+    start = dt.date.fromisoformat(sb["leagues"][0]["season"]["startDate"][:10])
+    return events_between(path, cache_dir, key, start - dt.timedelta(days=365), start - dt.timedelta(days=100))
+
+
+def events_between(path, cache_dir, key, start, end):
     today = dt.date.today()
     sb_dir = os.path.join(cache_dir, f"espn_{key}", "scoreboards")
     os.makedirs(sb_dir, exist_ok=True)
     events = []
     d = start
-    while d < today:
+    while d < min(end, today):
         ymd = d.strftime("%Y%m%d")
         cache = os.path.join(sb_dir, f"{ymd}.json")
         if os.path.exists(cache):
@@ -39,7 +50,7 @@ def season_events(path, cache_dir, key):
                     json.dump(day, f)
         events += [e["id"] for e in day if e["done"] and e["type"] in (2, 3)]
         d += dt.timedelta(days=1)
-    return lg["season"]["year"], events
+    return events
 
 
 def load_boxes(path, cache_dir, key, events, parse, workers=6):

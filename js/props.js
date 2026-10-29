@@ -52,28 +52,41 @@ export function defaultMarket(markets, games) {
 
 // Opponent multiplier for the next game: pipeline data first, then standings.
 export function opponentFactor({ L, fam, m, next, standings, deep, athlete }) {
-  if (!next?.oppId) return { factor: 1, why: "No upcoming opponent found." };
+  if (!next?.oppId) return { factor: 1, why: "No upcoming opponent found.", source: "none" };
   const d = deep && deepOppFactor(L, deep, m, next, athlete);
-  if (d) return d;
-  if (!m.oppEl || !standings?.leagueAvg) return { factor: 1, why: "No opponent adjustment for this market." };
+  if (d) return { ...d, source: "deep" };
+  if (!m.oppEl || !standings?.leagueAvg) return { factor: 1, why: "No opponent adjustment for this market.", source: "none" };
   const t = standings.teams[next.oppId];
-  if (!t || !t.gp) return { factor: 1, why: "Opponent has no games yet." };
+  if (!t || !t.gp) return { factor: 1, why: "Opponent has no games yet.", source: "none" };
   const side = m.oppSide === "off" ? t.pf : t.pa;
   const raw = side / standings.leagueAvg;
   const k = REGRESS_GAMES[fam] || 10;
   const reg = 1 + (raw - 1) * (t.gp / (t.gp + k));
   const factor = Math.min(1.25, Math.max(0.8, Math.pow(reg, m.oppEl)));
   const what = m.oppSide === "off" ? `scores ${fx(side)} ${UNIT[fam] || "pts"}/game` : `allows ${fx(side)} ${UNIT[fam] || "pts"}/game`;
-  return { factor, why: `${next.opp} ${what} vs league avg ${fx(standings.leagueAvg)} (${t.gp} games, shrunk toward average) → ×${factor.toFixed(3)}.` };
+  return { factor, why: `${next.opp} ${what} vs league avg ${fx(standings.leagueAvg)} (${t.gp} games, shrunk toward average) → ×${factor.toFixed(3)}.`, source: "standings" };
 }
 
-export function runProp(fam, m, games, { line, oddsOver, oddsUnder, opp, role = 0, minutes = null, posted = null }) {
+// When Vegas' implied team total is applied, it already prices the opponent's
+// defense: drop the points-allowed adjustment and halve (sqrt) defense-vs-position.
+export function combineOpponent(opp, context) {
+  if (!opp || !context?.vegasApplied) return opp;
+  if (opp.source === "standings") return { ...opp, factor: 1, why: `${opp.why} (replaced by the Vegas game total)` };
+  if (opp.source === "deep") {
+    const f = Math.sqrt(opp.factor);
+    return { ...opp, factor: f, why: `${opp.why.replace(/ → ×[\d.]+\.$/, "")} → ×${f.toFixed(3)} (half weight; the Vegas total covers the rest).` };
+  }
+  return opp;
+}
+
+export function runProp(fam, m, games, { line, oddsOver, oddsUnder, opp, role = 0, minutes = null, posted = null, context = null }) {
   const withVal = games.map((g) => ({ ...g, value: marketValue(m, g) })).filter((g) => g.value != null);
   // A sportsbook's posted main line without prices still says "about 50/50 here".
   const marketProb = posted && Number(line) === posted.line && (posted.over == null || posted.under == null) ? 0.5 : null;
   const res = M.analyzeProp(withVal.slice(0, MODEL_SAMPLE), {
     line, oddsOver, oddsUnder, dist: m.dist, marketProb,
-    oppFactor: opp?.factor ?? 1, roleAdj: role, perMinute: m.perMinute, minutesOverride: Number(minutes) || null,
+    oppFactor: combineOpponent(opp, context)?.factor ?? 1, roleAdj: role, perMinute: m.perMinute, minutesOverride: Number(minutes) || null,
+    contextFactor: context?.factor ?? 1, minutesFactor: context?.minutesFactor ?? 1, contextNotes: context?.notes,
     halfLife: fam === "football" ? 6 : 10,
   });
   return { res, withVal };

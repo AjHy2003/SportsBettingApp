@@ -8,6 +8,7 @@ import { addPick } from "../store.js";
 import { loadDeep } from "../deep.js";
 import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
+import { injuryReport } from "../context.js";
 import { planTicket, combine, compatible, choosePicks, bestSameGame } from "../parlay.js";
 
 const SPORTS = [
@@ -50,7 +51,7 @@ export async function renderToday(ctx, q) {
     <div class="crumbs"><a href="#/">Home</a> › Today</div>
     <div class="row" style="justify-content:space-between">
       <h1>🔥 Today's picks</h1>
-      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
+      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""}` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
     ${today ? "" : `<div class="notice warn" style="margin-bottom:14px">Daily picks are generated on GitHub each morning (around 5am, 11:45am and 5pm ET). They'll show here after the first run. You can still build a same-game parlay for any game below.</div>`}
     <div class="card">
@@ -109,7 +110,9 @@ export async function renderToday(ctx, q) {
         <div style="font-weight:700"><a href="${legLink(l)}" style="color:var(--text)">${esc(l.label)}</a> <span class="muted" style="font-weight:600">${priceTag(l)}</span></div>
         <div class="small muted">${esc(leagueName(l.league))} · ${esc(l.matchup)} · ${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}</div>
         <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why ? ` · ${esc(l.why)}` : ""}</div>
-        ${l.mismatch ? `<div class="small" style="color:var(--gold)">Line is far from his recent numbers — likely a role change. Check the news.</div>` : ""}
+        ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
+        ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
+        ${l.bestBook ? `<div class="small pos">Better price: ${M.fmtOdds(l.bestBook.odds)} at ${esc(l.bestBook.title)} (DraftKings ${M.fmtOdds(l.odds)})</div>` : ""}
       </div>
       ${addable ? `<button class="btn ${inMine ? "" : "ghost"} sm" data-add="${esc(l.id)}" title="Add to my parlay">${inMine ? "✓" : "+"}</button>` : ""}
     </div>`;
@@ -214,7 +217,7 @@ export async function renderToday(ctx, q) {
     }
     if (props?.size) {
       const people = await loadPeople(L, [gc.H, gc.A]);
-      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date }, standings, deep });
+      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum) }, standings, deep });
       for (const r of rows) {
         if (!r.res) continue;
         const side = r.res.verdict.lean;
@@ -222,7 +225,8 @@ export async function renderToday(ctx, q) {
         const odds = (side === "OVER" ? r.p.over : r.p.under) ?? -110;
         out.push({ id: `${lid}:${ev}:${r.aid}:${r.key}:${side}`, league: lid, gameKey: key, eventId: ev, start: comp.date, matchup, kind: "prop", player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation,
           marketKey: r.key, market: r.m.label, line: r.p.line, side, label: `${r.who.name} ${side === "OVER" ? "Over" : "Under"} ${r.p.line} ${r.m.label}`, odds, priced: r.p.over != null && r.p.under != null,
-          prob, edge: prob - M.impliedProb(odds), grade: r.res.verdict.grade, lean: true, mismatch: !!r.res.verdict.mismatch, why: `Projection ${r.res.projection.toFixed(1)} vs line ${r.p.line}` });
+          prob, edge: prob - M.impliedProb(odds), grade: r.res.verdict.grade, lean: true, mismatch: !!r.res.verdict.mismatch, questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
+          why: [`Projection ${r.res.projection.toFixed(1)} vs line ${r.p.line}`, r.context?.withWithout?.notes[0]].filter(Boolean).join(" · ") });
       }
     }
     return out;
@@ -276,16 +280,30 @@ export async function renderToday(ctx, q) {
     const box = $("#t-record");
     const r = today?.record;
     const graded = (history?.picks || []).filter((p) => p.result && p.result !== "VOID").sort((a, b) => new Date(b.start) - new Date(a.start));
+    const clv = r?.clv;
+    const clvBlock = clv?.moved ? `<div class="kpi"><div class="k">Beat the later line</div><div class="v ${clv.rate >= 0.5 ? "pos" : "neg"}">${pct(clv.rate)} <small>${clv.beat}/${clv.moved}</small></div></div>` : "";
+    const clvNote = `<p class="small muted" style="margin:8px 0 0"><b>Closing line value:</b> after a pick is posted, every later run checks the line again until the game starts. If the line moves our way (an over at 24.5 that later shows 25.5, a +3.5 that becomes +2.5), the market agreed with the pick. Beating the later line more than half the time is the quickest sign of a real edge, well before the win-loss record means anything.</p>`;
     if (!r || !(r.all.w + r.all.l)) {
-      box.innerHTML = `<h3>Track record</h3><div class="muted small">Every pick posted here is logged and graded automatically after the game. The record builds from the first day.</div>`;
+      box.innerHTML = `<h3>Track record</h3>${clvBlock ? `<div class="kpis">${clvBlock}</div>` : ""}<div class="muted small">Every pick posted here is logged and graded automatically after the game. The record builds from the first day.</div>${clvNote}`;
       return;
     }
     const line = (lbl, x) => `<div class="kpi"><div class="k">${lbl}</div><div class="v">${x.w}-${x.l} <small class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</small></div></div>`;
+    const cal = (r.calibration || []).filter((b) => b.n);
+    const clvCell = (p) => {
+      const c = p.clv;
+      if (!c || (c.pts === 0 && Math.abs(c.prob) < 0.005)) return `<span class="faint">—</span>`;
+      const good = c.pts > 0 || (c.pts === 0 && c.prob > 0);
+      return `<span class="${good ? "pos" : "neg"}">${c.pts ? signed(c.pts, 1) : signed(c.prob * 100, 1) + "%"}</span>`;
+    };
     box.innerHTML = `<h3>Track record</h3>
       <div class="kpis">${line("Last 7 days", r.last7)}${line("Last 30 days", r.last30)}${line("All time", r.all)}
-        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g]) : "").join("")}</div>
-      <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
-        ${graded.slice(0, 25).map((p) => `<tr><td>${fmtDate(p.start)}</td><td>${esc(p.label)} <span class="faint">${esc(leagueName(p.league))}</span></td><td class="r">${M.fmtOdds(p.odds)}</td><td class="r">${esc(p.grade)}</td><td class="r">${esc(p.actual ?? "")}</td><td class="${p.result === "W" ? "o" : p.result === "L" ? "u" : "p"}">${p.result}</td></tr>`).join("")}
+        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g]) : "").join("")}${clvBlock}</div>
+      ${cal.length ? `<h3 style="margin-top:14px">Calibration</h3><div class="table-wrap"><table><thead><tr><th>Model said</th><th class="r">Picks</th><th class="r">Expected hit %</th><th class="r">Actual hit %</th></tr></thead><tbody>
+        ${cal.map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
+      </tbody></table></div><p class="small faint" style="margin:6px 0 0">Small samples swing a lot; read this after a few hundred picks.</p>` : ""}
+      ${clvNote}
+      <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r" title="Line movement after the pick">CLV</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
+        ${graded.slice(0, 25).map((p) => `<tr><td>${fmtDate(p.start)}</td><td>${esc(p.label)} <span class="faint">${esc(leagueName(p.league))}</span></td><td class="r">${M.fmtOdds(p.odds)}</td><td class="r">${esc(p.grade)}</td><td class="r">${clvCell(p)}</td><td class="r">${esc(p.actual ?? "")}</td><td class="${p.result === "W" ? "o" : p.result === "L" ? "u" : "p"}">${p.result}</td></tr>`).join("")}
       </tbody></table></div>`;
   }
 

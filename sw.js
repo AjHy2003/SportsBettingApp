@@ -1,9 +1,9 @@
 // Offline shell: cache the app files, always go to network for data.
-const VERSION = "picklab-v2";
+const VERSION = "picklab-v3";
 const SHELL = [
   "./", "index.html", "css/app.css", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png",
   "js/app.js", "js/model.js", "js/sports.js", "js/espn.js", "js/ui.js", "js/store.js", "js/props.js", "js/deep.js",
-  "js/gamemodel.js", "js/scan.js", "js/parlay.js", "js/views/today.js",
+  "js/gamemodel.js", "js/scan.js", "js/parlay.js", "js/context.js", "js/views/today.js",
   "js/views/home.js", "js/views/slate.js", "js/views/game.js", "js/views/player.js", "js/views/racing.js",
   "js/views/golf.js", "js/views/events.js", "js/views/custom.js", "js/views/picks.js",
 ];

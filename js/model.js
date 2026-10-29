@@ -192,7 +192,7 @@ export function analyzeProp(games, opts) {
       const w = withMin.map((g, i) => Math.pow(0.5, i / halfLife) * (g.w ?? 1));
       const rate = sum(withMin.map((g, i) => w[i] * g.value)) / sum(withMin.map((g, i) => w[i] * g.minutes));
       const minRecent = ewma(withMin.map((g) => g.minutes), 5);
-      expMinutes = opts.minutesOverride > 0 ? Number(opts.minutesOverride) : minRecent;
+      expMinutes = opts.minutesOverride > 0 ? Number(opts.minutesOverride) : minRecent * (opts.minutesFactor || 1);
       base = rate * expMinutes;
       if (opts.minutesOverride > 0) notes.push(`Using ${expMinutes} expected minutes (recent avg ${minRecent.toFixed(1)}).`);
     }
@@ -201,8 +201,10 @@ export function analyzeProp(games, opts) {
   const opp = opts.oppFactor && isFinite(opts.oppFactor) ? opts.oppFactor : 1;
   const pace = opts.paceFactor && isFinite(opts.paceFactor) ? opts.paceFactor : 1;
   const role = 1 + (Number(opts.roleAdj) || 0) / 100;
-  const projection = base * opp * pace * role;
+  const ctx = opts.contextFactor && isFinite(opts.contextFactor) ? opts.contextFactor : 1;
+  const projection = base * opp * pace * role * ctx;
   if (opp !== 1) notes.push(`Opponent adjustment ×${opp.toFixed(3)}.`);
+  for (const n of opts.contextNotes || []) notes.push(`${n}.`);
   if (pace !== 1) notes.push(`Pace adjustment ×${pace.toFixed(3)}.`);
   if (role !== 1) notes.push(`Role / injury adjustment ${opts.roleAdj > 0 ? "+" : ""}${opts.roleAdj}%.`);
 
@@ -262,6 +264,18 @@ export function analyzeProp(games, opts) {
   const mismatch = isFinite(line) ? Math.abs(projection - line) / sdProj : 0;
   if (mismatch >= 1.5 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
   else if (mismatch >= 1.0 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  // Same idea in probability terms: stats saying 80%+ where the book says 50% is
+  // almost always missing information, not a gift.
+  const gap = marketProb != null && statsOver != null ? Math.abs(statsOver - marketProb) : 0;
+  // And in plain numbers: a line twice (or half) the projection, or outside everything
+  // the player did in the last 5 games, is the book pricing a new role.
+  const lo = Math.min(projection, line), hi = Math.max(projection, line);
+  const ratio = isFinite(line) && line >= 2.5 && lo > 0 ? hi / lo : 1;
+  const last5 = vals.slice(0, 5);
+  const outside = isFinite(line) && line >= 2.5 && last5.length === 5 &&
+    ((verdict.lean === "UNDER" && line > Math.max(...last5)) || (verdict.lean === "OVER" && line < Math.min(...last5)));
+  if ((gap >= 0.4 || ratio >= 2) && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
+  else if ((gap >= 0.3 || ratio >= 1.6 || outside) && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
 
   return {
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,
