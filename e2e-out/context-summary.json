@@ -13,9 +13,9 @@
  "books": null,
  "byGrade": {
   "A": 7,
-  "B": 26,
-  "C": 150,
-  "PASS": 448
+  "B": 29,
+  "C": 139,
+  "PASS": 456
  },
  "topPicks": [
   "A Chuba Hubbard Under 16.5 Rush Attempts -110 p=0.6133 | Projection 11.6 vs line 16.5 · under in 7/10 of last 10 · matchup ×1.02 · team total 22.0 | Vegas has CAR at 22 points tonight vs a usual 25.3 → ×0.945 ; Game script: 3.5-point underdog → ×0.965",
@@ -25,13 +25,13 @@
   "B Kyren Williams Over 13.5 Rush Attempts -110 p=0.5852 | Projection 16.5 vs line 13.5 · over in 5/10 of last 10 · matchup ×1.04 · team total 26.0 | Vegas has LAR at 26 points tonight vs a usual 23.9 → ×1.034 ; Game script: favored by 6.5 → ×1.065",
   "B Bijan Robinson Under 18.5 Rush Attempts -110 p=0.5848 | Projection 15.4 vs line 18.5 · under in 5/10 of last 10 · matchup ×0.94 · team total 21.0 | Vegas has ATL at 21 points tonight vs a usual 24 → ×0.948 ; Game script: 2.5-point underdog → ×0.975",
   "B Malik Willis Under 28.5 Pass Attempts -110 p=0.5844 | Projection 24.0 vs line 28.5 · under in 9/10 of last 10 · team total 18.3 | Vegas has MIA at 18.3 points tonight vs a usual 18.6 → ×0.995 ; Game script: 7-point underdog → ×1.056",
+  "B SAC ML 260 p=0.3372 | SAC wins: model 47% → blended 34% | ",
+  "B NEV +22.5 -108 p=0.5775 | UCLA covers: model 27% → blended 42% | ",
   "B Darren Waller Over 19.5 Receiving Yards -110 p=0.5813 | Projection 27.1 vs line 19.5 · over in 7/10 of last 10 · matchup ×0.89 · team total 22.0 | Vegas has CAR at 22 points tonight vs a usual 25.3 → ×0.919 ; Game script: 3.5-point underdog → ×1.014",
   "B Daniel Jones Over 18.5 Completions -110 p=0.5797 | Projection 20.3 vs line 18.5 · over in 7/10 of last 10 · matchup ×1.02 | Vegas has IND at 18.3 points tonight vs a usual 22.3 → ×0.923 ; Game script: 10-point underdog → ×1.080",
-  "C Over 44.5 -105 p=0.5912 | Over: model 100% → blended 59% | ",
+  "B Under 44.5 -102 p=0.5587 | Over: model 30% → blended 44% | ",
   "B Michael Penix Jr. Under 231.5 Passing Yards -110 p=0.5774 | Projection 209.7 vs line 231.5 · under in 6/10 of last 10 · team total 21.0 | Vegas has ATL at 21 points tonight vs a usual 24 → ×0.923 ; Game script: 2.5-point underdog → ×1.015",
-  "C Over 57.5 -110 p=0.5992 | Over: model 100% → blended 60% | ",
   "B Justin Jefferson Under 76.5 Receiving Yards -110 p=0.5769 | Projection 61.1 vs line 76.5 · under in 6/10 of last 10 · matchup ×1.07 · Josh Oliver out: 52.3 receiving yards in 7 games without vs 65.6 with → ×0.946 | Vegas has MIN at 21.8 points tonight vs a usual 21.6 → ×1.005 ; Game script: 3-point underdog → ×1.012 ; Josh Oliver out: 52.3 receiving yards in 7 games without vs 65.6 with → ×0.946",
-  "C Over 47.5 -110 p=0.5985 | Over: model 99% → blended 60% | ",
   "B Josh Allen Under 254.5 Passing Yards -110 p=0.5764 | Projection 217.8 vs line 254.5 · under in 5/10 of last 10 · Tyrell Shavers out: 224.1 passing yards in 13 games without vs 234.6 with → ×0.971 · team total 28.8 | Vegas has BUF at 28.8 points tonight vs a usual 29.6 → ×0.983 ; Game script: favored by 3 → ×0.982 ; Tyrell Shavers out: 224.1 passing yards in 13 games without vs 234.6 with → ×0.971"
  ],
  "sampleContext": [
@@ -78,6 +78,27 @@
   "nfl James Cook III Over 100.5 Rush + Rec Yards: Vegas has BUF at 28.8 points tonight vs a usual 29.6 → ×0.983 ; Tyrell Shavers out: 123.6 rush + rec yards in 13 games without vs 101.1 with → ×1.057",
   "nfl Ray Davis Under 4.5 Rushing Yards: Vegas has BUF at 28.8 points tonight vs a usual 29.6 → ×0.983 ; Game script: favored by 3 → ×1.030 ; Tyrell Shavers out: 18.7 rushing yards in 13 games without vs 3.7 with → ×1.350"
  ],
+ "lineSample": [
+  "nba MEM @ POR POR -7.5 PASS: POR covers: model 39% → blended 47%",
+  "nfl TEN @ CIN CIN -10 PASS: CIN covers: model 51% → blended 52%",
+  "nfl CAR @ GB GB -3.5 PASS: GB covers: model 46% → blended 49%",
+  "nfl LV @ NYJ NYJ -1.5 PASS: NYJ covers: model 52% → blended 51%",
+  "nfl LAC @ LAR LAR -6.5 PASS: LAR covers: model 59% → blended 54%",
+  "ncaaf FAU @ UNT UNT -14.5 PASS: UNT covers: model 37% → blended 45%",
+  "ncaaf ND @ NAVY NAVY +30.5 C: NAVY covers: model 81% → blended 61%",
+  "ncaaf WIS @ IOWA IOWA -3.5 PASS: IOWA covers: model 47% → blended 48%",
+  "ncaaf UAB @ USF USF -7.5 PASS: USF covers: model 58% → blended 53%",
+  "ncaaf MRSH @ ODU ODU +3 PASS: ODU covers: model 53% → blended 52%",
+  "ncaaf TEM @ ECU ECU -6 PASS: ECU covers: model 49% → blended 49%",
+  "ncaaf MINN @ IU IU -20.5 PASS: IU covers: model 30% → blended 46%",
+  "ncaaf CSU @ USU USU -6.5 PASS: USU covers: model 34% → blended 45%",
+  "ncaaf UTAH @ CIN CIN +6.5 PASS: CIN covers: model 42% → blended 47%",
+  "ncaaf SC @ OU OU -4.5 PASS: OU covers: model 40% → blended 47%",
+  "ncaaf CLEM @ FSU FSU -6 PASS: FSU covers: model 44% → blended 47%",
+  "ncaaf MSST @ TEX TEX -20.5 PASS: TEX covers: model 19% → blended 43%",
+  "ncaaf ARMY @ MEM MEM -6 PASS: MEM covers: model 47% → blended 49%"
+ ],
+ "lineMismatch": 5,
  "record": {
   "all": {
    "w": 2,
