@@ -70,7 +70,7 @@ export function opponentFactor({ L, fam, m, next, standings, deep, athlete }) {
 // When Vegas' implied team total is applied, it already prices the opponent's
 // defense: drop the points-allowed adjustment and halve (sqrt) defense-vs-position.
 export function combineOpponent(opp, context) {
-  if (!opp || !context || context.implied == null || context.factor === 1) return opp;
+  if (!opp || !context?.vegasApplied) return opp;
   if (opp.source === "standings") return { ...opp, factor: 1, why: `${opp.why} (replaced by the Vegas game total)` };
   if (opp.source === "deep") {
     const f = Math.sqrt(opp.factor);

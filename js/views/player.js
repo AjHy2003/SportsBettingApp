@@ -82,7 +82,7 @@ export async function renderPlayer(ctx, L, id, q) {
       ctxCache.set(m.key, null);
       playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id })
         .then((c) => { ctxCache.set(m.key, c); if (ctx.alive() && state.market === m.key) render(); })
-        .catch(() => {});
+        .catch(() => { ctxCache.set(m.key, { factor: 1, minutesFactor: 1, notes: [] }); if (ctx.alive() && state.market === m.key) render(); });
     }
     return ctxCache.get(m.key);
   }

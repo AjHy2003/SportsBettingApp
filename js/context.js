@@ -34,6 +34,7 @@ export function vegasContext({ fam, m, teamId, teamAbbr, isHome, lines, standing
   const el = ENV_ELASTICITY[fam]?.[m.key] || 0;
   const t = standings?.teams?.[teamId];
   if (el && t?.pf && standings.leagueAvg) {
+    out.applied = true;
     const k = TEAM_REGRESS[fam] || 8;
     const base = (t.gp * t.pf + k * standings.leagueAvg) / (t.gp + k);
     const f = clamp(Math.pow(implied / base, el), 0.85, 1.18);
@@ -155,6 +156,7 @@ export async function playerContext({ L, fam, m, games, teamId, teamAbbr, isHome
     minutesFactor: v.minutesFactor,
     notes: [...v.notes, ...(ww?.notes || [])],
     implied: v.implied,
+    vegasApplied: !!v.applied,
     status: me,
     outMates,
     withWithout: ww,
