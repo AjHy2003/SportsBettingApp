@@ -111,6 +111,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .sr-item img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--card-2); }
 .sr-item small { color: var(--muted); display: block; }
 .icon-btn { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 7px 10px; cursor: pointer; color: var(--text); }
+.kpi-input { width: 100%; max-width: 110px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg-2); font: inherit; color: inherit; }
+.acct-btn { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px; border-radius: 12px; color: var(--muted); font-weight: 600; font-size: 14px; white-space: nowrap; }
+.acct-btn:hover { color: var(--text); }
+.acct-btn.in { width: 38px; padding: 0; justify-content: center; }
+.avatar { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--grad); color: #fff; font: 700 13px/1 var(--head); flex: 0 0 auto; }
+.avatar.lg { width: 42px; height: 42px; font-size: 18px; }
+.acct-who { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.acct-form { display: grid; gap: 10px; }
+.acct-form .btn { width: 100%; padding: 10px 14px; }
+.acct-banner { display: flex; align-items: center; gap: 12px; justify-content: space-between; padding: 12px 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line)); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--card)), color-mix(in srgb, var(--cyan) 6%, var(--card))); }
 #theme-btn { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border-radius: 12px; color: var(--muted); }
 #theme-btn:hover { color: var(--text); }
 .icon-btn:hover { border-color: var(--accent); }
@@ -390,6 +400,8 @@ details.more[open] summary { display: none; }
   .hit .pct { font-size: 19px; }
   .topbar { gap: 10px; }
   .brand { font-size: 18px; }
+  .acct-btn .acct-lbl { display: none; }
+  .acct-btn { width: 38px; padding: 0; justify-content: center; }
   h1 { font-size: 24px; }
   .grid.two { grid-template-columns: minmax(0, 1fr); }
   .phead img { width: 60px; height: 60px; }

@@ -3,6 +3,7 @@
 // and a copy/share slip. Bets are always placed by you in the book's own app.
 import { esc, toast } from "./ui.js";
 import { fmtOdds } from "./model.js";
+import { slipUrl } from "./slip.js";
 
 const DK = { nba: "basketball/nba", wnba: "basketball/wnba", ncaab: "basketball/ncaab", nfl: "football/nfl", ncaaf: "football/ncaaf", nhl: "hockey/nhl", mlb: "baseball/mlb", epl: "soccer/england---premier-league" };
 const FD = { nba: "nba", wnba: "wnba", ncaab: "ncaab", nfl: "nfl", ncaaf: "ncaaf", nhl: "nhl", mlb: "mlb" };
@@ -68,8 +69,8 @@ function placeInner(legs, opts) {
     .map((x) => `<a class="bookchip" style="--bc:${x.b.color}" href="${esc(x.href)}" target="_blank" rel="noopener">${esc(x.b.name)}${x.exact ? " ＋" : " game"}</a>`).join("");
   return `
     <div class="row place-top"><span class="small muted">${opts.label || "Place it"}</span><span class="small faint">· you bet in the book's app; PickLab never sees your account</span><button class="linkbtn small" data-books-settings title="Choose your sportsbooks and state">⚙ My books</button></div>
-    <div class="row place-books">${books.map(btn).join("")}<button class="btn ghost sm" data-copy-slip>📋 Copy</button>${typeof navigator !== "undefined" && navigator.share ? `<button class="btn ghost sm" data-share-slip>Share</button>` : ""}</div>
-    ${multi ? `<details class="place-legs"><summary class="small">Add legs one tap at a time (＋ adds that leg to the book's slip; then switch the slip to Parlay)</summary>
+    <div class="row place-books">${books.map(btn).join("")}<button class="btn ghost sm" data-copy-slip title="Copy the bets as text, with a link">📋 Copy</button><button class="btn ghost sm" data-share-slip title="A link anyone can open to add these bets to their slip or save them">🔗 Share link</button></div>
+    ${multi ? `<details class="place-legs" ${opts.openLegs ? "open" : ""}><summary class="small">Add legs one tap at a time (＋ adds that leg to the book's slip; the legs stack up there, then switch the slip to Parlay)</summary>
       <ol>${legs.map((l) => `<li><span>${esc(l.label)}</span> <span class="faint small">${l.odds != null ? fmtOdds(l.odds) : ""}</span> ${chips(l) || `<span class="faint small">find it in the book</span>`}</li>`).join("")}</ol></details>` : ""}`;
 }
 
@@ -117,7 +118,13 @@ if (typeof document !== "undefined") {
     const r = registry.get(e.target.closest(".place")?.dataset.place);
     if (!r) return;
     const text = slipText(r.legs, r.opts);
-    if (share) { try { await navigator.share({ title: "PickLab bet", text }); } catch { /* cancelled */ } return; }
-    navigator.clipboard?.writeText(text).then(() => toast("Bet slip copied"), () => toast("Copy failed"));
+    let url = "";
+    try { url = await slipUrl(r.legs, r.opts); } catch { /* text only */ }
+    if (share) {
+      if (navigator.share) { try { await navigator.share({ title: "PickLab bet slip", text, url }); } catch { /* cancelled */ } return; }
+      navigator.clipboard?.writeText(url).then(() => toast("Link copied: anyone who opens it can add these bets to their slip"), () => toast("Copy failed"));
+      return;
+    }
+    navigator.clipboard?.writeText(url ? `${text}\n\nAdd it to your slip: ${url}` : text).then(() => toast("Bet slip copied"), () => toast("Copy failed"));
   });
 }
