@@ -1,0 +1,63 @@
+name: test-days
+# Temporary: live check of the Today day/game picker and today-first notification on
+# the claude/days branch. Writes nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/days"]
+    paths-ignore: ["e2e-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Daily picks
+        run: |
+          mkdir -p /tmp/hist
+          git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/hist/history.json || true
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Notification preview
+        run: node -e 'const n = require("./notify.json"); console.log(n.title + "\n" + n.body)' | tee notify.txt
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const et = (d) => new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short" }).format(new Date(d));
+            const out = { featured: Object.fromEntries(Object.entries(t.featured).map(([k, v]) => [k, v && { day: v.day, sgp: v.sgp, legs: v.legs.map((id) => { const l = t.legs.find((x) => x.id === id); return `${et(l.start)} ${l.matchup} ${l.label}`; }) }])),
+              sgpDays: t.sgps.map((x) => `${x.day} ${x.league} ${x.matchup}`), moonshots: Object.fromEntries(Object.entries(t.moonshots).map(([k, m]) => [k, { legs: m.legs.length, later: m.later, payout: m.payout }])) };
+            fs.writeFileSync("e2e-out/days-summary.json", JSON.stringify(out, null, 1));
+            console.log(JSON.stringify(out, null, 1).slice(0, 4000));
+          ' || true
+          cp picks.log notify.txt e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/days || true
+          git push -q origin HEAD:claude/days
