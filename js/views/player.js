@@ -7,6 +7,7 @@ import { mergeDeepStats } from "../scan.js";
 import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
 import { injuryReport, playerContext, roleChange } from "../context.js";
 import { articleOf } from "../news.js";
+import { gameWeather, weatherLine } from "../weather.js";
 import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderPlayer(ctx, L, id, q) {
@@ -78,13 +79,16 @@ export async function renderPlayer(ctx, L, id, q) {
   const nextOdds = nextSum ? pickcenterOdds(nextSum.pickcenter?.[0]) : null;
   const nextLines = nextOdds ? { spreadHome: nextOdds.spreadHome, total: nextOdds.total } : null;
   const report = nextSum ? injuryReport(nextSum) : null;
+  // Outdoor football: forecast for kickoff.
+  let nextWeather = null;
+  const weatherP = nextSum && fam === "football" ? gameWeather(L, nextSum).then((w) => (nextWeather = w)).catch(() => null) : Promise.resolve(null);
   const teamId = a.team?.id || games[0]?.teamId;
   const ctxCache = new Map();
   function contextFor(m) {
     if (!next || (!nextLines && !report)) return null;
     if (!ctxCache.has(m.key)) {
       ctxCache.set(m.key, null);
-      playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id })
+      weatherP.then((weather) => playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id, weather }))
         .then((c) => { ctxCache.set(m.key, c); if (ctx.alive() && state.market === m.key) render(); })
         .catch(() => { ctxCache.set(m.key, { factor: 1, minutesFactor: 1, notes: [] }); if (ctx.alive() && state.market === m.key) render(); });
     }
@@ -351,6 +355,7 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="small" style="display:grid;gap:8px">
         ${next ? `<div><b>Next:</b> ${next.home ? "vs" : "@"} ${esc(next.oppName || next.opp)} · ${fmtDate(next.date, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(next.date)}${restNext != null && restNext >= 0 && (fam === "basketball" || fam === "hockey") ? ` · ${restNext === 0 ? "<b>back-to-back</b>" : `${restNext} day${restNext === 1 ? "" : "s"} rest`}` : ""}</div>` : ""}
         <div><b>Opponent:</b> ${esc(opp.why)}</div>
+        ${nextWeather ? `<div><b>Weather:</b> ${esc(weatherLine(nextWeather))}</div>` : ""}
         ${opp.extra || ""}
         ${gctx?.notes?.length ? `<div><b>Tonight:</b><ul style="margin:4px 0 0;padding-left:18px">${gctx.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>` : state.useCtx && next && nextSum && !gctx ? `<div class="faint">Checking tonight's lines and injury report…</div>` : ""}
         ${gctx?.outMates?.length ? `<div><b>Out for ${esc(a.team?.abbreviation || "the team")}:</b> ${gctx.outMates.map((x) => `${esc(x.name)} <span class="faint">(${esc(x.status)})</span>`).join(", ")}</div>` : ""}

@@ -9,6 +9,7 @@ import { loadDeep } from "../deep.js";
 import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
+import { gameWeather } from "../weather.js";
 import { planTicket, combine, compatible, choosePicks, bestSameGame } from "../parlay.js";
 import { timeAgo } from "../news.js";
 
@@ -217,11 +218,11 @@ export async function renderToday(ctx, q) {
     const sum = await api.summary(L, ev);
     const comp = sum.header.competitions[0];
     const h = comp.competitors.find((c) => c.homeAway === "home"), a = comp.competitors.find((c) => c.homeAway === "away");
-    const [standings, schedH, schedA, deep, props] = await Promise.all([
+    const [standings, schedH, schedA, deep, props, weather] = await Promise.all([
       api.standings(L).then(standingsTable).catch(() => null), api.schedule(L, h.team.id).catch(() => null), api.schedule(L, a.team.id).catch(() => null),
-      loadDeep(L).catch(() => null), api.propBets(L, ev).then((items) => parseProps(items, L.markets)).catch(() => null),
+      loadDeep(L).catch(() => null), api.propBets(L, ev).then((items) => parseProps(items, L.markets)).catch(() => null), gameWeather(L, sum).catch(() => null),
     ]);
-    const gc = gameContext(L, sum, standings, schedH, schedA);
+    const gc = gameContext(L, sum, standings, schedH, schedA, weather);
     const matchup = `${a.team.abbreviation} @ ${h.team.abbreviation}`;
     const st = defaultLines(gc.odds);
     const out = [];
@@ -235,7 +236,7 @@ export async function renderToday(ctx, q) {
     }
     if (props?.size) {
       const people = await loadPeople(L, [gc.H, gc.A]);
-      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum) }, standings, deep });
+      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum), weather }, standings, deep });
       for (const r of rows) {
         if (!r.res) continue;
         const side = r.res.verdict.lean;

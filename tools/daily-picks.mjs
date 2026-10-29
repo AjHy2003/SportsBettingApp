@@ -41,6 +41,7 @@ const { loadDeep } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
 const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
+const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks } = await import("../js/parlay.js");
 const { loadBooks, matchEvent, shop } = await import("./books.mjs");
@@ -132,7 +133,8 @@ function propLeg(L, game, r) {
     r.l10?.n ? `${side.toLowerCase()} in ${hits}/${r.l10.n} of last ${r.l10.n}` : "",
     r.opp?.factor && Math.abs(r.opp.factor - 1) > 0.02 ? `matchup ×${r.opp.factor.toFixed(2)}` : "",
     r.context?.withWithout?.notes[0] || "",
-    r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
+    r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) / (r.context.weather?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
+    r.context?.weather ? `weather: ${r.context.weather.why} ×${r.context.weather.factor.toFixed(2)}` : "",
   ].filter(Boolean).join(" · ");
   return {
     id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:${side}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
@@ -169,13 +171,17 @@ async function scanLeague(cfg) {
       const sum = await api.summary(L, e.id);
       const comp = sum.header.competitions[0];
       const h = comp.competitors.find((c) => c.homeAway === "home"), a = comp.competitors.find((c) => c.homeAway === "away");
-      const [schedH, schedA] = await Promise.all([api.schedule(L, h.team.id).catch(() => null), api.schedule(L, a.team.id).catch(() => null)]);
-      const gc = gameContext(L, sum, standings, schedH, schedA);
+      const [schedH, schedA, weather] = await Promise.all([
+        api.schedule(L, h.team.id).catch(() => null), api.schedule(L, a.team.id).catch(() => null),
+        gameWeather(L, sum, { indoor: e.competitions?.[0]?.venue?.indoor ?? null }).catch(() => null),
+      ]);
+      const gc = gameContext(L, sum, standings, schedH, schedA, weather);
       const game = {
         key: `${L.id}:${e.id}`, league: L.id, eventId: e.id, start: comp.date, matchup: `${a.team.abbreviation} @ ${h.team.abbreviation}`,
         home: { id: h.team.id, abbr: h.team.abbreviation, name: h.team.displayName, logo: h.team.logos?.[0]?.href },
         away: { id: a.team.id, abbr: a.team.abbreviation, name: a.team.displayName, logo: a.team.logos?.[0]?.href },
         lines: { details: gc.odds.details, spreadHome: gc.odds.spreadHome, total: gc.odds.total, mlHome: gc.odds.mlHome, mlAway: gc.odds.mlAway },
+        weather: weather || undefined,
       };
       const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
       if (cfg.props) {
@@ -183,7 +189,7 @@ async function scanLeague(cfg) {
         if (props?.size) {
           const people = await loadPeople(L, [gc.H, gc.A]);
           const rows = propRows(L, props, people);
-          await scanRows(L, rows, { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum) }, standings, deep, concurrency: 4 });
+          await scanRows(L, rows, { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum), weather }, standings, deep, concurrency: 4 });
           game.out = rows.filter((r) => r.out).map((r) => `${r.who.name} (${r.out})`).filter((x, i, a) => a.indexOf(x) === i);
           for (const r of rows) if (r.res?.verdict?.lean) gameLegs.push(propLeg(L, game, r));
         }

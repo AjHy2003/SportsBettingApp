@@ -2,6 +2,7 @@
 // daily picks generator. No DOM access.
 import { scheduleResults, pickcenterOdds } from "./espn.js";
 import * as M from "./model.js";
+import { weatherEffect } from "./weather.js";
 
 // Games of shrinkage toward league average for team scoring rates.
 export const TEAM_REGRESS = { basketball: 8, football: 3, baseball: 20, hockey: 10, soccer: 6 };
@@ -32,7 +33,7 @@ export function teamRating(stand, res, lg, k) {
 }
 
 // Everything the line model needs from a game summary + standings + both schedules.
-export function gameContext(L, sum, standings, schedH, schedA) {
+export function gameContext(L, sum, standings, schedH, schedA, weather = null) {
   const comp = sum.header?.competitions?.[0];
   if (!comp) return null;
   const home = comp.competitors.find((c) => c.homeAway === "home");
@@ -73,6 +74,7 @@ export function gameContext(L, sum, standings, schedH, schedA) {
     // Weight on our model vs the no-vig market: game lines are sharp, so the model only nudges.
     wModel: minGames >= 4 ? 0.35 : 0.2,
     lineCap: league.includes("college") ? 0.15 : 0.25,
+    weather, wx: weatherEffect(weather),
     params: M.gameParams(league, fam === "soccer" ? "soccer" : league),
     odds: pickcenterOdds(sum.pickcenter?.[0]) || {},
   };
@@ -90,7 +92,9 @@ export function defaultLines(odds) {
 // Returns { g, rows: [{ key, label, v, info, sides: [{label, prob, odds, side}] }] }.
 export function evaluateLines(gc, st) {
   const { rH, rA, lg, params, wModel, minGames, H, A, fam } = gc;
-  const g = M.analyzeGame({ pf: rH.pf, pa: rH.pa }, { pf: rA.pf, pa: rA.pa }, lg, params, { spreadHome: st.spreadHome, total: st.total });
+  // Wind/rain/snow scale both teams' scoring.
+  const wx = gc.wx?.significant ? gc.wx.total : 1;
+  const g = M.analyzeGame({ pf: rH.pf * wx, pa: rH.pa }, { pf: rA.pf * wx, pa: rA.pa }, lg, params, { spreadHome: st.spreadHome, total: st.total });
   const pct = (p) => `${Math.round(p * 100)}%`;
   const rows = [];
   // Two-way market: model prob for side A (pushes excluded), anchored to the book.
@@ -108,7 +112,7 @@ export function evaluateLines(gc, st) {
   }
   if (g.totalP && st.total != null) {
     const r = twoWay(g.totalP.over, g.totalP.under, g.totalP.push, st.overOdds, st.underOdds, [`Over ${st.total}`, `Under ${st.total}`]);
-    rows.push({ key: "total", label: "Total", ...r, info: `Over: model ${pct(r.model)} → blended ${pct(r.fin)}`, line: st.total });
+    rows.push({ key: "total", label: "Total", ...r, info: `Over: model ${pct(r.model)}${wx < 1 ? ` (weather: ${gc.wx.why}, scoring ×${wx.toFixed(2)})` : ""} → blended ${pct(r.fin)}`, line: st.total });
   }
   if (fam === "soccer" && st.mlHome != null && st.mlAway != null) {
     let opts = [[`${H.abbreviation} win`, g.pHome, st.mlHome], ["Draw", g.pDraw, st.draw], [`${A.abbreviation} win`, g.pAway, st.mlAway]].filter((o) => o[2] != null);
