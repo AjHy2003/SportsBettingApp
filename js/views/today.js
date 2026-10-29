@@ -38,6 +38,8 @@ const savePrefs = (p) => { try { localStorage.setItem(PREFS, JSON.stringify(p));
 const money = (x) => (x == null || !isFinite(x) ? "—" : `$${x >= 100 ? x.toFixed(0) : x.toFixed(2).replace(/\.00$/, "")}`);
 const getData = (p) => fetch(p, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 const leagueName = (id) => leagueById(id)?.name || id;
+// Calendar day on this device, e.g. "2026-11-01".
+const dayKey = (d) => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`; };
 
 export async function renderToday(ctx, q) {
   const { app } = ctx;
@@ -49,8 +51,11 @@ export async function renderToday(ctx, q) {
   const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, ...loadPrefs() };
   if (q.sport) prefs.sport = q.sport;
   if (q.focus === "moon") Object.assign(prefs, { moonStake: 10, moonTarget: 10000 });
-  const state = { ...prefs, mine: [], sgpGame: q.sgp || null, sgpLegs: null, sgpPicked: [] };
+  // days: null = today (or the next day with games for this sport), "all", or one day's key.
+  // offGames: games switched off in the game picker.
+  const state = { ...prefs, mine: [], sgpGame: q.sgp || null, sgpLegs: null, sgpPicked: [], days: q.day || null, offGames: new Set() };
   const now = Date.now();
+  const todayKey = dayKey(now), tomorrowKey = dayKey(now + 864e5);
   const allLegs = (today?.legs || []).filter((l) => new Date(l.start) > now);
   const games = (today?.games || []).filter((g) => new Date(g.start) > now);
   const legById = new Map([...(today?.legs || []), ...(today?.alts || [])].map((l) => [l.id, l]));
@@ -70,6 +75,10 @@ export async function renderToday(ctx, q) {
     <div class="card">
       <h3>Sport</h3>
       <div class="chips scroll" id="t-sport">${SPORTS.map((s) => `<button class="chip" data-s="${s.id}">${s.label}</button>`).join("")}</div>
+      <h3 style="margin-top:12px">Day</h3>
+      <div class="chips scroll" id="t-day"></div>
+      <div class="small muted" id="t-day-note" style="margin-top:6px"></div>
+      <details class="gamepick" id="t-games-d"><summary id="t-games-sum"></summary><div id="t-games"></div></details>
       <div class="grid two" style="margin-top:12px;gap:12px">
         <div><h3>Budget</h3><div class="row"><div class="chips" id="t-budget">${BUDGETS.map((b) => `<button class="chip" data-b="${b}">$${b}</button>`).join("")}</div>
           <div class="field" style="width:92px"><input id="t-custom" type="number" min="1" step="1" placeholder="Custom" inputmode="numeric"/></div></div>
@@ -105,13 +114,60 @@ export async function renderToday(ctx, q) {
 
   const $ = (s) => app.querySelector(s);
   const sportLeagues = () => SPORTS.find((s) => s.id === state.sport)?.leagues || SPORTS[0].leagues;
-  const legsInSport = () => allLegs.filter((l) => sportLeagues().includes(l.league));
+  const sportLabel = () => SPORTS.find((s) => s.id === state.sport).label;
+
+  // Upcoming games for the chosen sport (from the games list, plus any only known from a leg).
+  function sportGames() {
+    const m = new Map();
+    for (const g of games) if (sportLeagues().includes(g.league)) m.set(g.key, { key: g.key, league: g.league, matchup: g.matchup, start: g.start });
+    for (const l of allLegs) if (!m.has(l.gameKey) && sportLeagues().includes(l.league)) m.set(l.gameKey, { key: l.gameKey, league: l.league, matchup: l.matchup, start: l.start });
+    return [...m.values()].sort((a, b) => new Date(a.start) - new Date(b.start));
+  }
+  const sportDays = () => [...new Set(sportGames().map((g) => dayKey(g.start)))].sort();
+  // The days in play. Today by default; when this sport has nothing today, the next day it does.
+  function activeDays() {
+    const avail = sportDays();
+    if (state.days === "all") return { days: avail, moved: false };
+    const want = state.days || todayKey;
+    if (avail.includes(want)) return { days: [want], moved: false };
+    return { days: avail.slice(0, 1), moved: avail.length > 0 };
+  }
+  const dayName = (k, long = false) => {
+    if (k === todayKey) return "Today";
+    if (k === tomorrowKey) return "Tomorrow";
+    const [y, mo, d] = k.split("-").map(Number);
+    return new Date(y, mo - 1, d).toLocaleDateString("en-US", long ? { weekday: "long", month: "short", day: "numeric" } : { weekday: "short", month: "numeric", day: "numeric" });
+  };
+  const scopeLabel = () => {
+    const { days } = activeDays();
+    return `${state.sport === "all" ? "All sports" : sportLabel()} · ${state.days === "all" ? "all days" : days.length ? dayName(days[0]) : "today"}`;
+  };
+  const dayGames = () => { const { days } = activeDays(); return sportGames().filter((g) => days.includes(dayKey(g.start))); };
+  const inScope = (l) => sportLeagues().includes(l.league) && activeDays().days.includes(dayKey(l.start)) && !state.offGames.has(l.gameKey);
+  const legsInSport = () => allLegs.filter(inScope);
 
   function persist() {
     savePrefs({ sport: state.sport, budget: state.budget, mode: state.mode, legs: state.legs, moonStake: state.moonStake, moonTarget: state.moonTarget, moonPerGame: state.moonPerGame });
   }
 
+  function renderDays() {
+    const avail = sportDays(), { days, moved } = activeDays();
+    const count = (k) => sportGames().filter((g) => dayKey(g.start) === k).length;
+    $("#t-day").innerHTML = avail.length
+      ? `${avail.map((k) => `<button class="chip ${state.days !== "all" && days.includes(k) ? "on" : ""}" data-d="${k}">${dayName(k)} <span class="cnt">${count(k)}</span></button>`).join("")}${avail.length > 1 ? `<button class="chip ${state.days === "all" ? "on" : ""}" data-d="all">All days</button>` : ""}`
+      : `<span class="small muted">No upcoming ${esc(sportLabel())} games in today's file.</span>`;
+    $("#t-day-note").innerHTML = moved ? `No ${esc(sportLabel())} games ${state.days && state.days !== todayKey ? `on ${esc(dayName(state.days))}` : "today"}, so this shows <b>${esc(dayName(days[0], true))}</b>.` : "";
+    // Game picker: every game on the chosen day(s), all on by default.
+    const list = dayGames();
+    const on = list.filter((g) => !state.offGames.has(g.key)).length;
+    $("#t-games-d").classList.toggle("hidden", !list.length);
+    $("#t-games-sum").innerHTML = `🎯 Games: <b>${on === list.length ? `all ${list.length}` : `${on} of ${list.length}`}</b> <span class="muted">· choose which games to build from</span>`;
+    $("#t-games").innerHTML = `<div class="row" style="margin:8px 0 6px;gap:6px"><button class="btn ghost sm" data-gall="1">All</button><button class="btn ghost sm" data-gall="0">None</button><span class="small faint">Tickets, parlays, picks and the moonshot only use the games you leave on.</span></div>
+      <div class="chips">${list.map((g) => `<button class="chip gchip ${state.offGames.has(g.key) ? "" : "on"}" data-g="${esc(g.key)}">${esc(g.matchup)} <span class="cnt">${state.days === "all" ? `${fmtDate(g.start, { weekday: "short" })} ` : ""}${fmtTime(g.start)}${sportLeagues().length > 1 ? ` · ${esc(leagueName(g.league))}` : ""}</span></button>`).join("")}</div>`;
+  }
+
   function syncControls() {
+    renderDays();
     app.querySelectorAll("#t-sport .chip").forEach((b) => b.classList.toggle("on", b.dataset.s === state.sport));
     app.querySelectorAll("#t-budget .chip").forEach((b) => b.classList.toggle("on", Number(b.dataset.b) === Number(state.budget)));
     app.querySelectorAll("#t-mode button").forEach((b) => b.classList.toggle("on", b.dataset.m === state.mode));
@@ -165,10 +221,12 @@ export async function renderToday(ctx, q) {
     const t = planTicket(legs, state.budget, state.mode, state.legs);
     const box = $("#t-ticket");
     if (!t.bets.length) {
-      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">No ${esc(SPORTS.find((s) => s.id === state.sport).label)} picks with an edge right now${legs.length ? "" : " (no games or lines posted yet)"}. Try another sport, or build a same-game parlay below.</div>`;
+      const none = dayGames().length && dayGames().every((g) => state.offGames.has(g.key));
+      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">${none ? "No games picked. Open 🎯 Games above and switch some on." : `No ${esc(scopeLabel())} picks with an edge right now${legsInSport().length ? "" : " (no lines posted yet)"}. Try another day or sport, or build a same-game parlay below.`}</div>`;
       return;
     }
-    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">Your ${money(state.budget)} ticket</h3>
+    const oneGame = new Set(legs.map((l) => l.gameKey)).size === 1 ? legs[0].matchup : null;
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">Your ${money(state.budget)} ticket <span class="faint" style="text-transform:none;letter-spacing:0">· ${esc(oneGame || scopeLabel())}</span></h3>
       <div class="row"><button class="btn ghost sm" id="t-copy">Copy</button><button class="btn sm" id="t-save">★ Save all</button></div></div>
       <div class="kpis">
         <div class="kpi"><div class="k">Total stake</div><div class="v">${money(t.totals.stake)}</div></div>
@@ -176,6 +234,7 @@ export async function renderToday(ctx, q) {
         <div class="kpi"><div class="k">Model expectation</div><div class="v ${t.totals.expectedProfit >= 0 ? "pos" : "neg"}">${signed(t.totals.expectedProfit, 2)}</div></div>
       </div>
       ${t.bets.some((b) => b.type !== "single" && b.legs.length < Number(state.legs)) ? `<div class="notice" style="margin-top:10px">Only ${t.bets.find((b) => b.type !== "single").legs.length} legs have an edge right now, so the parlay is ${t.bets.find((b) => b.type !== "single").legs.length} legs instead of ${state.legs}. Add your own with + to go longer.</div>` : ""}
+      ${oneGame && t.bets.some((b) => b.type === "sgp") ? `<div class="notice" style="margin-top:10px">${dayGames().filter((g) => !state.offGames.has(g.key)).length > 1 ? `Every pick with an edge here comes from one game (${esc(oneGame)})` : `Only one game is in play (${esc(oneGame)})`}, so the parlay is a same-game parlay. Pick another day or more games for a regular parlay.</div>` : ""}
       ${t.bets.map(betCard).join("")}`;
     $("#t-copy").onclick = () => {
       const txt = t.bets.map((b) => `${b.type === "single" ? "Straight" : `${b.legs.length}-leg parlay`} ${money(b.stake)} @ ${M.fmtOdds(b.american)}\n${b.legs.map((l) => `  ${l.label} ${M.fmtOdds(l.odds)}`).join("\n")}`).join("\n\n");
@@ -210,7 +269,7 @@ export async function renderToday(ctx, q) {
   function renderPicks() {
     const picks = choosePicks(legsInSport(), 15);
     const box = $("#t-picks");
-    box.innerHTML = `<h3>Top picks · ${esc(SPORTS.find((s) => s.id === state.sport).label)}</h3>
+    box.innerHTML = `<h3>Top picks · ${esc(scopeLabel())}</h3>
       ${picks.length ? picks.map((l) => legRow(l, { inMine: state.mine.includes(l.id) })).join("") : `<div class="muted small">Nothing clears the bar right now. That happens; passing is a pick too.</div>`}
       ${today?.featured ? `<p class="small muted" style="margin:10px 0 0">Tap <b>+</b> to add legs to your own parlay.</p>` : ""}`;
   }
@@ -285,16 +344,16 @@ export async function renderToday(ctx, q) {
 
   async function renderSgp() {
     const box = $("#t-sgp");
-    const sgpGames = games.filter((g) => sportLeagues().includes(g.league));
+    const sgpGames = dayGames();
     const options = sgpGames.map((g) => `<option value="${g.key}" ${state.sgpGame === g.key ? "selected" : ""}>${esc(leagueName(g.league))} · ${esc(g.matchup)} · ${fmtDate(g.start, { weekday: "short" })} ${fmtTime(g.start)}</option>`).join("");
     const extra = state.sgpGame && !sgpGames.some((g) => g.key === state.sgpGame) ? `<option value="${esc(state.sgpGame)}" selected>Selected game</option>` : "";
     box.innerHTML = `<h3>Same-game parlay</h3>
       <div class="field"><select id="t-sgp-game"><option value="">Pick a game…</option>${extra}${options}</select></div>
-      <div id="t-sgp-body" style="margin-top:8px">${sgpGames.length || extra ? `<div class="muted small">Choose a game to see every leg the model likes, then auto-build or pick your own.</div>` : `<div class="muted small">No upcoming ${esc(SPORTS.find((s) => s.id === state.sport).label)} games in today's file. Open any game page and tap <b>Build a same-game parlay</b>.</div>`}</div>`;
+      <div id="t-sgp-body" style="margin-top:8px">${sgpGames.length || extra ? `<div class="muted small">Choose a game to see every leg the model likes, then auto-build or pick your own.</div>` : `<div class="muted small">No upcoming ${esc(scopeLabel())} games in today's file. Open any game page and tap <b>Build a same-game parlay</b>.</div>`}</div>`;
     $("#t-sgp-game").onchange = (e) => { state.sgpGame = e.target.value || null; state.sgpLegs = null; renderSgp(); };
     if (!state.sgpGame) {
       // Featured: the model's best 3-leg same-game parlays from this morning's run.
-      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now);
+      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now && activeDays().days.includes(dayKey(legById.get(x.legs[0]).start))).slice(0, 5);
       if (feats.length) {
         $("#t-sgp-body").innerHTML = `<p class="small muted" style="margin:0 0 6px">Featured today:</p>${feats.map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px">
           <div class="row" style="justify-content:space-between"><b>${esc(leagueName(x.league))} · ${esc(x.matchup)}</b><span>${M.fmtOdds(x.american)} · ${pct(x.prob, 1)} to hit</span></div>
@@ -370,8 +429,7 @@ export async function renderToday(ctx, q) {
   // 🚀 Moonshot: the long-shot parlay with the best model chance of paying the target.
   function renderMoon() {
     const box = $("#t-moon");
-    const leagues = sportLeagues();
-    const pool = [...allLegs, ...allAlts].filter((l) => leagues.includes(l.league) && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
+    const pool = [...allLegs, ...allAlts].filter((l) => inScope(l) && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
     const m = pool.length ? buildMoonshot(pool, { stake: Number(state.moonStake), target: Number(state.moonTarget), perGame: Number(state.moonPerGame), exclude: moonExclude }) : null;
     const k$ = (x) => `$${x >= 1000 ? `${(x / 1000).toLocaleString("en-US")}k` : x}`;
     box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🚀 Moonshot</h3><span class="small muted">a lottery ticket built from the model's best long-shot legs</span></div>
@@ -380,8 +438,8 @@ export async function renderToday(ctx, q) {
         <div><div class="small muted">To win</div><div class="chips" id="t-moon-target">${MOON_TARGETS.map((x) => `<button class="chip ${Number(state.moonTarget) === x ? "on" : ""}" data-v="${x}">${k$(x)}</button>`).join("")}</div></div>
         <label class="small muted row" style="gap:6px;cursor:pointer"><input type="checkbox" id="t-moon-pg" ${Number(state.moonPerGame) === 2 ? "checked" : ""}/> 2 legs per game</label>
       </div>
-      ${!m ? `<div class="muted small" style="margin-top:10px">No legs to build with right now${pool.length ? "" : ` for ${esc(SPORTS.find((s) => s.id === state.sport).label)}`}. Try All sports, or check back when lines post.</div>` : `
-      ${m.reached ? "" : `<div class="notice warn" style="margin-top:10px">Today's ${esc(SPORTS.find((s) => s.id === state.sport).label)} legs can't reach ${k$(Number(state.moonTarget))} on $${state.moonStake}. The biggest ticket available is below; try All sports, a bigger bet or a smaller target.</div>`}
+      ${!m ? `<div class="muted small" style="margin-top:10px">No legs to build with right now${pool.length ? "" : ` for ${esc(scopeLabel())}`}. Try ${[state.sport !== "all" && "All sports", state.days !== "all" && "All days"].filter(Boolean).join(" or ") || "again later"}, or check back when lines post.</div>` : `
+      ${m.reached ? "" : `<div class="notice warn" style="margin-top:10px">The ${esc(scopeLabel())} legs can't reach ${k$(Number(state.moonTarget))} on $${state.moonStake}. The biggest ticket available is below; try ${[state.sport !== "all" && "All sports", state.days !== "all" && "All days"].filter(Boolean).concat("a bigger bet or a smaller target").join(", ")}.</div>`}
       <div class="kpis" style="margin-top:10px">
         <div class="kpi"><div class="k">Odds</div><div class="v">${M.fmtOdds(m.american)}</div></div>
         <div class="kpi"><div class="k">$${state.moonStake} wins</div><div class="v pos">$${Math.round(m.payout).toLocaleString("en-US")}</div></div>
@@ -410,7 +468,13 @@ export async function renderToday(ctx, q) {
     if (ms || mt) { if (ms) state.moonStake = Number(ms.dataset.v); if (mt) state.moonTarget = Number(mt.dataset.v); moonExclude = []; persist(); renderMoon(); return; }
     if (e.target.id === "t-moon-pg") { state.moonPerGame = e.target.checked ? 2 : 1; moonExclude = []; persist(); renderMoon(); return; }
     const s = e.target.closest("#t-sport .chip");
-    if (s) { state.sport = s.dataset.s; state.sgpGame = null; state.sgpLegs = null; renderAll(); renderSgp(); return; }
+    if (s) { state.sport = s.dataset.s; state.offGames = new Set(); state.sgpGame = null; state.sgpLegs = null; moonExclude = []; renderAll(); renderSgp(); return; }
+    const d = e.target.closest("#t-day .chip");
+    if (d) { state.days = d.dataset.d; state.offGames = new Set(); moonExclude = []; renderAll(); renderSgp(); return; }
+    const gm = e.target.closest("#t-games [data-g]");
+    if (gm) { const k = gm.dataset.g; if (state.offGames.has(k)) state.offGames.delete(k); else state.offGames.add(k); moonExclude = []; renderAll(); return; }
+    const ga = e.target.closest("#t-games [data-gall]");
+    if (ga) { state.offGames = ga.dataset.gall === "1" ? new Set() : new Set(dayGames().map((g) => g.key)); moonExclude = []; renderAll(); return; }
     const b = e.target.closest("#t-budget .chip, #t-bank .chip");
     if (b) { state.budget = Number(b.dataset.b); $("#t-custom").value = ""; renderAll(); renderSgp(); return; }
     const m = e.target.closest("#t-mode button");
@@ -441,10 +505,14 @@ export async function todayTeaser() {
   if (!today) return "";
   const now = Date.now();
   const legs = (today.legs || []).filter((l) => new Date(l.start) > now);
-  const picks = choosePicks(legs, 4);
+  // Today's games first; if nothing today has an edge, the next day that does.
+  const days = [...new Set(legs.map((l) => dayKey(l.start)))].sort();
+  let picks = [], day = null;
+  for (const d of days) { picks = choosePicks(legs.filter((l) => dayKey(l.start) === d), 4); if (picks.length) { day = d; break; } }
   if (!picks.length) return "";
+  const when = day === dayKey(now) ? "Today's" : `${new Date(picks[0].start).toLocaleDateString("en-US", { weekday: "long" })}'s`;
   return `<div class="card">
-    <div class="row" style="justify-content:space-between"><h2 style="margin:0">🔥 Today's top picks</h2><a class="btn sm" href="#/today">Build my ticket ›</a></div>
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">🔥 ${when} top picks</h2><a class="btn sm" href="#/today">Build my ticket ›</a></div>
     <div style="margin-top:6px">${picks.map((l) => `<a class="tp-row" href="#/today"><span class="gbadge ${esc(l.grade)}">${esc(l.grade)}</span><span class="tp-text"><b>${esc(l.label)}</b><span class="muted small">${M.fmtOdds(l.odds)} · ${esc(leagueName(l.league))} · ${fmtTime(l.start)}</span></span></a>`).join("")}</div>
   </div>`;
 }

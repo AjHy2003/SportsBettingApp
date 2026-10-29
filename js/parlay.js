@@ -78,17 +78,21 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
   budget = Math.max(1, Number(budget) || 10);
   const good = legs.filter((l) => l.edge > 0 && l.prob > 0 && !l.mismatch && usableLeg(l) && GRADE_WEIGHT[l.grade]);
   let bets = [];
+  // Every leg from one game (say, the only NFL game today): the parlay has to be a same-game parlay.
+  const oneGame = !sgpGameKey && good.length && new Set(good.map((l) => l.gameKey)).size === 1 ? good[0].gameKey : null;
+  const sameGame = sgpGameKey || oneGame;
+  const parlayType = sameGame ? "sgp" : "parlay";
   // Asked for more legs than there are good ones: build the longest parlay available.
   const parlayOf = (n) => {
     for (let k = n; k >= 2; k--) {
-      const p = sgpGameKey ? bestSameGame(legs, sgpGameKey, k) : bestParlay(good, k);
+      const p = sameGame ? bestSameGame(legs, sameGame, k) : bestParlay(good, k);
       if (p) return p;
     }
     return null;
   };
   if (mode === "parlay" || sgpGameKey) {
     const p = parlayOf(nLegs);
-    if (p) bets = [{ type: sgpGameKey ? "sgp" : "parlay", stake: budget, ...p }];
+    if (p) bets = [{ type: parlayType, stake: budget, ...p }];
   } else if (mode === "singles") {
     bets = singles(good, budget, SINGLES_COUNT(budget));
   } else {
@@ -96,7 +100,7 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
     const p = budget >= 4 ? parlayOf(nLegs) : null;
     const parlayStake = p ? roundStake(budget * 0.3) : 0;
     bets = singles(good, budget - parlayStake, Math.max(1, SINGLES_COUNT(budget) - 1));
-    if (p) bets.push({ type: "parlay", stake: parlayStake, ...p });
+    if (p) bets.push({ type: parlayType, stake: parlayStake, ...p });
   }
   for (const b of bets) {
     b.toWin = b.stake * (b.decimal - 1);

@@ -28,7 +28,7 @@ const pages = [
 (async () => {
   // Google Chrome (E2E_CHANNEL=chrome) plays H.264 video; bundled Chromium doesn't.
   const browser = await chromium.launch(process.env.E2E_CHANNEL ? { channel: process.env.E2E_CHANNEL } : {});
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: "America/New_York" });
   const report = [];
   const visit = async (name, hash, after) => {
     const pg = await ctx.newPage();
@@ -169,6 +169,25 @@ const pages = [
       const dkExact = await pg.$$eval("#t-moon .place-legs a.bookchip", (x) => x.filter((a) => /outcomes=/.test(a.href)).length);
       const pickDk = await pg.$$eval("#t-picks .bookchip", (x) => x.map((a) => a.href).slice(0, 5));
       return { moon: moon.slice(0, 900), books, dkExactLegs: dkExact, pickDk };
+    });
+  }
+  // Day picker: the default day per sport, then each other day, then a single game.
+  for (const sport of ["nfl", "football", "all"]) {
+    await visit(`today-days-${sport}`, `#/today?sport=${sport}`, async (pg) => {
+      const snap = async () => ({
+        days: (await pg.innerText("#t-day").catch(() => "")).replace(/\s+/g, " "),
+        note: await pg.innerText("#t-day-note").catch(() => ""),
+        games: await pg.innerText("#t-games-sum").catch(() => ""),
+        ticket: (await pg.innerText("#t-ticket").catch(() => "")).replace(/\s+/g, " ").slice(0, 260),
+        pickDays: [...new Set(await pg.$$eval("#t-picks .pick .small.muted", (x) => x.map((e) => e.innerText.split(" · ").slice(2, 3).join("").split(" ")[0])))],
+      });
+      const out = { first: await snap(), other: [] };
+      for (const d of await pg.$$eval("#t-day .chip", (x) => x.map((c) => c.dataset.d))) {
+        await pg.click(`#t-day .chip[data-d="${d}"]`);
+        await pg.waitForTimeout(300);
+        out.other.push({ d, ...(await snap()) });
+      }
+      return out;
     });
   }
   // Trends and the live games board.
