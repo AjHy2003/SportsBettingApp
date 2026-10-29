@@ -8,6 +8,7 @@ import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playe
 import { injuryReport, playerContext, roleChange } from "../context.js";
 import { articleOf } from "../news.js";
 import { gameWeather, weatherLine } from "../weather.js";
+import { placeBet } from "../sportsbooks.js";
 import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderPlayer(ctx, L, id, q) {
@@ -305,7 +306,8 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="row" style="margin-top:12px">
         <button class="btn sm" id="save">★ Save pick</button>
         ${res.pPush > 0.02 ? `<span class="small muted">Push chance ${pct(res.pPush)}</span>` : ""}
-      </div>`;
+      </div>
+      ${v.side && next ? placeBet([{ kind: "prop", league: L.id, label: v.altOnly || state.altOnly ? `${a.displayName} ${line + 0.5}+ ${m.label}` : `${a.displayName} ${v.side === "OVER" ? "Over" : "Under"} ${line} ${m.label}`, odds: v.side === "OVER" ? res.oddsOver : res.oddsUnder, matchup: next.opp ? `${next.home ? "vs" : "@"} ${next.opp}` : "", dk: nextOdds?.dk?.game || undefined }], { title: "Straight bet" }) : ""}`;
     $("#save").onclick = () => {
       const side = v.side || v.lean;
       const ok = addPick({

@@ -293,6 +293,28 @@ export function pickcenterOdds(pc) {
     mlHome: pc.homeTeamOdds?.moneyLine ?? null,
     mlAway: pc.awayTeamOdds?.moneyLine ?? null,
     draw: pc.drawOdds?.moneyLine ?? null,
+    dk: dkLinks(pc.links),
+  };
+}
+
+// DraftKings bet-slip links ESPN attaches to its odds: each one opens DraftKings with
+// that selection added to the bet slip. -> { game, ml: {A, B}, spread: {A, B}, total: {A, B} }
+// (A = home / over, B = away / under), or null.
+export function dkLinks(links) {
+  const by = {};
+  for (const l of links || []) {
+    let url = l.href || "";
+    try { url = new URL(url).searchParams.get("preurl") || url; } catch { /* keep as is */ }
+    if (!/^https:\/\/sportsbook\.draftkings\.com\//.test(url)) continue;
+    const rel = (l.rel || [])[0];
+    if (rel) by[rel] = url;
+  }
+  if (!Object.keys(by).length) return null;
+  return {
+    game: by.game || null,
+    ml: { A: by.home || null, B: by.away || null },
+    spread: { A: by.homeSpread || null, B: by.awaySpread || null },
+    total: { A: by.over || null, B: by.under || null },
   };
 }
 

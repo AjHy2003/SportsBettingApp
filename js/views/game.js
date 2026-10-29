@@ -145,6 +145,18 @@ export async function renderGame(ctx, L, ev, q) {
   }
   $("#g-cmp").innerHTML = `<div class="a"><b>${esc(A.abbreviation)}</b></div><div class="lbl"></div><div class="b"><b>${esc(H.abbreviation)}</b></div>${statRows.join("")}`;
 
+  // DraftKings bet-slip link for the side the model leans (only while the lines match DraftKings').
+  function dkFor(r) {
+    const dk = odds.dk;
+    if (!dk) return "";
+    const s = r.sides?.find((x) => x.label === r.v.lean);
+    const same = r.key === "spread" ? st.spreadHome === odds.spreadHome : r.key === "total" ? st.total === odds.total : true;
+    const href = (same && s && dk[r.key]?.[s.side]) || dk.game;
+    if (!href) return "";
+    const exact = href !== dk.game;
+    return `<a class="bookchip" style="--bc:#53d337" href="${esc(href)}" target="_blank" rel="noopener" title="${exact ? `Add ${esc(r.v.lean)} to your DraftKings slip` : "Open this game on DraftKings"}">DK${exact ? " ＋" : " ↗"}</a>`;
+  }
+
   function renderModel() {
     const { g, rows } = evaluateLines(gc, st);
     const pred = sum.predictor;
@@ -158,7 +170,7 @@ export async function renderGame(ctx, L, ev, q) {
         <div class="kpi"><div class="k">Total</div><div class="v">${fx(g.total, dec)}</div></div>
       </div>
       <table style="margin-top:12px"><thead><tr><th>Market</th><th>Pick</th><th class="r">Prob</th><th class="r">Edge</th><th class="r">Grade</th><th></th></tr></thead><tbody>
-      ${rows.map((r, i) => `<tr><td>${r.label}<div class="faint small">${esc(r.info)}</div></td><td><b>${esc(r.v.side || `lean ${r.v.lean}`)}</b></td><td class="r">${pct(r.v.prob, 1)}</td><td class="r ${r.v.edge > 0 ? "pos" : "neg"}">${signed(r.v.edge * 100, 1)}</td><td class="r"><b>${r.v.grade}</b></td><td><button class="btn ghost sm" data-save="${i}">★</button></td></tr>`).join("") || `<tr><td colspan="6" class="muted">Enter a spread or total to evaluate.</td></tr>`}
+      ${rows.map((r, i) => `<tr><td>${r.label}<div class="faint small">${esc(r.info)}</div></td><td><b>${esc(r.v.side || `lean ${r.v.lean}`)}</b></td><td class="r">${pct(r.v.prob, 1)}</td><td class="r ${r.v.edge > 0 ? "pos" : "neg"}">${signed(r.v.edge * 100, 1)}</td><td class="r"><b>${r.v.grade}</b></td><td style="white-space:nowrap"><button class="btn ghost sm" data-save="${i}">★</button> ${dkFor(r)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">Enter a spread or total to evaluate.</td></tr>`}
       </tbody></table>
       ${pred?.homeTeam?.gameProjection ? `<p class="small muted" style="margin:10px 0 0">ESPN Matchup Predictor: ${esc(H.abbreviation)} ${fx(Number(pred.homeTeam.gameProjection))}% to win.</p>` : ""}
       <details class="explain" style="margin-top:8px"><summary>How this is calculated</summary>

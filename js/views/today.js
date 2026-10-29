@@ -10,18 +10,23 @@ import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { gameWeather } from "../weather.js";
-import { planTicket, combine, compatible, choosePicks, bestSameGame } from "../parlay.js";
+import { planTicket, combine, compatible, choosePicks, bestSameGame, usableLeg } from "../parlay.js";
 import { timeAgo } from "../news.js";
+import { placeBet } from "../sportsbooks.js";
+import { buildMoonshot, oneIn } from "../moonshot.js";
 
 const SPORTS = [
-  { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf"] },
+  { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
   { id: "basketball", label: "🏀 Basketball", leagues: ["nba", "ncaab"] },
   { id: "football", label: "🏈 Football", leagues: ["nfl", "ncaaf"] },
   { id: "nba", label: "NBA", leagues: ["nba"] },
   { id: "nfl", label: "NFL", leagues: ["nfl"] },
   { id: "ncaab", label: "College BB", leagues: ["ncaab"] },
   { id: "ncaaf", label: "College FB", leagues: ["ncaaf"] },
+  { id: "nhl", label: "🏒 NHL", leagues: ["nhl"] },
 ];
+const MOON_STAKES = [1, 2, 5, 10, 20];
+const MOON_TARGETS = [1000, 5000, 10000, 25000, 50000];
 const BUDGETS = [5, 10, 25, 50, 100];
 const PREFS = "picklab.today.v1";
 
@@ -38,13 +43,15 @@ export async function renderToday(ctx, q) {
   const [today, history] = await Promise.all([getData("data/picks/today.json"), getData("data/picks/history.json")]);
   if (!ctx.alive()) return;
 
-  const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, ...loadPrefs() };
+  const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, ...loadPrefs() };
   if (q.sport) prefs.sport = q.sport;
   const state = { ...prefs, mine: [], sgpGame: q.sgp || null, sgpLegs: null, sgpPicked: [] };
   const now = Date.now();
   const allLegs = (today?.legs || []).filter((l) => new Date(l.start) > now);
   const games = (today?.games || []).filter((g) => new Date(g.start) > now);
-  const legById = new Map((today?.legs || []).map((l) => [l.id, l]));
+  const legById = new Map([...(today?.legs || []), ...(today?.alts || [])].map((l) => [l.id, l]));
+  const allAlts = (today?.alts || []).filter((l) => new Date(l.start) > now);
+  let moonExclude = [];
 
   const stale = today && today.date !== new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()).replaceAll("-", "");
   const rec = today?.record?.last30;
@@ -67,6 +74,7 @@ export async function renderToday(ctx, q) {
       </div>
     </div>
     <div class="card" style="margin-top:14px" id="t-ticket"></div>
+    <div class="card moon" style="margin-top:14px" id="t-moon"></div>
     <div class="grid two" style="margin-top:14px">
       <div class="card" id="t-picks"></div>
       <div>
@@ -94,7 +102,7 @@ export async function renderToday(ctx, q) {
   const legsInSport = () => allLegs.filter((l) => sportLeagues().includes(l.league));
 
   function persist() {
-    savePrefs({ sport: state.sport, budget: state.budget, mode: state.mode, legs: state.legs });
+    savePrefs({ sport: state.sport, budget: state.budget, mode: state.mode, legs: state.legs, moonStake: state.moonStake, moonTarget: state.moonTarget, moonPerGame: state.moonPerGame });
   }
 
   function syncControls() {
@@ -121,7 +129,10 @@ export async function renderToday(ctx, q) {
         ${l.bestBook ? `<div class="small pos">Better price: ${M.fmtOdds(l.bestBook.odds)} at ${esc(l.bestBook.title)} (DraftKings ${M.fmtOdds(l.odds)})</div>` : ""}
         ${l.news?.url ? `<a class="news-line" href="${esc(l.news.url)}" target="_blank" rel="noopener">${l.news.video ? "🎬" : "📰"} ${esc(l.news.headline)} <span class="faint">· ${timeAgo(l.news.published)}</span></a>` : ""}
       </div>
-      ${addable ? `<button class="btn ${inMine ? "" : "ghost"} sm" data-add="${esc(l.id)}" title="Add to my parlay">${inMine ? "✓" : "+"}</button>` : ""}
+      <div class="pick-actions">
+        ${addable ? `<button class="btn ${inMine ? "" : "ghost"} sm" data-add="${esc(l.id)}" title="Add to my parlay">${inMine ? "✓" : "+"}</button>` : ""}
+        ${l.dk ? `<a class="bookchip" style="--bc:#53d337" href="${esc(l.dk)}" target="_blank" rel="noopener" title="${l.dkExact ? "Open DraftKings with this bet in your slip" : "Open this game on DraftKings"}">DK${l.dkExact ? " ＋" : " ↗"}</a>` : ""}
+      </div>
     </div>`;
   }
 
@@ -131,6 +142,7 @@ export async function renderToday(ctx, q) {
       <div class="row" style="justify-content:space-between"><b>${label}</b><span><b>${money(b.stake)}</b> to win <b class="pos">${money(b.toWin)}</b> · ${M.fmtOdds(b.american)}</span></div>
       <div class="small" style="margin-top:6px">${b.legs.map((l) => `• ${esc(l.label)} <span class="faint">${esc(l.kind === "prop" ? l.matchup : "")} ${M.fmtOdds(l.odds)}</span>`).join("<br/>")}</div>
       <div class="small muted" style="margin-top:6px">Model: ${pct(b.prob, b.prob < 0.1 ? 1 : 0)} to hit · expected ${signed(b.expected, 2)} on ${money(b.stake)}</div>
+      ${placeBet(b.legs, { stake: b.stake, american: b.american, title: label })}
     </div>`;
   }
 
@@ -201,7 +213,8 @@ export async function renderToday(ctx, q) {
         <div class="kpi"><div class="k">Model hit chance</div><div class="v">${pct(c.prob, 1)}</div></div></div>
       ${conflicts ? `<div class="notice warn" style="margin-top:8px">Some legs overlap (same player, or spread + moneyline on one game). Books often won't allow these together.</div>` : ""}
       ${sameGame ? `<p class="small muted">Includes same-game legs: the book's price will differ from this estimate.</p>` : ""}
-      ${legs.map((l) => legRow(l, { inMine: true })).join("")}`;
+      ${legs.map((l) => legRow(l, { inMine: true })).join("")}
+      ${placeBet(legs, { stake: Number(state.budget) || 10, american: c.american, title: `${legs.length}-leg parlay` })}`;
     $("#t-clear").onclick = () => { state.mine = []; renderAll(); };
     $("#t-save-mine").onclick = () => {
       saveTicket(sameGame ? "sgp" : legs.length > 1 ? "parlay" : "single", legs, Number(state.budget) || 10, c.american);
@@ -232,7 +245,8 @@ export async function renderToday(ctx, q) {
       const home = s.side === "A";
       out.push({ id: `${lid}:${ev}:${r.key}:${s.side}`, league: lid, gameKey: key, eventId: ev, start: comp.date, matchup, kind: r.key, marketKey: r.key, market: r.label, label: s.label,
         side: r.key === "total" ? (home ? "OVER" : "UNDER") : home ? "HOME" : "AWAY", line: r.key === "spread" ? (home ? st.spreadHome : -st.spreadHome) : r.key === "total" ? st.total : null,
-        odds: s.odds ?? -110, priced: s.odds != null, prob: s.prob, edge: s.prob - M.impliedProb(s.odds ?? -110), grade: r.v.grade, lean: true, why: r.info });
+        odds: s.odds ?? -110, priced: s.odds != null, prob: s.prob, edge: s.prob - M.impliedProb(s.odds ?? -110), grade: r.v.grade, lean: true, why: r.info,
+        dk: gc.odds.dk?.[r.key]?.[s.side] || gc.odds.dk?.game || undefined, dkExact: !!gc.odds.dk?.[r.key]?.[s.side] || undefined });
     }
     if (props?.size) {
       const people = await loadPeople(L, [gc.H, gc.A]);
@@ -242,7 +256,7 @@ export async function renderToday(ctx, q) {
         const side = r.res.verdict.lean;
         const prob = (side === "OVER" ? r.res.pOver : r.res.pUnder) / (1 - (r.res.pPush || 0));
         const odds = (side === "OVER" ? r.p.over : r.p.under) ?? -110;
-        out.push({ id: `${lid}:${ev}:${r.aid}:${r.key}:${side}`, league: lid, gameKey: key, eventId: ev, start: comp.date, matchup, kind: "prop", player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation,
+        out.push({ id: `${lid}:${ev}:${r.aid}:${r.key}:${side}`, league: lid, gameKey: key, eventId: ev, start: comp.date, matchup, kind: "prop", player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation, dk: gc.odds.dk?.game || undefined,
           marketKey: r.key, market: r.m.label, line: r.p.line, side, label: `${r.who.name} ${side === "OVER" ? "Over" : "Under"} ${r.p.line} ${r.m.label}`, odds, priced: r.p.over != null && r.p.under != null,
           prob, edge: prob - M.impliedProb(odds), grade: r.res.verdict.grade, lean: true, mismatch: !!r.res.verdict.mismatch, questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
           why: [`Projection ${r.res.projection.toFixed(1)} vs line ${r.p.line}`, r.context?.withWithout?.notes[0]].filter(Boolean).join(" · ") });
@@ -330,12 +344,53 @@ export async function renderToday(ctx, q) {
     persist();
     syncControls();
     renderTicket();
+    renderMoon();
     renderPicks();
     renderMine();
   }
 
+  // 🚀 Moonshot: the long-shot parlay with the best model chance of paying the target.
+  function renderMoon() {
+    const box = $("#t-moon");
+    const leagues = sportLeagues();
+    const pool = [...allLegs, ...allAlts].filter((l) => leagues.includes(l.league) && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
+    const m = pool.length ? buildMoonshot(pool, { stake: Number(state.moonStake), target: Number(state.moonTarget), perGame: Number(state.moonPerGame), exclude: moonExclude }) : null;
+    const k$ = (x) => `$${x >= 1000 ? `${(x / 1000).toLocaleString("en-US")}k` : x}`;
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🚀 Moonshot</h3><span class="small muted">a lottery ticket built from the model's best long-shot legs</span></div>
+      <div class="row" style="margin-top:10px;gap:14px">
+        <div><div class="small muted">Bet</div><div class="chips" id="t-moon-stake">${MOON_STAKES.map((x) => `<button class="chip ${Number(state.moonStake) === x ? "on" : ""}" data-v="${x}">$${x}</button>`).join("")}</div></div>
+        <div><div class="small muted">To win</div><div class="chips" id="t-moon-target">${MOON_TARGETS.map((x) => `<button class="chip ${Number(state.moonTarget) === x ? "on" : ""}" data-v="${x}">${k$(x)}</button>`).join("")}</div></div>
+        <label class="small muted row" style="gap:6px;cursor:pointer"><input type="checkbox" id="t-moon-pg" ${Number(state.moonPerGame) === 2 ? "checked" : ""}/> 2 legs per game</label>
+      </div>
+      ${!m ? `<div class="muted small" style="margin-top:10px">No legs to build with right now${pool.length ? "" : ` for ${esc(SPORTS.find((s) => s.id === state.sport).label)}`}. Try All sports, or check back when lines post.</div>` : `
+      ${m.reached ? "" : `<div class="notice warn" style="margin-top:10px">Today's ${esc(SPORTS.find((s) => s.id === state.sport).label)} legs can't reach ${k$(Number(state.moonTarget))} on $${state.moonStake}. The biggest ticket available is below; try All sports, a bigger bet or a smaller target.</div>`}
+      <div class="kpis" style="margin-top:10px">
+        <div class="kpi"><div class="k">Odds</div><div class="v">${M.fmtOdds(m.american)}</div></div>
+        <div class="kpi"><div class="k">$${state.moonStake} wins</div><div class="v pos">$${Math.round(m.payout).toLocaleString("en-US")}</div></div>
+        <div class="kpi"><div class="k">Real chance (est.)</div><div class="v">1 in ${oneIn(m.prob)}</div></div>
+      </div>
+      <p class="small muted" style="margin:8px 0 0">${m.legs.length} legs · the book's price implies 1 in ${oneIn(1 / m.decimal)}${m.legs.some((l) => l.alt) ? " · includes DraftKings alt lines (X+)" : ""}. The estimate counts only half of each leg's model edge (big edges are usually overstated, and a parlay multiplies the error). Even built from the best legs, a moonshot almost always loses: play it with lottery-ticket money only.</p>
+      ${m.legs.map((l) => legRow(l, { addable: false })).join("")}
+      <div class="row" style="margin-top:10px"><button class="btn ghost sm" id="t-moon-again">🎲 Another combo</button><button class="btn sm" id="t-moon-save">★ Save moonshot</button></div>
+      ${placeBet(m.legs, { stake: Number(state.moonStake), american: m.american, title: `${m.legs.length}-leg moonshot` })}`}`;
+    if (!m) return;
+    $("#t-moon-again").onclick = () => {
+      // Swap out one of the current legs at random for a different ticket.
+      const pickOne = m.legs[Math.floor(Math.random() * m.legs.length)];
+      moonExclude = [...moonExclude, pickOne.id].slice(-Math.max(3, Math.floor(pool.length / 4)));
+      renderMoon();
+    };
+    $("#t-moon-save").onclick = () => {
+      saveTicket("parlay", m.legs, Number(state.moonStake), m.american);
+      toast("Moonshot saved · track it live under ★ My bets");
+    };
+  }
+
   // Events
   $("#t-root").addEventListener("click", (e) => {
+    const ms = e.target.closest("#t-moon-stake .chip"), mt = e.target.closest("#t-moon-target .chip");
+    if (ms || mt) { if (ms) state.moonStake = Number(ms.dataset.v); if (mt) state.moonTarget = Number(mt.dataset.v); moonExclude = []; persist(); renderMoon(); return; }
+    if (e.target.id === "t-moon-pg") { state.moonPerGame = e.target.checked ? 2 : 1; moonExclude = []; persist(); renderMoon(); return; }
     const s = e.target.closest("#t-sport .chip");
     if (s) { state.sport = s.dataset.s; state.sgpGame = null; state.sgpLegs = null; renderAll(); renderSgp(); return; }
     const b = e.target.closest("#t-budget .chip");

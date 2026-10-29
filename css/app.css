@@ -356,3 +356,21 @@ table.ladder tbody tr { cursor: pointer; }
 table.ladder tbody tr:hover td { background: var(--card-2); }
 table.ladder tr.value td { background: var(--over-bg); }
 table.ladder tr.cur td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+/* ---------- place it: sportsbook buttons ---------- */
+.place { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.place-top { gap: 6px; margin-bottom: 6px; }
+.place-books { gap: 6px; }
+.bookbtn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 11px; border-radius: 9px; font-weight: 700; font-size: 13px; color: #fff; background: var(--bc, var(--accent)); border: 1px solid color-mix(in srgb, var(--bc, var(--accent)) 70%, #000); white-space: nowrap; }
+.bookbtn:hover { text-decoration: none; filter: brightness(1.08); }
+.bookchip { display: inline-block; padding: 2px 7px; border-radius: 7px; font-size: 11.5px; font-weight: 700; color: var(--bc, var(--accent)); border: 1px solid color-mix(in srgb, var(--bc, var(--accent)) 60%, transparent); background: color-mix(in srgb, var(--bc, var(--accent)) 10%, transparent); white-space: nowrap; }
+.bookchip:hover { text-decoration: none; background: color-mix(in srgb, var(--bc, var(--accent)) 22%, transparent); }
+.linkbtn { border: 0; background: none; color: var(--accent-2); cursor: pointer; padding: 0; margin-left: auto; font: inherit; }
+.place-legs { margin-top: 8px; }
+.place-legs summary { cursor: pointer; color: var(--muted); }
+.place-legs ol { margin: 6px 0 0; padding-left: 20px; }
+.place-legs li { margin: 5px 0; }
+.place-legs li .bookchip { margin-left: 4px; }
+.pick-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.grade.ALT { background: color-mix(in srgb, #8b5cf6 20%, transparent); color: #a78bfa; font-size: 11px !important; }
+.card.moon { border-color: color-mix(in srgb, #8b5cf6 45%, var(--line)); background: linear-gradient(180deg, color-mix(in srgb, #8b5cf6 7%, var(--card)), var(--card)); }
