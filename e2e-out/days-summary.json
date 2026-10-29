@@ -3,17 +3,18 @@
   "basketball": {
    "day": "20261029",
    "legs": [
-    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
     "Thu SAC @ NO Jeremiah Fears Under 5.5 Assists",
+    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
     "Thu MEM @ POR Cam Spencer Over 9.5 Pts + Ast"
    ]
   },
   "football": {
-   "day": "20261031",
+   "day": "20261029",
+   "sgp": true,
    "legs": [
-    "Sat MICH @ RUTG RUTG ML",
-    "Sat ND @ NAVY NAVY +30.5",
-    "Sat KSU @ COLO KSU ML"
+    "Thu CAR @ GB Chuba Hubbard Under 16.5 Rush Attempts",
+    "Thu CAR @ GB Savion Williams Under 2.5 Receptions",
+    "Thu CAR @ GB Darren Waller Over 21.5 Receiving Yards"
    ]
   },
   "hockey": {
@@ -27,17 +28,17 @@
   "any": {
    "day": "20261029",
    "legs": [
-    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
     "Thu SAC @ NO Jeremiah Fears Under 5.5 Assists",
+    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
     "Thu MEM @ POR Cam Spencer Over 9.5 Pts + Ast"
    ]
   }
  },
  "sgpDays": [
   "undefined nba MEM @ POR",
+  "undefined nfl MIN @ DET",
   "undefined nfl CAR @ GB",
   "undefined nfl LAC @ LAR",
-  "undefined nfl MIN @ DET",
   "undefined nhl CBJ @ CAR",
   "undefined nba SAC @ NO",
   "undefined nhl BOS @ STL",
@@ -48,12 +49,12 @@
  ],
  "moonshots": {
   "all": {
-   "legs": 6,
-   "payout": 10088
+   "legs": 4,
+   "payout": 10041
   },
   "basketball": {
    "legs": 3,
-   "payout": 10146
+   "payout": 10004
   },
   "football": {
    "legs": 7,
@@ -62,7 +63,7 @@
   },
   "hockey": {
    "legs": 10,
-   "payout": 10084
+   "payout": 10001
   }
  }
 }
