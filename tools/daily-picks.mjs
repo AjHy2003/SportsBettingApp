@@ -38,7 +38,7 @@ const { leagueById, MARKETS } = await import("../js/sports.js");
 const { api, standingsTable, parseProps, loadGamelogs, pool } = await import("../js/espn.js");
 const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
 const { loadDeep } = await import("../js/deep.js");
-const { gameContext, defaultLines, evaluateLines, fmtSpread } = await import("../js/gamemodel.js");
+const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
 const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
 const { marketValue } = await import("../js/props.js");
@@ -91,7 +91,8 @@ function lineLegs(L, gc, game, bookEv) {
       const push = r.push || 0;
       const [oA, oB] = r.sides.map((s) => s.odds ?? -110);
       const a = fin * (1 - push), b = (1 - fin) * (1 - push);
-      v = makeVerdict(a, b, push, oA, oB, expectedValue(a, push, oA), expectedValue(b, push, oB), gc.minGames, r.sides.map((s) => s.label));
+      // Same sanity check as the site's, against the all-book consensus.
+      v = guardLine(makeVerdict(a, b, push, oA, oB, expectedValue(a, push, oA), expectedValue(b, push, oB), gc.minGames, r.sides.map((s) => s.label)), r.model, cons);
       probs = [fin, 1 - fin];
     }
     r.sides.forEach((s, i) => {
@@ -105,7 +106,7 @@ function lineLegs(L, gc, game, bookEv) {
         line: point(s),
         team: kind === "total" ? null : s.side === "A" ? game.home.abbr : game.away.abbr,
         odds, priced: s.odds != null, prob, edge: prob - impliedProb(odds), ev: prob * decimalOdds(odds) - 1,
-        grade: lean ? v.grade : "PASS", lean,
+        grade: lean ? v.grade : "PASS", lean, mismatch: lean && !!v.mismatch,
         why: cons != null ? `${r.info.replace(/ → blended .*/, "")} · ${Math.max(...shopped.map((x) => x?.books || 0))}-book consensus ${pctTxt(cons)} → blended ${pctTxt(probs[0])}` : r.info,
       };
       if (sh && s.odds != null && decimalOdds(sh.best.odds) > decimalOdds(odds) + 1e-9) {

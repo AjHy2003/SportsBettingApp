@@ -50,9 +50,18 @@ export function gameContext(L, sum, standings, schedH, schedA) {
     const gp = rec ? rec.split("-").reduce((s, x) => s + (Number(x) || 0), 0) : res.length;
     return isFinite(pf) && isFinite(pa) && gp ? { pf, pa, gp } : null;
   };
-  const standH = standings?.teams?.[home.team.id] || boxStand(home.team, resH);
-  const standA = standings?.teams?.[away.team.id] || boxStand(away.team, resA);
-  const lg = standings?.leagueAvg || DEFAULT_AVG[L.id] || avgFromResults(resH, resA) || 1;
+  // Standings can disagree with the actual results (college standings count conference
+  // games only): with 3+ results, trust the results when they're more than 30% apart.
+  const checked = (stand, res) => {
+    if (res.length < 3) return stand;
+    const pf = M.mean(res.map((g) => g.pf)), pa = M.mean(res.map((g) => g.pa));
+    return stand?.pf && Math.abs(stand.pf / pf - 1) <= 0.3 && Math.abs(stand.pa / pa - 1) <= 0.3 ? stand : { pf, pa, gp: res.length };
+  };
+  const standH = checked(standings?.teams?.[home.team.id] || boxStand(home.team, resH), resH);
+  const standA = checked(standings?.teams?.[away.team.id] || boxStand(away.team, resA), resA);
+  const defAvg = DEFAULT_AVG[L.id];
+  const stLg = standings?.leagueAvg && (!defAvg || Math.abs(standings.leagueAvg / defAvg - 1) <= 0.3) ? standings.leagueAvg : null;
+  const lg = stLg || defAvg || avgFromResults(resH, resA) || 1;
   const k = TEAM_REGRESS[fam] || 8;
   const minGames = Math.min(standH?.gp ?? resH.length, standA?.gp ?? resA.length);
   const league = L.espn.split("/")[1];
@@ -89,7 +98,7 @@ export function evaluateLines(gc, st) {
     const dec = pA / (pA + pB);
     const fin = M.anchor(dec, oA, oB, wModel);
     const a = fin * (1 - push), b = (1 - fin) * (1 - push);
-    const v = M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels);
+    const v = guardLine(M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels), dec, M.noVig(oA, oB)?.a);
     return { v, model: dec, fin, push, sides: [{ label: labels[0], prob: fin, odds: oA, side: "A" }, { label: labels[1], prob: 1 - fin, odds: oB, side: "B" }] };
   };
   if (g.spread && st.spreadHome != null) {
@@ -117,6 +126,16 @@ export function evaluateLines(gc, st) {
     rows.push({ key: "ml", label: "Moneyline", ...r, info: `${H.abbreviation} wins: model ${pct(r.model)} → blended ${pct(r.fin)}` });
   }
   return { g, rows };
+}
+
+// Game lines are sharp: a team model 25+ points away from the market is far more
+// likely missing something (injuries, bad inputs) than finding value.
+export function guardLine(v, pModelA, marketA) {
+  if (!v || marketA == null || pModelA == null) return v;
+  const gap = Math.abs(pModelA - marketA);
+  if (gap >= 0.4 && v.grade !== "PASS") { v.grade = "PASS"; v.side = null; v.mismatch = true; }
+  else if (gap >= 0.25 && (v.grade === "A" || v.grade === "B")) { v.grade = "C"; v.mismatch = true; }
+  return v;
 }
 
 // Odds for the side a verdict picked.

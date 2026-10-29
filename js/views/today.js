@@ -110,7 +110,7 @@ export async function renderToday(ctx, q) {
         <div style="font-weight:700"><a href="${legLink(l)}" style="color:var(--text)">${esc(l.label)}</a> <span class="muted" style="font-weight:600">${priceTag(l)}</span></div>
         <div class="small muted">${esc(leagueName(l.league))} · ${esc(l.matchup)} · ${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}</div>
         <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why ? ` · ${esc(l.why)}` : ""}</div>
-        ${l.mismatch ? `<div class="small" style="color:var(--gold)">Line is far from the player's recent numbers — likely a role change. Check the news.</div>` : ""}
+        ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
         ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
         ${l.bestBook ? `<div class="small pos">Better price: ${M.fmtOdds(l.bestBook.odds)} at ${esc(l.bestBook.title)} (DraftKings ${M.fmtOdds(l.odds)})</div>` : ""}
       </div>

@@ -67,6 +67,8 @@ jobs:
               topPicks: t.picks.map((id) => t.legs.find((l) => l.id === id)).map((l) => `${l.grade} ${l.label} ${l.odds} p=${l.prob} | ${l.why} | ${(l.context || []).join(" ; ")}`),
               sampleContext: props.filter((l) => l.context).slice(0, 25).map((l) => `${l.league} ${l.label}: ${l.context.join(" ; ")}`),
               wwSamples: props.filter((l) => l.context?.some((n) => / out: /.test(n))).slice(0, 15).map((l) => `${l.league} ${l.label}: ${l.context.join(" ; ")}`),
+              lineSample: t.legs.filter((l) => l.kind !== "prop" && (l.side === "HOME" || l.side === "OVER")).filter((l, i, a) => a.findIndex((x) => x.league === l.league) === i || i % 12 === 0).slice(0, 30).map((l) => `${l.league} ${l.matchup} ${l.label} ${l.grade}: ${l.why}`),
+              lineMismatch: t.legs.filter((l) => l.kind !== "prop" && l.mismatch).length,
               record: t.record,
             };
             fs.writeFileSync("e2e-out/context-summary.json", JSON.stringify(out, null, 1));
