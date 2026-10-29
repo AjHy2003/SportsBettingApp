@@ -36,12 +36,14 @@ globalThis.fetch = async (url, opts) => {
 
 const { leagueById, MARKETS } = await import("../js/sports.js");
 const { api, standingsTable, parseProps, loadGamelogs, pool } = await import("../js/espn.js");
-const { impliedProb, fmtOdds } = await import("../js/model.js");
+const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
 const { loadDeep } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread } = await import("../js/gamemodel.js");
 const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
+const { injuryReport } = await import("../js/context.js");
 const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks } = await import("../js/parlay.js");
+const { loadBooks, matchEvent, shop } = await import("./books.mjs");
 
 const LEAGUES = [
   { id: "nba", window: "day", props: true },
@@ -69,29 +71,49 @@ async function upcomingEvents(cfg, L) {
 
 const pctTxt = (p) => `${Math.round(p * 100)}%`;
 
-function lineLegs(L, gc, game) {
+// Game-line legs for both sides of every market. With The Odds API (books.mjs),
+// the model is blended with the all-book consensus instead of DraftKings alone,
+// and each leg notes the best price available elsewhere.
+function lineLegs(L, gc, game, bookEv) {
   const st = defaultLines(gc.odds);
   const { rows } = evaluateLines(gc, st);
   const legs = [];
   for (const r of rows) {
     if (!r.sides) continue;
-    for (const s of r.sides) {
+    const kind = r.key;
+    const sideName = (s) => (kind === "total" ? (s.side === "A" ? "OVER" : "UNDER") : s.side === "A" ? "HOME" : "AWAY");
+    const point = (s) => (kind === "spread" ? (s.side === "A" ? st.spreadHome : -st.spreadHome) : kind === "total" ? st.total : null);
+    const shopped = bookEv && r.sides.length === 2 ? r.sides.map((s) => shop(bookEv, kind, sideName(s), point(s))) : null;
+    const cons = shopped?.[0]?.consensus ?? (shopped?.[1]?.consensus != null ? 1 - shopped[1].consensus : null);
+    let v = r.v, probs = r.sides.map((s) => s.prob);
+    if (cons != null && r.model != null) {
+      const fin = gc.wModel * r.model + (1 - gc.wModel) * cons;
+      const push = r.push || 0;
+      const [oA, oB] = r.sides.map((s) => s.odds ?? -110);
+      const a = fin * (1 - push), b = (1 - fin) * (1 - push);
+      v = makeVerdict(a, b, push, oA, oB, expectedValue(a, push, oA), expectedValue(b, push, oB), gc.minGames, r.sides.map((s) => s.label));
+      probs = [fin, 1 - fin];
+    }
+    r.sides.forEach((s, i) => {
       const odds = s.odds ?? -110;
-      const prob = s.prob;
-      const lean = r.v.lean === s.label;
-      const kind = r.key;
-      const isHomeSide = s.side === "A";
+      const prob = probs[i];
+      const lean = v.lean === s.label;
+      const sh = shopped?.[i];
       const leg = {
         id: `${L.id}:${game.eventId}:${kind}:${s.side}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
-        kind, marketKey: kind, market: r.label, label: s.label, side: kind === "total" ? (isHomeSide ? "OVER" : "UNDER") : isHomeSide ? "HOME" : "AWAY",
-        line: kind === "spread" ? (isHomeSide ? st.spreadHome : -st.spreadHome) : kind === "total" ? st.total : null,
-        team: kind === "total" ? null : isHomeSide ? game.home.abbr : game.away.abbr,
+        kind, marketKey: kind, market: r.label, label: s.label, side: sideName(s),
+        line: point(s),
+        team: kind === "total" ? null : s.side === "A" ? game.home.abbr : game.away.abbr,
         odds, priced: s.odds != null, prob, edge: prob - impliedProb(odds), ev: prob * decimalOdds(odds) - 1,
-        grade: lean ? r.v.grade : "PASS", lean,
-        why: r.info,
+        grade: lean ? v.grade : "PASS", lean,
+        why: cons != null ? `${r.info.replace(/ → blended .*/, "")} · ${Math.max(...shopped.map((x) => x?.books || 0))}-book consensus ${pctTxt(cons)} → blended ${pctTxt(probs[0])}` : r.info,
       };
+      if (sh && s.odds != null && decimalOdds(sh.best.odds) > decimalOdds(odds) + 1e-9) {
+        leg.bestBook = { title: sh.best.title, odds: sh.best.odds, ev: prob * decimalOdds(sh.best.odds) - 1 };
+      }
+      if (sh) leg.books = sh.books;
       legs.push(leg);
-    }
+    });
   }
   return legs;
 }
@@ -107,6 +129,8 @@ function propLeg(L, game, r) {
     `Projection ${res.projection.toFixed(1)} vs line ${r.p.line}`,
     r.l10?.n ? `${side.toLowerCase()} in ${hits}/${r.l10.n} of last ${r.l10.n}` : "",
     r.opp?.factor && Math.abs(r.opp.factor - 1) > 0.02 ? `matchup ×${r.opp.factor.toFixed(2)}` : "",
+    r.context?.withWithout ? r.context.withWithout.notes[0] : "",
+    r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
   ].filter(Boolean).join(" · ");
   return {
     id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:${side}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
@@ -115,10 +139,16 @@ function propLeg(L, game, r) {
     odds, priced: r.p.over != null && r.p.under != null, prob, edge: prob - impliedProb(odds), ev: prob * decimalOdds(odds) - 1,
     grade: res.verdict.grade, lean: true, proj: Number(res.projection.toFixed(2)), why,
     mismatch: !!res.verdict.mismatch,
+    book: { line: r.p.line, over: r.p.over, under: r.p.under },
+    questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
+    context: r.context?.notes?.length ? r.context.notes : undefined,
   };
 }
 
 let failedLeagues = 0;
+// All-book prices (optional ODDS_API_KEY secret; refreshed once a day, cached otherwise).
+const BOOKS = await loadBooks({ key: process.env.ODDS_API_KEY, cacheFile: "cache/oddsapi.json", refresh: process.env.ODDS_API_REFRESH === "1", leagues: LEAGUES.map((c) => c.id) }).catch((e) => { console.log(`odds api: ${e.message}`); return null; });
+console.log(BOOKS ? `odds api: ${Object.values(BOOKS.events).reduce((s, x) => s + x.length, 0)} events from ${BOOKS.fetchedAt}` : "odds api: off (no ODDS_API_KEY), using DraftKings only");
 
 async function scanLeague(cfg) {
   const L = leagueById(cfg.id);
@@ -144,13 +174,14 @@ async function scanLeague(cfg) {
         away: { id: a.team.id, abbr: a.team.abbreviation, name: a.team.displayName, logo: a.team.logos?.[0]?.href },
         lines: { details: gc.odds.details, spreadHome: gc.odds.spreadHome, total: gc.odds.total, mlHome: gc.odds.mlHome, mlAway: gc.odds.mlAway },
       };
-      const gameLegs = lineLegs(L, gc, game);
+      const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
       if (cfg.props) {
         const props = await api.propBets(L, e.id).then((items) => parseProps(items, L.markets)).catch(() => null);
         if (props?.size) {
           const people = await loadPeople(L, [gc.H, gc.A]);
           const rows = propRows(L, props, people);
-          await scanRows(L, rows, { game: { H: gc.H, A: gc.A, date: comp.date }, standings, deep, concurrency: 4 });
+          await scanRows(L, rows, { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum) }, standings, deep, concurrency: 4 });
+          game.out = rows.filter((r) => r.out).map((r) => `${r.who.name} (${r.out})`).filter((x, i, a) => a.indexOf(x) === i);
           for (const r of rows) if (r.res?.verdict?.lean) gameLegs.push(propLeg(L, game, r));
         }
       }
@@ -215,6 +246,55 @@ async function gradePending(history) {
   return graded;
 }
 
+// ---------- closing line value ----------
+// Latest pre-game price for each posted pick: "did the market move toward us?"
+function snapshotLines(history, legs) {
+  const props = new Map(), lines = new Map();
+  for (const l of legs) {
+    if (l.kind === "prop") props.set(`${l.league}:${l.eventId}:${l.playerId}:${l.marketKey}`, l.book);
+    else lines.set(l.id, { line: l.line, odds: l.odds });
+  }
+  let n = 0;
+  for (const p of history.picks) {
+    if (p.result || new Date(p.start) <= now) continue;
+    let snap = null;
+    if (p.kind === "prop") {
+      const b = props.get(`${p.league}:${p.eventId}:${p.playerId}:${p.marketKey}`);
+      if (b) snap = { line: b.line, odds: (p.side === "OVER" ? b.over : b.under) ?? null };
+    } else {
+      snap = lines.get(p.id) || null;
+    }
+    if (snap && snap.line != null || snap?.odds != null) { p.close = { ...snap, at: new Date().toISOString() }; n++; }
+  }
+  return n;
+}
+
+// Positive = we got a better number than the last pre-game line.
+function clvOf(p) {
+  if (!p.close) return null;
+  let pts = 0;
+  if (p.kind === "spread") pts = p.line - p.close.line;
+  else if (p.kind !== "ml" && p.close.line != null) pts = p.side === "OVER" ? p.close.line - p.line : p.line - p.close.line;
+  const prob = p.close.odds != null && p.odds != null && (p.kind === "ml" || p.close.line === p.line) ? impliedProb(p.close.odds) - impliedProb(p.odds) : 0;
+  return { pts: Math.round(pts * 10) / 10, prob: Math.round(prob * 1000) / 1000 };
+}
+
+function clvSummary(history) {
+  const rows = history.picks.map((p) => ({ p, c: clvOf(p) })).filter((x) => x.c && (x.c.pts !== 0 || Math.abs(x.c.prob) >= 0.005));
+  const beat = rows.filter((x) => x.c.pts > 0 || (x.c.pts === 0 && x.c.prob > 0)).length;
+  return { moved: rows.length, beat, rate: rows.length ? beat / rows.length : null, tracked: history.picks.filter((p) => p.close).length };
+}
+
+// Does "60%" actually hit 60%?
+function calibration(history) {
+  const graded = history.picks.filter((p) => ["W", "L"].includes(p.result));
+  const buckets = [[0.5, 0.55], [0.55, 0.6], [0.6, 0.65], [0.65, 1.01]];
+  return buckets.map(([lo, hi]) => {
+    const r = graded.filter((p) => p.prob >= lo && p.prob < hi);
+    return { lo, hi: Math.min(hi, 1), n: r.length, predicted: r.length ? r.reduce((s, p) => s + p.prob, 0) / r.length : null, actual: r.length ? r.filter((p) => p.result === "W").length / r.length : null };
+  });
+}
+
 function record(history, days = null) {
   const since = days ? now - days * 864e5 : 0;
   const rows = history.picks.filter((p) => ["W", "L"].includes(p.result) && new Date(p.start) >= since);
@@ -235,7 +315,9 @@ const legs = results.flatMap((r) => r.legs);
 const picks = choosePicks(legs);
 
 const history = loadHistory();
+const snapshots = snapshotLines(history, legs);
 const graded = await gradePending(history);
+for (const p of history.picks) if (p.result && p.close && !p.clv) p.clv = clvOf(p);
 const known = new Set(history.picks.map((p) => p.id));
 const issued = new Date().toISOString();
 for (const p of picks) {
@@ -266,7 +348,8 @@ const today = {
   generated: issued, date: todayET, games, legs: legs.map(slim), picks: picks.map((p) => p.id),
   featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev } : null])),
   sgps: sgps.map((x) => ({ game: x.game, matchup: x.matchup, league: x.league, legs: x.sgp.legs.map((l) => l.id), american: x.sgp.american, prob: x.sgp.prob, ev: x.sgp.ev })),
-  record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded },
+  books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
+  record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded, clv: clvSummary(history), calibration: calibration(history), snapshots },
 };
 const outDir = path.join(SITE, "data", "picks");
 fs.mkdirSync(outDir, { recursive: true });

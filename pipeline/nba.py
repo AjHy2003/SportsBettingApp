@@ -13,7 +13,7 @@ import datetime as dt
 import os
 
 from common import clean, ranks, write_json
-from espn_boxes import load_boxes, season_events
+from espn_boxes import load_boxes, previous_season_events, season_events
 
 POS = {"PG": "G", "SG": "G", "G": "G", "SF": "F", "PF": "F", "F": "F", "GF": "F", "C": "C", "FC": "C", "CF": "C"}
 DVP_STATS = ["pts", "reb", "ast", "fg3m", "stl", "blk", "tov", "fgm", "fga", "ftm", "fg3a"]
@@ -109,10 +109,29 @@ def possessions(t, o):
     return 0.5 * (one(t, o) + one(o, t))
 
 
+def write_lineups(out, league, boxes):
+    """Per team: who played (and minutes) in every game, for with/without teammate splits."""
+    teams = {}
+    for ev, box in boxes:
+        for tid, t in box["teams"].items():
+            played = {p["id"]: round(p["min"], 1) for p in box["players"] if p["team"] == tid and p.get("min", 0) > 0}
+            if played:
+                teams.setdefault(t["abbr"], {})[ev] = {"d": box["date"][:10], "p": played}
+    ldir = os.path.join(out, league, "lineups")
+    os.makedirs(ldir, exist_ok=True)
+    for abbr, games in teams.items():
+        write_json(os.path.join(ldir, f"{abbr}.json"), {"team": abbr, "games": games})
+
+
 def build(out, cache):
     season, events = season_events("basketball/nba", cache, "nba")
     print(f"NBA season {season}: {len(events)} completed games", flush=True)
     boxes = load_boxes("basketball/nba", cache, "nba", events, parse_summary)
+    # Last season's box scores only feed the with/without lineup files.
+    prev_events = previous_season_events("basketball/nba", cache, "nba")
+    prev_boxes = load_boxes("basketball/nba", cache, "nba", prev_events, parse_summary)
+    print(f"NBA last season: {len(prev_boxes)} games for lineups", flush=True)
+    write_lineups(out, "nba", boxes + prev_boxes)
 
     team_games = {}   # abbr -> list of per-game team rows
     dvp = {}          # abbr -> pos -> list of per-game sums allowed

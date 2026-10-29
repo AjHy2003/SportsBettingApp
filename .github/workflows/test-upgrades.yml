@@ -1,0 +1,87 @@
+name: test-upgrades
+# Temporary: live end-to-end check of the claude/upgrades branch. Writes nothing to
+# picks-data and sends no notifications; results are committed to this branch.
+on:
+  push:
+    branches: ["claude/upgrades"]
+    paths-ignore: ["e2e-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Build data
+        run: python pipeline/build.py --out _site/data --cache cache 2>&1 | tee build.log
+      - name: Copy real pick history (read-only)
+        run: |
+          mkdir -p /tmp/hist
+          if git fetch -q origin picks-data; then git show origin/picks-data:history.json > /tmp/hist/history.json || true; fi
+          ls -la /tmp/hist
+      - name: Daily picks
+        run: node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Injury watcher dry run
+        run: node tools/watch.mjs --dir /tmp/hist 2>&1 | tee watch.log
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end against live data
+        run: NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize context
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const props = t.legs.filter((l) => l.kind === "prop" && l.lean);
+            const out = {
+              games: t.games.length, legs: t.legs.length, picks: t.picks.length, props: props.length,
+              withContext: props.filter((l) => l.context).length,
+              withWithout: props.filter((l) => l.context?.some((n) => / out: /.test(n))).length,
+              questionable: props.filter((l) => l.questionable).length,
+              mismatch: props.filter((l) => l.mismatch).length,
+              gamesWithOut: t.games.filter((g) => g.out?.length).map((g) => `${g.matchup}: ${g.out.slice(0, 4).join(", ")}`).slice(0, 8),
+              bestBook: t.legs.filter((l) => l.bestBook).length, books: t.books,
+              byGrade: Object.fromEntries(["A", "B", "C", "PASS"].map((g) => [g, t.legs.filter((l) => l.lean && l.grade === g).length])),
+              topPicks: t.picks.map((id) => t.legs.find((l) => l.id === id)).map((l) => `${l.grade} ${l.label} ${l.odds} p=${l.prob} | ${l.why} | ${(l.context || []).join(" ; ")}`),
+              sampleContext: props.filter((l) => l.context).slice(0, 25).map((l) => `${l.league} ${l.label}: ${l.context.join(" ; ")}`),
+              wwSamples: props.filter((l) => l.context?.some((n) => / out: /.test(n))).slice(0, 15).map((l) => `${l.league} ${l.label}: ${l.context.join(" ; ")}`),
+              record: t.record,
+            };
+            fs.writeFileSync("e2e-out/context-summary.json", JSON.stringify(out, null, 1));
+            console.log(JSON.stringify({ ...out, sampleContext: out.sampleContext.slice(0, 5), topPicks: out.topPicks.slice(0, 5) }, null, 1));
+          ' || true
+          for lg in nba nfl; do echo "$lg lineups: $(ls _site/data/$lg/lineups 2>/dev/null | wc -l) teams"; done | tee e2e-out/lineups.txt
+          f=$(ls _site/data/nba/lineups/*.json 2>/dev/null | head -1); [ -n "$f" ] && python -c "import json,sys;d=json.load(open('$f'));print('$f', len(d['games']), 'games')" | tee -a e2e-out/lineups.txt
+          f=$(ls _site/data/nfl/lineups/*.json 2>/dev/null | head -1); [ -n "$f" ] && python -c "import json,sys;d=json.load(open('$f'));print('$f', len(d['games']), 'games')" | tee -a e2e-out/lineups.txt
+          cp build.log picks.log watch.log notify.json e2e-out/ 2>/dev/null || true
+          cp _site/data/status.json e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/upgrades || true
+          git push -q origin HEAD:claude/upgrades

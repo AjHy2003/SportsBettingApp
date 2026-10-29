@@ -192,7 +192,7 @@ export function analyzeProp(games, opts) {
       const w = withMin.map((g, i) => Math.pow(0.5, i / halfLife) * (g.w ?? 1));
       const rate = sum(withMin.map((g, i) => w[i] * g.value)) / sum(withMin.map((g, i) => w[i] * g.minutes));
       const minRecent = ewma(withMin.map((g) => g.minutes), 5);
-      expMinutes = opts.minutesOverride > 0 ? Number(opts.minutesOverride) : minRecent;
+      expMinutes = opts.minutesOverride > 0 ? Number(opts.minutesOverride) : minRecent * (opts.minutesFactor || 1);
       base = rate * expMinutes;
       if (opts.minutesOverride > 0) notes.push(`Using ${expMinutes} expected minutes (recent avg ${minRecent.toFixed(1)}).`);
     }
@@ -201,8 +201,10 @@ export function analyzeProp(games, opts) {
   const opp = opts.oppFactor && isFinite(opts.oppFactor) ? opts.oppFactor : 1;
   const pace = opts.paceFactor && isFinite(opts.paceFactor) ? opts.paceFactor : 1;
   const role = 1 + (Number(opts.roleAdj) || 0) / 100;
-  const projection = base * opp * pace * role;
+  const ctx = opts.contextFactor && isFinite(opts.contextFactor) ? opts.contextFactor : 1;
+  const projection = base * opp * pace * role * ctx;
   if (opp !== 1) notes.push(`Opponent adjustment ×${opp.toFixed(3)}.`);
+  for (const n of opts.contextNotes || []) notes.push(`${n}.`);
   if (pace !== 1) notes.push(`Pace adjustment ×${pace.toFixed(3)}.`);
   if (role !== 1) notes.push(`Role / injury adjustment ${opts.roleAdj > 0 ? "+" : ""}${opts.roleAdj}%.`);
 

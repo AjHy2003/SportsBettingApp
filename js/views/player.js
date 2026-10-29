@@ -1,10 +1,11 @@
-import { api, loadGamelogs, parseProps, standingsTable } from "../espn.js";
+import { api, loadGamelogs, parseProps, standingsTable, pickcenterOdds } from "../espn.js";
 import * as M from "../model.js";
 import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, hitTile, gameChart, wireChartTips, toast } from "../ui.js";
 import { addPick } from "../store.js";
 import { loadDeep, loadDeepPlayer, deepPlayerPanel } from "../deep.js";
 import { mergeDeepStats } from "../scan.js";
-import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
+import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
+import { injuryReport, playerContext } from "../context.js";
 
 export async function renderPlayer(ctx, L, id, q) {
   const { app } = ctx;
@@ -32,11 +33,13 @@ export async function renderPlayer(ctx, L, id, q) {
   const next = await findNextGame(L, a.team?.id || games[0]?.teamId, ov);
   if (!ctx.alive()) return;
 
-  const [propsAll, standings, deep, deepPlayer] = await Promise.all([
-    next && next.state !== "post" ? api.propBets(L, next.id).then((items) => parseProps(items, L.markets)).catch(() => null) : null,
+  const upcoming = next && next.state !== "post";
+  const [propsAll, standings, deep, deepPlayer, nextSum] = await Promise.all([
+    upcoming ? api.propBets(L, next.id).then((items) => parseProps(items, L.markets)).catch(() => null) : null,
     api.standings(L).then(standingsTable).catch(() => null),
     loadDeep(L).catch(() => null),
     loadDeepPlayer(L, id).catch(() => null),
+    upcoming ? api.summary(L, next.id).catch(() => null) : null,
   ]);
   if (!ctx.alive()) return;
   const myProps = propsAll?.get(String(id)) || {};
@@ -65,7 +68,24 @@ export async function renderPlayer(ctx, L, id, q) {
     minutes: "",
     role: 0,
     useOpp: true,
+    useCtx: true,
   };
+  // Tonight's game context (Vegas lines, injuries) per market, computed lazily.
+  const nextOdds = nextSum ? pickcenterOdds(nextSum.pickcenter?.[0]) : null;
+  const nextLines = nextOdds ? { spreadHome: nextOdds.spreadHome, total: nextOdds.total } : null;
+  const report = nextSum ? injuryReport(nextSum) : null;
+  const teamId = a.team?.id || games[0]?.teamId;
+  const ctxCache = new Map();
+  function contextFor(m) {
+    if (!next || (!nextLines && !report)) return null;
+    if (!ctxCache.has(m.key)) {
+      ctxCache.set(m.key, null);
+      playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id })
+        .then((c) => { ctxCache.set(m.key, c); if (ctx.alive() && state.market === m.key) render(); })
+        .catch(() => {});
+    }
+    return ctxCache.get(m.key);
+  }
 
   app.innerHTML = `
     <div class="crumbs"><a href="#/">Home</a> › <a href="#/l/${L.id}">${esc(L.name)}</a> › ${esc(a.displayName)}</div>
@@ -87,8 +107,9 @@ export async function renderPlayer(ctx, L, id, q) {
           <div class="field" id="min-field"><label for="f-min">Expected minutes</label><input id="f-min" type="number" step="1" inputmode="numeric" placeholder="auto"/></div>
           <div class="field"><label for="f-role">Role / injury adj. %</label><input id="f-role" type="number" step="5" value="0" inputmode="numeric"/></div>
           <div class="field"><label for="f-opp">Opponent adj.</label><select id="f-opp"><option value="1">On</option><option value="0">Off</option></select></div>
+          <div class="field"><label for="f-ctx">Tonight's context</label><select id="f-ctx"><option value="1">On</option><option value="0">Off</option></select></div>
         </div>
-        <p class="small faint" style="margin:8px 0 0">Role adj.: e.g. +15 if a teammate who takes shots/targets is out, −20 if returning from injury on a minutes limit.</p>
+        <p class="small faint" style="margin:8px 0 0">Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit.</p>
       </div>
       <div class="card" id="verdict"></div>
     </div>
@@ -168,8 +189,12 @@ export async function renderPlayer(ctx, L, id, q) {
   function render() {
     const m = market();
     const line = Number(state.line);
-    const opp = state.useOpp ? oppAdjust(m) : { factor: 1, why: "Opponent adjustment turned off." };
-    const { res, withVal } = runProp(fam, m, games, { line, oddsOver: state.oddsOver, oddsUnder: state.oddsUnder, opp, role: state.role, minutes: state.minutes, posted: myProps[m.key] });
+    const opp0 = state.useOpp ? oppAdjust(m) : { factor: 1, why: "Opponent adjustment turned off." };
+    const gctx = state.useCtx ? contextFor(m) : null;
+    const opp = combineOpponent(opp0, gctx);
+    const { res, withVal } = runProp(fam, m, games, { line, oddsOver: state.oddsOver, oddsUnder: state.oddsUnder, opp: opp0, role: state.role, minutes: state.minutes, posted: myProps[m.key], context: gctx });
+    if (gctx?.status?.maybe && res.verdict && ["A", "B"].includes(res.verdict.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
+    if (gctx?.status?.out && res.verdict) { res.verdict.grade = "PASS"; res.verdict.side = null; }
 
     // Book info
     const p = myProps[m.key];
@@ -188,7 +213,8 @@ export async function renderPlayer(ctx, L, id, q) {
           <div class="call">${v.placeholder ? `Enter your line <span class="muted" style="font-size:14px;font-weight:600">· leans ${v.lean === "OVER" ? "over" : "under"} ${line}</span>` : v.side ? `<span class="${sideCls}">${v.side}</span> ${line} ${esc(m.label)}` : `PASS <span class="muted" style="font-size:14px;font-weight:600">· leans ${v.lean === "OVER" ? "over" : "under"}</span>`}</div>
           ${v.placeholder ? `<div class="small muted">No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade.</div>` : ""}
           ${v.capped && !v.placeholder ? `<div class="small faint">Capped at B: no market price to compare against.</div>` : ""}
-          ${v.mismatch && !v.placeholder ? `<div class="notice warn" style="margin-top:6px">The line (${line}) is far from his recent production (projection ${fx(res.projection)}). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. ${v.grade === "PASS" ? "No grade until you've checked the news." : "Grade capped at C."}</div>` : ""}
+          ${gctx?.status ? `<div class="notice warn" style="margin-top:6px">Injury report: <b>${esc(gctx.status.status)}</b>${gctx.status.out ? " — no grade; props are usually voided if the player doesn't play." : v.questionable ? " — grade capped at C until the status clears." : ""}</div>` : ""}
+          ${v.mismatch && !v.placeholder ? `<div class="notice warn" style="margin-top:6px">The line (${line}) is far from recent production (projection ${fx(res.projection)}). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. ${v.grade === "PASS" ? "No grade until you've checked the news." : "Grade capped at C."}</div>` : ""}
           <div class="small muted">${v.lean ? `Model ${pct(v.prob, 1)} vs ${pct(M.impliedProb(v.lean === "OVER" ? res.oddsOver : res.oddsUnder), 1)} needed to break even · edge ${signed(v.edge * 100, 1)} pts · EV ${signed(v.ev * 100, 1)}%` : ""}</div>
           ${res.statsOver != null ? `<div class="small faint">Over: stats only ${pct(res.statsOver)}${res.marketProb != null ? ` · market ${pct(res.marketProb)} · blended ${pct(res.pOver / (1 - res.pPush))}` : " · no market anchor"}</div>` : ""}
         </div>
@@ -264,6 +290,8 @@ export async function renderPlayer(ctx, L, id, q) {
         ${next ? `<div><b>Next:</b> ${next.home ? "vs" : "@"} ${esc(next.oppName || next.opp)} · ${fmtDate(next.date, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(next.date)}${restNext != null && restNext >= 0 && (fam === "basketball" || fam === "hockey") ? ` · ${restNext === 0 ? "<b>back-to-back</b>" : `${restNext} day${restNext === 1 ? "" : "s"} rest`}` : ""}</div>` : ""}
         <div><b>Opponent:</b> ${esc(opp.why)}</div>
         ${opp.extra || ""}
+        ${gctx?.notes?.length ? `<div><b>Tonight:</b><ul style="margin:4px 0 0;padding-left:18px">${gctx.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>` : state.useCtx && next && nextSum && !gctx ? `<div class="faint">Checking tonight's lines and injury report…</div>` : ""}
+        ${gctx?.outMates?.length ? `<div><b>Out for ${esc(a.team?.abbreviation || "the team")}:</b> ${gctx.outMates.map((x) => `${esc(x.name)} <span class="faint">(${esc(x.status)})</span>`).join(", ")}</div>` : ""}
         <div><b>Sample:</b> ${res.n} games (most recent ${MODEL_SAMPLE} max, newer games weigh more). SD ${fx(res.sd)}, range ${fx(res.min, 0)}–${fx(res.max, 0)}.</div>
       </div>`;
 
@@ -312,6 +340,7 @@ export async function renderPlayer(ctx, L, id, q) {
   bind("#f-min", "minutes");
   bind("#f-role", "role", (v) => Number(v) || 0);
   $("#f-opp").addEventListener("change", (e) => { state.useOpp = e.target.value === "1"; render(); });
+  $("#f-ctx").addEventListener("change", (e) => { state.useCtx = e.target.value === "1"; render(); });
 
   render();
 }

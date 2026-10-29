@@ -131,7 +131,7 @@ function nflPanel(deep, p, next) {
     ${next?.opp ? `<h3 style="margin-top:14px">Matchup: ${esc(next.opp)}</h3>${nflDefenseLine(deep, next.opp)}${oppHist}` : ""}
     <h3 style="margin-top:14px">Weekly</h3>
     <div class="table-wrap"><table><thead><tr><th>Week</th><th>Opp</th>${cols.map(([, l]) => `<th class="r">${l}</th>`).join("")}</tr></thead><tbody>${weekRows}</tbody></table></div>
-    <p class="small faint" style="margin:8px 0 0">Separation and cushion are Next Gen Stats averages: yards to the nearest defender at the catch or incompletion (how open he gets), and at the snap. Depth = air yards past the line of scrimmage on the target. Designed runs exclude scrambles and kneels. Rank pills: 1st = stingiest defense.</p>
+    <p class="small faint" style="margin:8px 0 0">Separation and cushion are Next Gen Stats averages: yards to the nearest defender at the catch or incompletion (how open the receiver gets), and at the snap. Depth = air yards past the line of scrimmage on the target. Designed runs exclude scrambles and kneels. Rank pills: 1st = stingiest defense.</p>
   </div>`;
 }
 
@@ -236,7 +236,7 @@ function nbaPanel(deep, p, next) {
     const theirMiss = (opp.fg_miss + mine.opp_fg_miss) / 2;
     const expMin = avg(recent, "min");
     const avail = perMin * expMin * ((ourMiss + theirMiss) / avgGameMiss);
-    outlook = `<div class="notice" style="margin-top:12px"><b>Rebound outlook vs ${esc(next.opp)}:</b> expect about <b>${fx(ourMiss)}</b> ${esc(p.team)} misses + <b>${fx(theirMiss)}</b> ${esc(next.opp)} misses (${fx(ourMiss + theirMiss)} total vs his recent ${fx(avgGameMiss)}). In ~${fx(expMin, 0)} minutes that's ~<b>${fx(avail)}</b> missed shots while he's on the floor; at his recent ${pct(conv, 1)} conversion ≈ <b>${fx(avail * conv)} rebounds</b>.</div>`;
+    outlook = `<div class="notice" style="margin-top:12px"><b>Rebound outlook vs ${esc(next.opp)}:</b> expect about <b>${fx(ourMiss)}</b> ${esc(p.team)} misses + <b>${fx(theirMiss)}</b> ${esc(next.opp)} misses (${fx(ourMiss + theirMiss)} total vs a recent ${fx(avgGameMiss)}). In ~${fx(expMin, 0)} minutes that's ~<b>${fx(avail)}</b> missed shots while the player is on the floor; at a recent ${pct(conv, 1)} conversion ≈ <b>${fx(avail * conv)} rebounds</b>.</div>`;
   }
   return `<div class="card" style="margin-top:14px">
     <div class="row" style="justify-content:space-between"><h3 style="margin:0">Advanced · usage & rebounding</h3><span class="pill gold">Computed from box scores</span></div>
@@ -244,7 +244,7 @@ function nbaPanel(deep, p, next) {
     ${next?.opp ? `<h3 style="margin-top:14px">Matchup: ${esc(next.opp)}</h3>${nbaTeamLine(deep, next.opp)}` : ""}
     ${outlook}
     <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Opp</th><th class="r">Min</th><th class="r">Usg%</th><th class="r">Reb</th><th class="r">Misses on floor</th><th class="r">Reb%</th><th class="r">Team misses</th><th class="r">Opp misses</th><th class="r">Ast</th><th class="r">Ast%</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="small faint" style="margin:8px 0 0">Misses on floor = both teams' missed shots (FGs plus ~44% of missed free throws) while he was playing, i.e. the rebounds available to anyone. Reb % = share of all rebounds he grabbed while on the floor. Usage % = share of team plays (shots, free-throw trips, turnovers) he used. NBA.com's tracking stats ("potential rebounds/assists", which only count chances near the player) block automated access, so these are the closest box-score equivalents.</p>
+    <p class="small faint" style="margin:8px 0 0">Misses on floor = both teams' missed shots (FGs plus ~44% of missed free throws) while the player was on the floor, i.e. the rebounds available to anyone. Reb % = share of all rebounds grabbed while on the floor. Usage % = share of team plays (shots, free-throw trips, turnovers) used. NBA.com's tracking stats ("potential rebounds/assists", which only count chances near the player) block automated access, so these are the closest box-score equivalents.</p>
   </div>`;
 }
 

@@ -1,0 +1,42 @@
+name: Injury alerts for today's picks
+
+on:
+  schedule:
+    - cron: "5 16-23 * * *"  # hourly, noon to 7pm ET
+    - cron: "5 0-3 * * *"    # and 8pm to 11pm ET (tip-offs and kickoffs)
+  workflow_dispatch:
+
+permissions:
+  contents: write   # alert log lives on the picks-data branch
+
+concurrency:
+  group: picks-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Load pick history
+        id: hist
+        run: |
+          if git fetch -q origin picks-data:picks-data; then git worktree add -q picks-data picks-data; echo "ok=1" >> "$GITHUB_OUTPUT"
+          else echo "No picks yet"; fi
+      - name: Check injury reports
+        if: steps.hist.outputs.ok == '1'
+        run: node tools/watch.mjs --dir picks-data --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+      - name: Save alert log
+        if: steps.hist.outputs.ok == '1'
+        run: |
+          cd picks-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add alerts.json
+          git diff --cached --quiet || { git commit -qm "Update injury alerts" && git pull -q --rebase origin picks-data && git push -q origin picks-data; }

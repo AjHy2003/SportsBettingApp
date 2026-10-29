@@ -29,6 +29,9 @@ jobs:
     timeout-minutes: 40
     env:
       NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      # One all-book price pull a day (12 of The Odds API's 500 free monthly requests); other runs reuse it.
+      ODDS_API_REFRESH: ${{ github.event.schedule == '47 15 * * *' && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -60,7 +63,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history.json
-          git diff --cached --quiet || { git commit -qm "Update pick history" && git push -q origin picks-data; }
+          git diff --cached --quiet || { git commit -qm "Update pick history" && { git pull -q --rebase origin picks-data || true; } && git push -q origin picks-data; }
       - name: Phone notification
         continue-on-error: true
         if: env.NTFY_TOPIC != '' && (github.event.schedule == '47 15 * * *' || inputs.notify)
