@@ -465,8 +465,9 @@ fs.mkdirSync(path.dirname(HISTORY), { recursive: true });
 fs.writeFileSync(HISTORY, JSON.stringify(history));
 
 const groups = { basketball: ["nba", "ncaab"], football: ["nfl", "ncaaf"], hockey: ["nhl"] };
-// Featured parlays use today's games (Eastern time). When today can't make one (say, one
-// Thursday night game with no edge), they move to the next day that can.
+// Featured parlays use today's games (Eastern time). Too few games with an edge for a
+// regular parlay (a Thursday with one NFL game): the day's best same-game parlay. Only
+// when neither works do they move to the next day.
 const dayOf = (l) => etDate(new Date(l.start));
 const weekdayOf = (l) => new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short" }).format(new Date(l.start));
 const upcomingDays = [...new Set(legs.filter((l) => new Date(l.start) > now).map(dayOf))].sort();
@@ -474,8 +475,8 @@ function parlayFor(ids, n) {
   for (const d of upcomingDays) {
     const pool = legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now && dayOf(l) === d);
     const keys = [...new Set(pool.map((l) => l.gameKey))];
-    const p = bestParlay(pool, n) || (keys.length === 1 ? bestSameGame(pool, keys[0], n) : null);
-    if (p) return { ...p, day: d, sgp: keys.length === 1 || undefined };
+    const p = bestParlay(pool, n) || keys.map((k) => bestSameGame(pool, k, n)).filter((x) => x && x.ev > 0).sort((a, b) => b.ev - a.ev)[0];
+    if (p) return { ...p, day: d, sgp: new Set(p.legs.map((l) => l.gameKey)).size === 1 || undefined };
   }
   return null;
 }
