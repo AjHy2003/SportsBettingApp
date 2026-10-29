@@ -1,0 +1,112 @@
+[
+ {
+  "name": "signed-out banner on My bets",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "short password rejected",
+  "ok": true,
+  "info": "Use at least 6 characters for the password."
+ },
+ {
+  "name": "account created and synced on A",
+  "ok": true,
+  "info": "☁️ Synced just now · fan1793315367287@example.com"
+ },
+ {
+  "name": "header shows the account",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "wrong password message",
+  "ok": true,
+  "info": "Wrong email or password."
+ },
+ {
+  "name": "B got A's picks",
+  "ok": true,
+  "info": "[\"p1\",\"p2\"]"
+ },
+ {
+  "name": "B got A's ticket",
+  "ok": true,
+  "info": "[\"t1\"]"
+ },
+ {
+  "name": "B got A's bankroll",
+  "ok": true,
+  "info": "{\"bankroll\":500,\"dailyPct\":4}"
+ },
+ {
+  "name": "B's My bets shows the parlay",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "ticket removed on B is gone on A",
+  "ok": true,
+  "info": "[]"
+ },
+ {
+  "name": "pick added on B is on A",
+  "ok": true,
+  "info": "3"
+ },
+ {
+  "name": "result edited on B is on A",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "book settings synced A → B",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "removed ticket stays removed after reload",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "other accounts can't read your data",
+  "ok": true,
+  "info": "permission-denied"
+ },
+ {
+  "name": "new account starts empty",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "sign out clears this device",
+  "ok": true,
+  "info": "{\"picks\":[],\"tickets\":[],\"bankroll\":null}"
+ },
+ {
+  "name": "signed-out banner back",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "signing back in restores picks and bankroll",
+  "ok": true,
+  "info": "{\"picks\":[\"1793315370967-0bs2a\",\"p1\",\"p2\"],\"tickets\":[],\"bankroll\":{\"bankroll\":500,\"dailyPct\":4}}"
+ },
+ {
+  "name": "no page errors on A",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "no page errors on B",
+  "ok": true,
+  "info": ""
+ },
+ {
+  "name": "no page errors on C",
+  "ok": true,
+  "info": ""
+ }
+]
