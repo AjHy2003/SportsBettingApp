@@ -15,6 +15,7 @@ import { timeAgo } from "../news.js";
 import { placeBet } from "../sportsbooks.js";
 import { buildMoonshot, oneIn } from "../moonshot.js";
 import { moveText } from "../movement.js";
+import { bankroll, bankrollOk, suggestedBudget, spend, openBankrollSettings, bankrollMoney } from "../bankroll.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
@@ -26,6 +27,7 @@ const SPORTS = [
   { id: "ncaaf", label: "College FB", leagues: ["ncaaf"] },
   { id: "nhl", label: "🏒 NHL", leagues: ["nhl"] },
 ];
+const LEG_COUNTS = [2, 3, 4, 5, 6, 8, 10];
 const MOON_STAKES = [1, 2, 5, 10, 20];
 const MOON_TARGETS = [1000, 5000, 10000, 25000, 50000];
 const BUDGETS = [5, 10, 25, 50, 100];
@@ -61,7 +63,7 @@ export async function renderToday(ctx, q) {
     <div class="crumbs"><a href="#/">Home</a> › Today</div>
     <div class="row" style="justify-content:space-between">
       <h1>🔥 Today's picks</h1>
-      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""}` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
+      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
     ${today ? "" : `<div class="notice warn" style="margin-bottom:14px">Daily picks are generated on GitHub each morning (around 5am, 11:45am and 5pm ET). They'll show here after the first run. You can still build a same-game parlay for any game below.</div>`}
     <div class="card">
@@ -69,9 +71,11 @@ export async function renderToday(ctx, q) {
       <div class="chips scroll" id="t-sport">${SPORTS.map((s) => `<button class="chip" data-s="${s.id}">${s.label}</button>`).join("")}</div>
       <div class="grid two" style="margin-top:12px;gap:12px">
         <div><h3>Budget</h3><div class="row"><div class="chips" id="t-budget">${BUDGETS.map((b) => `<button class="chip" data-b="${b}">$${b}</button>`).join("")}</div>
-          <div class="field" style="width:92px"><input id="t-custom" type="number" min="1" step="1" placeholder="Custom" inputmode="numeric"/></div></div></div>
+          <div class="field" style="width:92px"><input id="t-custom" type="number" min="1" step="1" placeholder="Custom" inputmode="numeric"/></div></div>
+          <div class="small muted" id="t-bank" style="margin-top:6px"></div></div>
         <div><h3>Build</h3><div class="row"><div class="seg" id="t-mode"><button data-m="singles">Straight bets</button><button data-m="parlay">Parlay</button><button data-m="mix">Mix</button></div>
-          <div class="seg" id="t-legs">${[2, 3, 4, 5].map((n) => `<button data-n="${n}">${n} legs</button>`).join("")}</div></div></div>
+          <div class="seg" id="t-legs">${LEG_COUNTS.map((n) => `<button data-n="${n}">${n} legs</button>`).join("")}</div>
+          <div class="field" id="t-legs-custom-f" style="width:84px"><input id="t-legs-custom" type="number" min="2" max="15" step="1" placeholder="Legs" inputmode="numeric" title="Any number of legs, 2-15"/></div></div></div>
       </div>
     </div>
     <div class="card" style="margin-top:14px" id="t-ticket"></div>
@@ -112,6 +116,13 @@ export async function renderToday(ctx, q) {
     app.querySelectorAll("#t-mode button").forEach((b) => b.classList.toggle("on", b.dataset.m === state.mode));
     app.querySelectorAll("#t-legs button").forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === Number(state.legs)));
     $("#t-legs").classList.toggle("hidden", state.mode === "singles");
+    $("#t-legs-custom-f").classList.toggle("hidden", state.mode === "singles");
+    if (!LEG_COUNTS.includes(Number(state.legs))) $("#t-legs-custom").value = state.legs;
+    // Bankroll: a suggested budget for today and what's left of your limits.
+    const bk = bankroll(), sug = suggestedBudget(), sp = spend();
+    $("#t-bank").innerHTML = bk.bankroll
+      ? `🏦 Suggested today: <button class="chip ${Number(state.budget) === sug ? "on" : ""}" data-b="${sug}" style="padding:2px 9px">$${sug}</button> · spent today ${bankrollMoney(sp.day)}${bk.dailyLimit ? ` of ${bankrollMoney(bk.dailyLimit)}` : ""}${bk.weeklyLimit ? ` · this week ${bankrollMoney(sp.week)} of ${bankrollMoney(bk.weeklyLimit)}` : ""} · <button class="linkbtn" data-bank style="margin:0">edit</button>`
+      : `<button class="linkbtn" data-bank style="margin:0">🏦 Set your bankroll</button> to get a suggested daily budget and spending limits.`;
     if (!BUDGETS.includes(Number(state.budget))) $("#t-custom").value = state.budget;
   }
 
@@ -163,13 +174,16 @@ export async function renderToday(ctx, q) {
         <div class="kpi"><div class="k">If everything hits</div><div class="v pos">${money(t.totals.maxReturn)}</div></div>
         <div class="kpi"><div class="k">Model expectation</div><div class="v ${t.totals.expectedProfit >= 0 ? "pos" : "neg"}">${signed(t.totals.expectedProfit, 2)}</div></div>
       </div>
+      ${t.bets.some((b) => b.type !== "single" && b.legs.length < Number(state.legs)) ? `<div class="notice" style="margin-top:10px">Only ${t.bets.find((b) => b.type !== "single").legs.length} legs have an edge right now, so the parlay is ${t.bets.find((b) => b.type !== "single").legs.length} legs instead of ${state.legs}. Add your own with + to go longer.</div>` : ""}
       ${t.bets.map(betCard).join("")}`;
     $("#t-copy").onclick = () => {
       const txt = t.bets.map((b) => `${b.type === "single" ? "Straight" : `${b.legs.length}-leg parlay`} ${money(b.stake)} @ ${M.fmtOdds(b.american)}\n${b.legs.map((l) => `  ${l.label} ${M.fmtOdds(l.odds)}`).join("\n")}`).join("\n\n");
       navigator.clipboard?.writeText(txt).then(() => toast("Ticket copied"), () => toast("Copy failed"));
     };
     $("#t-save").onclick = () => {
-      for (const b of t.bets) saveTicket(b.type, b.legs, b.stake, b.american);
+      if (!bankrollOk(t.totals.stake)) return;
+      for (const b of t.bets) saveTicket(b.type, b.legs, b.stake, b.american, { prob: b.prob, skipCheck: true });
+      renderAll();
       toast(`Saved ${t.bets.length} bet${t.bets.length === 1 ? "" : "s"} · track them live under ★ My bets`);
     };
   }
@@ -185,8 +199,9 @@ export async function renderToday(ctx, q) {
   const saveLeg = (l, extra = {}) => addPick({ ...toPick(l), ...extra });
 
   // Save a bet as a ticket (tracked live under ★ My bets) and its legs as picks.
-  function saveTicket(type, legs, stake, american) {
-    const id = addTicket({ type, stake, american, toWin: stake * M.payout(american), legs: legs.map(toPick) });
+  function saveTicket(type, legs, stake, american, { skipCheck = false, ...extra } = {}) {
+    if (!skipCheck && !bankrollOk(stake)) return null;
+    const id = addTicket({ type, stake, american, toWin: stake * M.payout(american), prob: extra.prob ?? legs.reduce((p, l) => p * (l.prob || 0.5), 1), ...extra, legs: legs.map(toPick) });
     for (const l of legs) saveLeg(l, { ticketId: id });
     return id;
   }
@@ -219,7 +234,7 @@ export async function renderToday(ctx, q) {
       ${placeBet(legs, { stake: Number(state.budget) || 10, american: c.american, title: `${legs.length}-leg parlay` })}`;
     $("#t-clear").onclick = () => { state.mine = []; renderAll(); };
     $("#t-save-mine").onclick = () => {
-      saveTicket(sameGame ? "sgp" : legs.length > 1 ? "parlay" : "single", legs, Number(state.budget) || 10, c.american);
+      if (!saveTicket(sameGame ? "sgp" : legs.length > 1 ? "parlay" : "single", legs, Number(state.budget) || 10, c.american, { prob: c.prob })) return;
       toast("Parlay saved · track it live under ★ My bets");
     };
   }
@@ -383,7 +398,7 @@ export async function renderToday(ctx, q) {
       renderMoon();
     };
     $("#t-moon-save").onclick = () => {
-      saveTicket("parlay", m.legs, Number(state.moonStake), m.american);
+      if (!saveTicket("parlay", m.legs, Number(state.moonStake), m.american, { prob: m.prob, kind: "moonshot" })) return;
       toast("Moonshot saved · track it live under ★ My bets");
     };
   }
@@ -395,12 +410,13 @@ export async function renderToday(ctx, q) {
     if (e.target.id === "t-moon-pg") { state.moonPerGame = e.target.checked ? 2 : 1; moonExclude = []; persist(); renderMoon(); return; }
     const s = e.target.closest("#t-sport .chip");
     if (s) { state.sport = s.dataset.s; state.sgpGame = null; state.sgpLegs = null; renderAll(); renderSgp(); return; }
-    const b = e.target.closest("#t-budget .chip");
+    const b = e.target.closest("#t-budget .chip, #t-bank .chip");
     if (b) { state.budget = Number(b.dataset.b); $("#t-custom").value = ""; renderAll(); renderSgp(); return; }
     const m = e.target.closest("#t-mode button");
     if (m) { state.mode = m.dataset.m; renderAll(); return; }
     const n = e.target.closest("#t-legs button");
-    if (n) { state.legs = Number(n.dataset.n); renderAll(); renderSgp(); return; }
+    if (n) { state.legs = Number(n.dataset.n); $("#t-legs-custom").value = ""; renderAll(); renderSgp(); return; }
+    if (e.target.closest("[data-bank]")) { openBankrollSettings(() => { if (ctx.alive()) renderAll(); }); return; }
     const add = e.target.closest("[data-add]");
     if (add) {
       const id = add.dataset.add;
@@ -410,6 +426,7 @@ export async function renderToday(ctx, q) {
     }
   });
   $("#t-custom").addEventListener("input", (e) => { const v = Number(e.target.value); if (v >= 1) { state.budget = v; renderAll(); } });
+  $("#t-legs-custom").addEventListener("input", (e) => { const v = Math.round(Number(e.target.value)); if (v >= 2 && v <= 15) { state.legs = v; renderAll(); renderSgp(); } });
 
   renderAll();
   renderSgp();

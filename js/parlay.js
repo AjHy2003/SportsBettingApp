@@ -78,7 +78,14 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
   budget = Math.max(1, Number(budget) || 10);
   const good = legs.filter((l) => l.edge > 0 && l.prob > 0 && !l.mismatch && usableLeg(l) && GRADE_WEIGHT[l.grade]);
   let bets = [];
-  const parlayOf = (n) => (sgpGameKey ? bestSameGame(legs, sgpGameKey, n) : bestParlay(good, n));
+  // Asked for more legs than there are good ones: build the longest parlay available.
+  const parlayOf = (n) => {
+    for (let k = n; k >= 2; k--) {
+      const p = sgpGameKey ? bestSameGame(legs, sgpGameKey, k) : bestParlay(good, k);
+      if (p) return p;
+    }
+    return null;
+  };
   if (mode === "parlay" || sgpGameKey) {
     const p = parlayOf(nLegs);
     if (p) bets = [{ type: sgpGameKey ? "sgp" : "parlay", stake: budget, ...p }];
@@ -86,7 +93,7 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
     bets = singles(good, budget, SINGLES_COUNT(budget));
   } else {
     // Mix: ~70% on straight bets, ~30% on one parlay.
-    const p = budget >= 4 ? bestParlay(good, nLegs) : null;
+    const p = budget >= 4 ? parlayOf(nLegs) : null;
     const parlayStake = p ? roundStake(budget * 0.3) : 0;
     bets = singles(good, budget - parlayStake, Math.max(1, SINGLES_COUNT(budget) - 1));
     if (p) bets.push({ type: "parlay", stake: parlayStake, ...p });

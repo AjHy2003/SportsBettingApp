@@ -12,6 +12,8 @@ import { renderCustom } from "./views/custom.js";
 import { renderPicks, liveBetsNow } from "./views/picks.js";
 import { renderToday } from "./views/today.js";
 import { renderNews } from "./views/news.js";
+import { renderTrends } from "./views/trends.js";
+import { renderLiveGames } from "./views/livegames.js";
 
 const app = $("#app");
 let navToken = 0;
@@ -38,6 +40,8 @@ async function route() {
     if (parts[0] === "picks") return renderPicks(ctx, q);
     if (parts[0] === "today") return renderToday(ctx, q);
     if (parts[0] === "news") return renderNews(ctx, q);
+    if (parts[0] === "trends") return renderTrends(ctx, q);
+    if (parts[0] === "live") return renderLiveGames(ctx, q);
     if (parts[0] === "l") {
       const L = leagueById(parts[1]);
       if (!L) throw new Error("Unknown league");

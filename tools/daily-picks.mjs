@@ -35,7 +35,7 @@ globalThis.fetch = async (url, opts) => {
 };
 
 const { leagueById, MARKETS } = await import("../js/sports.js");
-const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool } = await import("../js/espn.js");
+const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool, scheduleResults } = await import("../js/espn.js");
 const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
 const { loadDeep } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
@@ -46,6 +46,52 @@ const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
 const { propMove, gameMove } = await import("../js/movement.js");
+
+// ---------- team betting records (against the spread, over/under) ----------
+// ESPN's closing DraftKings line for a finished game, cached on disk forever.
+const CLOSE_DIR = "cache/closing-odds";
+async function closingLine(L, ev) {
+  const f = path.join(CLOSE_DIR, `${L.id}-${ev}.json`);
+  try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { /* not cached */ }
+  const [sport, league] = L.espn.split("/");
+  try {
+    const r = await fetch(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league}/events/${ev}/competitions/${ev}/odds`);
+    if (!r.ok) return null;
+    const items = (await r.json()).items || [];
+    const it = items.find((x) => String(x.provider?.id) === "100") || items.find((x) => String(x.provider?.id) !== "200");
+    const out = { spread: it?.spread ?? null, total: it?.overUnder ?? null };
+    fs.mkdirSync(CLOSE_DIR, { recursive: true });
+    fs.writeFileSync(f, JSON.stringify(out));
+    return out;
+  } catch { return null; }
+}
+
+// This season's record against the closing spread and total.
+async function teamRecord(L, team, sched) {
+  if (!sched) return null;
+  const games = scheduleResults(sched, team.id).filter((g) => String(g.seasonType) !== "1").slice(0, 25);
+  if (!games.length) return null;
+  const rows = [];
+  await pool(games, 6, async (g) => {
+    const c = await closingLine(L, g.eventId);
+    if (!c || (c.spread == null && c.total == null)) return;
+    const line = c.spread == null ? null : g.home ? c.spread : -c.spread; // this team's number
+    const cover = line == null ? null : g.pf - g.pa + line;
+    const tot = c.total == null ? null : g.pf + g.pa - c.total;
+    rows.push({ date: g.date, ats: cover == null ? null : cover > 0 ? "W" : cover < 0 ? "L" : "P", ou: tot == null ? null : tot > 0 ? "O" : tot < 0 ? "U" : "P", home: g.home });
+  });
+  rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const count = (k, v, f = () => true) => rows.filter((r) => r[k] === v && f(r)).length;
+  return {
+    n: rows.length,
+    ats: { w: count("ats", "W"), l: count("ats", "L"), p: count("ats", "P") },
+    atsHome: { w: count("ats", "W", (r) => r.home), l: count("ats", "L", (r) => r.home) },
+    atsAway: { w: count("ats", "W", (r) => !r.home), l: count("ats", "L", (r) => !r.home) },
+    ou: { o: count("ou", "O"), u: count("ou", "U"), p: count("ou", "P") },
+    atsLast5: rows.filter((r) => r.ats).slice(0, 5).map((r) => r.ats).join(""),
+    ouLast5: rows.filter((r) => r.ou).slice(0, 5).map((r) => r.ou).join(""),
+  };
+}
 
 // A big move against an A/B pick usually means news or sharp money the stats don't see.
 function applyMove(leg, mv) {
@@ -221,6 +267,7 @@ async function scanLeague(cfg) {
         gameWeather(L, sum, { indoor: e.competitions?.[0]?.venue?.indoor ?? null }).catch(() => null),
       ]);
       const gc = gameContext(L, sum, standings, schedH, schedA, weather);
+      const [recH, recA] = await Promise.all([teamRecord(L, h.team, schedH).catch(() => null), teamRecord(L, a.team, schedA).catch(() => null)]);
       const game = {
         key: `${L.id}:${e.id}`, league: L.id, eventId: e.id, start: comp.date, matchup: `${a.team.abbreviation} @ ${h.team.abbreviation}`,
         home: { id: h.team.id, abbr: h.team.abbreviation, name: h.team.displayName, logo: h.team.logos?.[0]?.href },
@@ -228,6 +275,8 @@ async function scanLeague(cfg) {
         lines: { details: gc.odds.details, spreadHome: gc.odds.spreadHome, total: gc.odds.total, mlHome: gc.odds.mlHome, mlAway: gc.odds.mlAway },
         weather: weather || undefined,
         dk: gc.odds.dk?.game || undefined,
+        open: gc.odds.open || undefined,
+        records: recH || recA ? { home: recH, away: recA } : undefined,
       };
       const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
       if (cfg.props) {
