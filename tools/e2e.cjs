@@ -161,6 +161,16 @@ const pages = [
       });
     }
   } catch (e) { report.push({ name: "tracker", errors: ["setup: " + e.message] }); }
+  // Moonshots and place-it panels on the Today page.
+  for (const sport of ["all", "basketball", "football", "nhl"]) {
+    await visit(`moonshot-${sport}`, `#/today?sport=${sport}`, async (pg) => {
+      const moon = (await pg.innerText("#t-moon").catch(() => "")).replace(/\s+/g, " ");
+      const books = await pg.$$eval("#t-moon .bookbtn", (x) => x.map((a) => a.href));
+      const dkExact = await pg.$$eval("#t-moon .place-legs a.bookchip", (x) => x.filter((a) => /outcomes=/.test(a.href)).length);
+      const pickDk = await pg.$$eval("#t-picks .bookchip", (x) => x.map((a) => a.href).slice(0, 5));
+      return { moon: moon.slice(0, 900), books, dkExactLegs: dkExact, pickDk };
+    });
+  }
   await visit("home-with-picks", "#/");
   fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
   await browser.close();

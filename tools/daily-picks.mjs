@@ -1,6 +1,6 @@
 // Daily picks generator. Runs in GitHub Actions after the data pipeline:
 //   node tools/daily-picks.mjs --site _site --history picks-data/history.json
-// Scans today's NBA / college basketball games and this week's NFL / college
+// Scans today's NBA / college basketball / NHL games and this week's NFL / college
 // football games: every DraftKings game line and player prop goes through the
 // same model the site uses. Writes:
 //   <site>/data/picks/today.json    all evaluated legs, top picks, record
@@ -35,7 +35,7 @@ globalThis.fetch = async (url, opts) => {
 };
 
 const { leagueById, MARKETS } = await import("../js/sports.js");
-const { api, standingsTable, parseProps, loadGamelogs, pool } = await import("../js/espn.js");
+const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool } = await import("../js/espn.js");
 const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
 const { loadDeep } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
@@ -43,7 +43,8 @@ const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
 const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
-const { bestParlay, bestSameGame, decimalOdds, choosePicks } = await import("../js/parlay.js");
+const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
+const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
 const { loadBooks, matchEvent, shop } = await import("./books.mjs");
 const { leagueNews, isStory } = await import("../js/news.js");
 
@@ -52,6 +53,7 @@ const LEAGUES = [
   { id: "nfl", window: "week", props: true },
   { id: "ncaaf", window: "week", props: true, params: "groups=80&limit=300" },
   { id: "ncaab", window: "day", props: true, params: "groups=50&limit=400" },
+  { id: "nhl", window: "day", props: true },
 ];
 const now = new Date();
 const etDate = (d) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(d).replaceAll("-", "");
@@ -114,7 +116,15 @@ function lineLegs(L, gc, game, bookEv) {
       if (sh && s.odds != null && decimalOdds(sh.best.odds) > decimalOdds(odds) + 1e-9) {
         leg.bestBook = { title: sh.best.title, odds: sh.best.odds, ev: prob * decimalOdds(sh.best.odds) - 1 };
       }
-      if (sh) leg.books = sh.books;
+      if (sh) {
+        leg.books = sh.books;
+        const links = Object.fromEntries(sh.prices.filter((p) => p.link).map((p) => [p.book, p.link]));
+        if (Object.keys(links).length) leg.bookLinks = links;
+      }
+      // DraftKings bet-slip link from ESPN's odds (adds this exact selection), else the game page.
+      const dk = gc.odds.dk?.[kind]?.[s.side];
+      leg.dk = dk || gc.odds.dk?.game || undefined;
+      leg.dkExact = !!dk || undefined;
       legs.push(leg);
     });
   }
@@ -146,8 +156,31 @@ function propLeg(L, game, r) {
     book: { line: r.p.line, over: r.p.over, under: r.p.under },
     questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
     roleChange: res.verdict.roleChange,
+    dk: game.dk || undefined,
     context: r.context?.notes?.length ? r.context.notes : undefined,
   };
+}
+
+// Alt-line legs from DraftKings milestones ("30+ points" at a price): plus-money rungs
+// where the model beats the price. Moonshot material, never top picks.
+function altLegs(L, game, r, ladder) {
+  const res = r.res;
+  if (!ladder?.length || !res?.probOver || res.verdict?.mismatch || res.verdict?.roleChange || r.context?.status?.maybe) return [];
+  const out = [];
+  for (const { at, odds } of ladder) {
+    if (odds == null || odds < 100) continue;
+    const p = res.probOver(at - 0.5)?.over;
+    if (!(p >= 0.08)) continue;
+    const edge = p - impliedProb(odds);
+    if (edge <= 0) continue;
+    out.push({
+      id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:alt${at}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
+      kind: "prop", alt: true, player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation, marketKey: r.key, market: r.m.label,
+      line: at - 0.5, side: "OVER", label: `${r.who.name} ${at}+ ${r.m.label}`, odds, priced: true, prob: p, edge, ev: p * decimalOdds(odds) - 1,
+      grade: "ALT", lean: true, proj: Number(res.projection.toFixed(2)), why: `Projection ${res.projection.toFixed(1)} · model ${pctTxt(p)} vs ${pctTxt(impliedProb(odds))} priced`, dk: game.dk || undefined,
+    });
+  }
+  return out.sort((a, b) => b.edge - a.edge).slice(0, 2);
 }
 
 let failedLeagues = 0;
@@ -158,14 +191,14 @@ console.log(BOOKS ? `odds api: ${Object.values(BOOKS.events).reduce((s, x) => s 
 async function scanLeague(cfg) {
   const L = leagueById(cfg.id);
   let events = [];
-  try { events = await upcomingEvents(cfg, L); } catch (e) { console.log(`${cfg.id}: scoreboard failed ${e.message}`); failedLeagues++; return { games: [], legs: [] }; }
+  try { events = await upcomingEvents(cfg, L); } catch (e) { console.log(`${cfg.id}: scoreboard failed ${e.message}`); failedLeagues++; return { games: [], legs: [], alts: [] }; }
   console.log(`${cfg.id}: ${events.length} upcoming games`);
-  if (!events.length) return { games: [], legs: [] };
+  if (!events.length) return { games: [], legs: [], alts: [] };
   const [standings, deep] = await Promise.all([
     api.standings(L).then(standingsTable).catch(() => null),
     loadDeep(L).catch(() => null),
   ]);
-  const games = [], legs = [];
+  const games = [], legs = [], alts = [];
   await pool(events, 3, async (e) => {
     try {
       const sum = await api.summary(L, e.id);
@@ -182,16 +215,20 @@ async function scanLeague(cfg) {
         away: { id: a.team.id, abbr: a.team.abbreviation, name: a.team.displayName, logo: a.team.logos?.[0]?.href },
         lines: { details: gc.odds.details, spreadHome: gc.odds.spreadHome, total: gc.odds.total, mlHome: gc.odds.mlHome, mlAway: gc.odds.mlAway },
         weather: weather || undefined,
+        dk: gc.odds.dk?.game || undefined,
       };
       const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
       if (cfg.props) {
-        const props = await api.propBets(L, e.id).then((items) => parseProps(items, L.markets)).catch(() => null);
+        const items = await api.propBets(L, e.id).catch(() => null);
+        const props = items ? parseProps(items, L.markets) : null;
+        const miles = items ? parseMilestones(items, L.markets) : null;
         if (props?.size) {
           const people = await loadPeople(L, [gc.H, gc.A]);
           const rows = propRows(L, props, people);
           await scanRows(L, rows, { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum), weather }, standings, deep, concurrency: 4 });
           game.out = rows.filter((r) => r.out).map((r) => `${r.who.name} (${r.out})`).filter((x, i, a) => a.indexOf(x) === i);
           for (const r of rows) if (r.res?.verdict?.lean) gameLegs.push(propLeg(L, game, r));
+          if (miles?.size) for (const r of rows) alts.push(...altLegs(L, game, r, miles.get(r.aid)?.[r.key]));
         }
       }
       game.nLegs = gameLegs.length;
@@ -201,8 +238,8 @@ async function scanLeague(cfg) {
       console.log(`  ${cfg.id} ${e.id} failed: ${err.message}`);
     }
   });
-  console.log(`${cfg.id}: ${games.length} games, ${legs.length} legs`);
-  return { games, legs };
+  console.log(`${cfg.id}: ${games.length} games, ${legs.length} legs, ${alts.length} alt-line legs`);
+  return { games, legs, alts };
 }
 
 // ---------- track record ----------
@@ -321,6 +358,7 @@ const results = [];
 for (const cfg of LEAGUES) results.push(await scanLeague(cfg));
 const games = results.flatMap((r) => r.games).sort((a, b) => new Date(a.start) - new Date(b.start));
 const legs = results.flatMap((r) => r.legs);
+const alts = results.flatMap((r) => r.alts || []);
 
 // News: the latest ESPN story or video about each pick's player (props) or either
 // team (game lines), and the top stories for the notification.
@@ -365,13 +403,23 @@ history.updated = issued;
 fs.mkdirSync(path.dirname(HISTORY), { recursive: true });
 fs.writeFileSync(HISTORY, JSON.stringify(history));
 
-const groups = { basketball: ["nba", "ncaab"], football: ["nfl", "ncaaf"] };
+const groups = { basketball: ["nba", "ncaab"], football: ["nfl", "ncaaf"], hockey: ["nhl"] };
 const parlayFor = (ids, n) => bestParlay(legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now), n);
 const featured = {
   basketball: parlayFor(groups.basketball, 3),
   football: parlayFor(groups.football, 3),
-  any: parlayFor([...groups.basketball, ...groups.football], 3),
+  hockey: parlayFor(groups.hockey, 3),
+  any: parlayFor(Object.values(groups).flat(), 3),
 };
+// Featured moonshots: $10 -> $10,000 with the best model chance, per sport.
+const moonPool = (ids) => [...legs, ...alts].filter((l) => ids.includes(l.league) && new Date(l.start) > now && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
+const moonshots = {};
+for (const [k, ids] of Object.entries({ all: Object.values(groups).flat(), ...groups })) {
+  const m = buildMoonshot(moonPool(ids), { stake: 10, target: 10000 });
+  if (m?.reached) moonshots[k] = { legs: m.legs.map((l) => l.id), american: m.american, decimal: Number(m.decimal.toFixed(2)), prob: m.prob, payout: Math.round(m.payout), ev: m.ev };
+}
+console.log(`moonshots: ${Object.entries(moonshots).map(([k, m]) => `${k} ${m.legs.length} legs 1 in ${oneIn(m.prob)}`).join(", ") || "none"}`);
+
 const sgps = games
   .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, sgp: bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
   .filter((x) => x.sgp && x.sgp.ev > 0)
@@ -381,6 +429,8 @@ const sgps = games
 const slim = (l) => ({ ...l, prob: Number(l.prob.toFixed(4)), edge: Number(l.edge.toFixed(4)), ev: Number(l.ev.toFixed(4)) });
 const today = {
   generated: issued, date: todayET, games, legs: legs.map(slim), picks: picks.map((p) => p.id),
+  alts: alts.map(slim),
+  moonshots,
   featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev } : null])),
   sgps: sgps.map((x) => ({ game: x.game, matchup: x.matchup, league: x.league, legs: x.sgp.legs.map((l) => l.id), american: x.sgp.american, prob: x.sgp.prob, ev: x.sgp.ev })),
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
@@ -398,12 +448,19 @@ const counts = ["A", "B"].map((g) => `${picks.filter((p) => p.grade === g).lengt
 const lines = picks.slice(0, 6).map(short);
 if (featured.basketball) lines.push(`🏀 3-leg parlay ${fmtOdds(featured.basketball.american)} (${pctTxt(featured.basketball.prob)} to hit)`);
 if (featured.football) lines.push(`🏈 3-leg parlay ${fmtOdds(featured.football.american)} (${pctTxt(featured.football.prob)} to hit)`);
+if (moonshots.all) lines.push(`🚀 Moonshot: $10 → $${moonshots.all.payout.toLocaleString("en-US")} (${moonshots.all.legs.length} legs, est. 1 in ${oneIn(moonshots.all.prob)}; lottery money only)`);
 for (const id of ["nba", "nfl"]) {
   const st = topStories.find((x) => x.league === id);
   if (st) lines.push(`📰 ${leagueById(id).name}: ${st.headline}`);
 }
 const rec = today.record.last30;
-if (rec.w + rec.l) lines.push(`Last 30 days: ${rec.w}-${rec.l}, ${rec.units >= 0 ? "+" : ""}${rec.units.toFixed(1)}u`);
+// Mondays: last week's report card.
+const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short" }).format(now);
+const wk = today.record.last7, clvAll = today.record.clv;
+if (weekday === "Mon" && wk.w + wk.l) {
+  const best = ["A", "B", "C"].map((g) => ({ g, ...wk.byGrade[g] })).filter((x) => x.w + x.l).sort((a, b) => b.units - a.units)[0];
+  lines.push(`📊 Last week: ${wk.w}-${wk.l}, ${wk.units >= 0 ? "+" : ""}${wk.units.toFixed(1)}u${best ? ` · best: ${best.g} picks ${best.w}-${best.l}` : ""}${clvAll?.rate != null ? ` · beat the closing line ${Math.round(clvAll.rate * 100)}%` : ""}`);
+} else if (rec.w + rec.l) lines.push(`Last 30 days: ${rec.w}-${rec.l}, ${rec.units >= 0 ? "+" : ""}${rec.units.toFixed(1)}u`);
 fs.writeFileSync("notify.json", JSON.stringify({
   skip: failedLeagues === LEAGUES.length,
   title: picks.length ? `PickLab: ${picks.length} picks today (${counts})` : "PickLab: no strong edges today",

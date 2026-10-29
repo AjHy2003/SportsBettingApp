@@ -21,7 +21,7 @@ export async function loadBooks({ key, cacheFile, refresh, leagues }) {
       const sport = SPORT_KEYS[lg];
       if (!sport) continue;
       try {
-        const r = await fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${encodeURIComponent(key)}&regions=us&markets=h2h,spreads,totals&oddsFormat=american`);
+        const r = await fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${encodeURIComponent(key)}&regions=us&markets=h2h,spreads,totals&oddsFormat=american&includeLinks=true`);
         out.remaining = r.headers.get("x-requests-remaining") ?? out.remaining;
         if (!r.ok) { console.log(`odds api ${lg}: HTTP ${r.status}`); continue; }
         out.events[lg] = await r.json();
@@ -68,7 +68,8 @@ export function shop(ev, kind, side, point) {
     if (!m) continue;
     const mine = m.outcomes.find((o) => o.name === name && (kind === "ml" || o.point === point));
     if (!mine) continue;
-    prices.push({ book: b.key, title: b.title, odds: mine.price });
+    // Bet-slip deep link when the book provides one (may contain a {state} placeholder).
+    prices.push({ book: b.key, title: b.title, odds: mine.price, link: mine.link || m.link || b.link || null });
     const otherPoint = kind === "spread" ? -point : point;
     const other = m.outcomes.find((o) => o.name === otherName && (kind === "ml" || o.point === otherPoint));
     if (other) fair.push(implied(mine.price) / (implied(mine.price) + implied(other.price)));
