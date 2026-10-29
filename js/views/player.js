@@ -5,7 +5,7 @@ import { addPick } from "../store.js";
 import { loadDeep, loadDeepPlayer, deepPlayerPanel } from "../deep.js";
 import { mergeDeepStats } from "../scan.js";
 import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
-import { injuryReport, playerContext } from "../context.js";
+import { injuryReport, playerContext, roleChange } from "../context.js";
 
 export async function renderPlayer(ctx, L, id, q) {
   const { app } = ctx;
@@ -195,6 +195,8 @@ export async function renderPlayer(ctx, L, id, q) {
     const { res, withVal } = runProp(fam, m, games, { line, oddsOver: state.oddsOver, oddsUnder: state.oddsUnder, opp: opp0, role: state.role, minutes: state.minutes, posted: myProps[m.key], context: gctx });
     if (gctx?.status?.maybe && res.verdict && ["A", "B"].includes(res.verdict.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
     if (gctx?.status?.out && res.verdict) { res.verdict.grade = "PASS"; res.verdict.side = null; }
+    const rc = res.verdict && roleChange(gctx, a.position?.abbreviation, res.verdict.lean, line, res.projection);
+    if (rc) { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.roleChange = rc; }
 
     // Book info
     const p = myProps[m.key];
@@ -214,6 +216,7 @@ export async function renderPlayer(ctx, L, id, q) {
           ${v.placeholder ? `<div class="small muted">No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade.</div>` : ""}
           ${v.capped && !v.placeholder ? `<div class="small faint">Capped at B: no market price to compare against.</div>` : ""}
           ${gctx?.status ? `<div class="notice warn" style="margin-top:6px">Injury report: <b>${esc(gctx.status.status)}</b>${gctx.status.out ? " — no grade; props are usually voided if the player doesn't play." : v.questionable ? " — grade capped at C until the status clears." : ""}</div>` : ""}
+          ${v.roleChange ? `<div class="notice warn" style="margin-top:6px">${esc(v.roleChange.join(", "))} ${v.roleChange.length > 1 ? "are" : "is"} out tonight, and this player has rarely played without ${v.roleChange.length > 1 ? "them" : "that teammate"}. A line this far above the projection is likely the book pricing a bigger role. No grade on the under.</div>` : ""}
           ${v.mismatch && !v.placeholder ? `<div class="notice warn" style="margin-top:6px">The line (${line}) is far from recent production (projection ${fx(res.projection)}). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. ${v.grade === "PASS" ? "No grade until you've checked the news." : "Grade capped at C."}</div>` : ""}
           <div class="small muted">${v.lean ? `Model ${pct(v.prob, 1)} vs ${pct(M.impliedProb(v.lean === "OVER" ? res.oddsOver : res.oddsUnder), 1)} needed to break even · edge ${signed(v.edge * 100, 1)} pts · EV ${signed(v.ev * 100, 1)}%` : ""}</div>
           ${res.statsOver != null ? `<div class="small faint">Over: stats only ${pct(res.statsOver)}${res.marketProb != null ? ` · market ${pct(res.marketProb)} · blended ${pct(res.pOver / (1 - res.pPush))}` : " · no market anchor"}</div>` : ""}

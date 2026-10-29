@@ -196,7 +196,7 @@ async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, dee
       <div class="table-wrap"><table><thead><tr><th>Player</th><th>Market</th><th class="r">Line</th><th class="r">Over</th><th class="r">Under</th><th class="r">Proj</th><th class="r">P(over)</th><th>Pick</th><th class="r">Edge</th><th class="r">Grade</th><th></th></tr></thead><tbody>
       ${rows.map((r) => {
         const v = r.res?.verdict;
-        const flag = r.out ? ` <span class="pill neg">${esc(r.out)}</span>` : r.context?.status?.maybe ? ` <span class="pill" style="color:var(--gold)">${esc(r.context.status.status)}</span>` : r.context?.withWithout ? ` <span class="pill gold" title="${esc(r.context.withWithout.notes[0])}">teammate out</span>` : "";
+        const flag = r.out ? ` <span class="pill neg">${esc(r.out)}</span>` : r.context?.status?.maybe ? ` <span class="pill" style="color:var(--gold)">${esc(r.context.status.status)}</span>` : r.res?.verdict?.roleChange ? ` <span class="pill" style="color:var(--gold)" title="${esc(r.res.verdict.roleChange.join(", "))} out: likely a bigger role tonight">role change</span>` : r.context?.withWithout?.notes.length ? ` <span class="pill gold" title="${esc(r.context.withWithout.notes[0])}">teammate out</span>` : "";
         return `<tr class="${v && v.grade !== "PASS" ? "hl" : ""}"><td>${esc(r.who.name)} <span class="faint">${esc(r.who.team?.abbreviation || "")} ${esc(r.who.pos || "")}</span>${flag}</td><td>${esc(r.m.label)}</td>
         <td class="r">${r.p.line}</td><td class="r">${M.fmtOdds(r.p.over)}</td><td class="r">${M.fmtOdds(r.p.under)}</td>
         <td class="r">${r.res ? fx(r.res.projection) : r.err ? "—" : ""}</td><td class="r">${r.res ? pct(r.res.pOver) : ""}</td>

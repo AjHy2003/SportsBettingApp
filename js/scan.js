@@ -4,7 +4,7 @@ import { api, loadGamelogs, pool } from "./espn.js";
 import { MARKETS } from "./sports.js";
 import { loadDeepPlayer, deepGameStats } from "./deep.js";
 import { marketsFor, opponentFactor, runProp, playedGames, combineOpponent } from "./props.js";
-import { playerContext } from "./context.js";
+import { playerContext, roleChange } from "./context.js";
 
 export async function loadPeople(L, teams) {
   const people = new Map();
@@ -74,6 +74,8 @@ export async function scanRows(L, rows, { game, standings, deep, concurrency = 4
     if (!res.n) { r.err = true; continue; }
     // A questionable player might sit or be limited: never more than a C.
     if (context?.status?.maybe && ["A", "B"].includes(res.verdict?.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
+    const rc = res.verdict && roleChange(context, r.who.pos, res.verdict.lean, r.p.line, res.projection);
+    if (rc) { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.roleChange = rc; }
     r.res = res;
     r.edge = res.verdict?.edge;
     r.opp = combineOpponent(opp, context);

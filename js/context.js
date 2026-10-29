@@ -92,7 +92,8 @@ export async function loadLineups(L, teamAbbr) {
 
 // How the player produced in games without tonight's missing teammates,
 // relative to the (recency-weighted) sample the projection already uses.
-// games: playedGames() output, newest first. Returns { factor, notes[], detail } or null.
+// games: playedGames() output, newest first.
+// Returns null without lineup data, else { factor, notes[], names[] (used), regulars[] (out teammates who usually play) }.
 export function withWithout({ games, m, lineup, outTeammates, halfLife = 10 }) {
   if (!lineup?.games || !outTeammates?.length) return null;
   const G = lineup.games;
@@ -100,8 +101,10 @@ export function withWithout({ games, m, lineup, outTeammates, halfLife = 10 }) {
   if (mine.length < 6) return null;
   // Only teammates who were real contributors in this sample matter.
   const freq = (id) => mine.filter((x) => G[String(x.g.eventId)].p[id] != null).length / mine.length;
-  const relevant = outTeammates.filter((t) => freq(t.id) >= 0.3).sort((a, b) => freq(b.id) - freq(a.id)).slice(0, 3);
-  if (!relevant.length) return null;
+  const regulars = outTeammates.filter((t) => freq(t.id) >= 0.3).sort((a, b) => freq(b.id) - freq(a.id));
+  const none = { factor: 1, notes: [], names: [], regulars };
+  const relevant = regulars.slice(0, 3);
+  if (!relevant.length) return none;
   const absentAll = (x, ids) => ids.every((id) => G[String(x.g.eventId)].p[id] == null);
   let ids = relevant.map((t) => t.id);
   let without = mine.filter((x) => absentAll(x, ids));
@@ -109,7 +112,7 @@ export function withWithout({ games, m, lineup, outTeammates, halfLife = 10 }) {
     ids = [ids[0]];
     without = mine.filter((x) => absentAll(x, ids));
   }
-  if (without.length < 2) return null;
+  if (without.length < 2) return none;
   const names = relevant.filter((t) => ids.includes(t.id)).map((t) => t.name);
   const perMin = m.perMinute && mine.every((x) => x.g.minutes > 0);
   const rate = (xs, weighted) => {
@@ -134,10 +137,25 @@ export function withWithout({ games, m, lineup, outTeammates, halfLife = 10 }) {
   return {
     factor,
     names,
+    regulars,
     nWithout: n,
     nWith: avgWith.length,
     notes: [`${who} out: ${fmt(without)} ${m.label.toLowerCase()} in ${n} game${n === 1 ? "" : "s"} without vs ${fmt(avgWith)} with → ×${factor.toFixed(3)}`],
   };
+}
+
+const POS_GROUP = { PG: "G", SG: "G", G: "G", SF: "F", PF: "F", F: "F", FB: "RB" };
+const posGroup = (p) => POS_GROUP[p] || p;
+
+// A regular at the same position is out and the player has (almost) never played
+// without them: a line well above the projection is the book pricing the bigger
+// role, not an edge on the under. Returns the missing teammates' names or null.
+export function roleChange(context, pos, lean, line, projection) {
+  const ww = context?.withWithout;
+  if (!ww?.regulars?.length || lean !== "UNDER" || !(line > projection * 1.1)) return null;
+  const g = posGroup(pos);
+  const missing = ww.regulars.filter((t) => g && posGroup(t.pos) === g && !ww.names.includes(t.name));
+  return missing.length ? missing.map((t) => t.name) : null;
 }
 
 // Everything above for one player in one game.

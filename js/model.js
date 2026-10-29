@@ -264,6 +264,11 @@ export function analyzeProp(games, opts) {
   const mismatch = isFinite(line) ? Math.abs(projection - line) / sdProj : 0;
   if (mismatch >= 1.5 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
   else if (mismatch >= 1.0 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  // Same idea in probability terms: stats saying 80%+ where the book says 50% is
+  // almost always missing information, not a gift.
+  const gap = marketProb != null && statsOver != null ? Math.abs(statsOver - marketProb) : 0;
+  if (gap >= 0.4 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
+  else if (gap >= 0.3 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
 
   return {
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,

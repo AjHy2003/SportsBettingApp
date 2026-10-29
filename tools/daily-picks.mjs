@@ -129,7 +129,7 @@ function propLeg(L, game, r) {
     `Projection ${res.projection.toFixed(1)} vs line ${r.p.line}`,
     r.l10?.n ? `${side.toLowerCase()} in ${hits}/${r.l10.n} of last ${r.l10.n}` : "",
     r.opp?.factor && Math.abs(r.opp.factor - 1) > 0.02 ? `matchup ×${r.opp.factor.toFixed(2)}` : "",
-    r.context?.withWithout ? r.context.withWithout.notes[0] : "",
+    r.context?.withWithout?.notes[0] || "",
     r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
   ].filter(Boolean).join(" · ");
   return {
@@ -141,6 +141,7 @@ function propLeg(L, game, r) {
     mismatch: !!res.verdict.mismatch,
     book: { line: r.p.line, over: r.p.over, under: r.p.under },
     questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
+    roleChange: res.verdict.roleChange,
     context: r.context?.notes?.length ? r.context.notes : undefined,
   };
 }
