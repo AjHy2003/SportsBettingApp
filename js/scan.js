@@ -44,7 +44,7 @@ export function propRows(L, propsAll, people) {
 }
 
 // Run the prop model on every row.
-// game = { H, A, date, lines?: {spreadHome, total}, report?: injuryReport() map }.
+// game = { H, A, date, lines?: {spreadHome, total}, report?: injuryReport() map, weather?: gameWeather() }.
 export async function scanRows(L, rows, { game, standings, deep, concurrency = 4, onProgress } = {}) {
   const ids = [...new Set(rows.map((r) => r.aid))];
   const logs = new Map(), deepPlayers = new Map();
@@ -68,7 +68,7 @@ export async function scanRows(L, rows, { game, standings, deep, concurrency = 4
     const isHome = r.who.team && String(r.who.team.id) === String(H.id);
     const next = r.who.team ? { oppId: isHome ? A.id : H.id, opp: isHome ? A.abbreviation : H.abbreviation, home: isHome, date: game.date } : null;
     const opp = opponentFactor({ L, fam, m: r.m, next, standings, deep, athlete: { id: r.aid, position: { abbreviation: r.who.pos }, team: r.who.team } });
-    const context = r.who.team ? await playerContext({ L, fam, m: r.m, games, teamId: r.who.team.id, teamAbbr: r.who.team.abbreviation, isHome, lines: game.lines, standings, report: game.report, playerId: r.aid }) : null;
+    const context = r.who.team ? await playerContext({ L, fam, m: r.m, games, teamId: r.who.team.id, teamAbbr: r.who.team.abbreviation, isHome, lines: game.lines, standings, report: game.report, playerId: r.aid, weather: game.weather }) : null;
     if (context?.status?.out) { r.err = true; r.out = context.status.status; continue; }
     const { res, withVal } = runProp(fam, r.m, games, { line: r.p.line, oddsOver: r.p.over, oddsUnder: r.p.under, opp, posted: r.p, context });
     if (!res.n) { r.err = true; continue; }

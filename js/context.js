@@ -6,6 +6,7 @@
 //     games without those teammates (with/without splits).
 import { marketValue } from "./props.js";
 import { TEAM_REGRESS } from "./gamemodel.js";
+import { weatherEffect, weatherPropFactor } from "./weather.js";
 
 // How strongly each market tracks the team's scoring environment.
 const ENV_ELASTICITY = {
@@ -159,7 +160,7 @@ export function roleChange(context, pos, lean, line, projection) {
 }
 
 // Everything above for one player in one game.
-export async function playerContext({ L, fam, m, games, teamId, teamAbbr, isHome, lines, standings, report, playerId }) {
+export async function playerContext({ L, fam, m, games, teamId, teamAbbr, isHome, lines, standings, report, playerId, weather = null }) {
   const avgMinutes = games.slice(0, 10).reduce((s, g) => s + (g.minutes || 0), 0) / Math.max(1, Math.min(10, games.length));
   const v = vegasContext({ fam, m, teamId, teamAbbr, isHome, lines, standings, avgMinutes });
   const me = playerStatus(report, teamId, playerId);
@@ -169,10 +170,14 @@ export async function playerContext({ L, fam, m, games, teamId, teamAbbr, isHome
     const lineup = await loadLineups(L, teamAbbr);
     ww = withWithout({ games, m, lineup, outTeammates: outMates, halfLife: fam === "football" ? 6 : 10 });
   }
+  // Outdoor football weather: wind and rain move the pass/run mix (and scoring when no Vegas total).
+  const eff = weatherEffect(weather);
+  const wf = weatherPropFactor(eff, m.key, v.applied ? ENV_ELASTICITY[fam]?.[m.key] || 0 : 0);
   return {
-    factor: v.factor * (ww?.factor ?? 1),
+    factor: v.factor * (ww?.factor ?? 1) * (wf ?? 1),
     minutesFactor: v.minutesFactor,
-    notes: [...v.notes, ...(ww?.notes || [])],
+    notes: [...v.notes, ...(ww?.notes || []), ...(wf ? [`Weather: ${eff.why} → ×${wf.toFixed(3)}`] : [])],
+    weather: wf ? { factor: wf, why: eff.why } : null,
     implied: v.implied,
     vegasApplied: !!v.applied,
     status: me,

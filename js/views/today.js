@@ -4,11 +4,12 @@ import { leagueById } from "../sports.js";
 import { api, standingsTable, parseProps } from "../espn.js";
 import * as M from "../model.js";
 import { esc, loading, setTitle, pct, fx, signed, fmtDate, fmtTime, toast } from "../ui.js";
-import { addPick } from "../store.js";
+import { addPick, addTicket } from "../store.js";
 import { loadDeep } from "../deep.js";
 import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
+import { gameWeather } from "../weather.js";
 import { planTicket, combine, compatible, choosePicks, bestSameGame } from "../parlay.js";
 import { timeAgo } from "../news.js";
 
@@ -154,18 +155,26 @@ export async function renderToday(ctx, q) {
       navigator.clipboard?.writeText(txt).then(() => toast("Ticket copied"), () => toast("Copy failed"));
     };
     $("#t-save").onclick = () => {
-      for (const b of t.bets) for (const l of b.legs) saveLeg(l);
-      toast(`Saved ${t.bets.reduce((n, b) => n + b.legs.length, 0)} picks`);
+      for (const b of t.bets) saveTicket(b.type, b.legs, b.stake, b.american);
+      toast(`Saved ${t.bets.length} bet${t.bets.length === 1 ? "" : "s"} · track them live under ★ My bets`);
     };
   }
 
-  function saveLeg(l) {
-    if (l.kind === "prop") addPick({ league: l.league, athleteId: l.playerId, athlete: l.player, market: l.marketKey, marketLabel: l.market, line: l.line, side: l.side, odds: l.odds, prob: l.prob, grade: l.grade, eventId: l.eventId, eventDate: l.start, opp: l.matchup });
-    else {
-      const g = games.find((x) => x.key === l.gameKey);
-      addPick({ league: l.league, eventId: l.eventId, eventDate: l.start, athlete: l.matchup, marketLabel: l.market, market: l.kind, game: true, homeAbbr: g?.home.abbr, awayAbbr: g?.away.abbr,
-        side: l.kind === "total" ? (l.side === "OVER" ? `Over ${l.line}` : `Under ${l.line}`) : l.label, line: l.kind === "spread" ? (l.side === "HOME" ? l.line : -l.line) : l.line, odds: l.odds, prob: l.prob, grade: l.grade });
-    }
+  // A leg in the saved-pick shape (store.js), which the live tracker also reads.
+  function toPick(l) {
+    if (l.kind === "prop") return { league: l.league, athleteId: l.playerId, athlete: l.player, market: l.marketKey, marketLabel: l.market, line: l.line, side: l.side, odds: l.odds, prob: l.prob, grade: l.grade, eventId: l.eventId, eventDate: l.start, opp: l.matchup };
+    const g = games.find((x) => x.key === l.gameKey);
+    const [awayAbbr, homeAbbr] = String(l.matchup || "").split(" @ ");
+    return { league: l.league, eventId: l.eventId, eventDate: l.start, athlete: l.matchup, marketLabel: l.market, market: l.kind, game: true, homeAbbr: g?.home.abbr || homeAbbr, awayAbbr: g?.away.abbr || awayAbbr,
+      side: l.kind === "total" ? (l.side === "OVER" ? `Over ${l.line}` : `Under ${l.line}`) : l.label, line: l.kind === "spread" ? (l.side === "HOME" ? l.line : -l.line) : l.line, odds: l.odds, prob: l.prob, grade: l.grade };
+  }
+  const saveLeg = (l, extra = {}) => addPick({ ...toPick(l), ...extra });
+
+  // Save a bet as a ticket (tracked live under ★ My bets) and its legs as picks.
+  function saveTicket(type, legs, stake, american) {
+    const id = addTicket({ type, stake, american, toWin: stake * M.payout(american), legs: legs.map(toPick) });
+    for (const l of legs) saveLeg(l, { ticketId: id });
+    return id;
   }
 
   function renderPicks() {
@@ -186,7 +195,7 @@ export async function renderToday(ctx, q) {
     const c = combine(legs);
     const sameGame = new Set(legs.map((l) => l.gameKey)).size < legs.length;
     const conflicts = legs.some((a, i) => legs.some((b, j) => j > i && !compatible(a, b, a.gameKey === b.gameKey)));
-    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">My parlay · ${legs.length} legs</h3><button class="btn ghost sm" id="t-clear">Clear</button></div>
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">My parlay · ${legs.length} legs</h3><div class="row"><button class="btn ghost sm" id="t-clear">Clear</button><button class="btn sm" id="t-save-mine">★ Save parlay</button></div></div>
       <div class="kpis"><div class="kpi"><div class="k">Odds</div><div class="v">${M.fmtOdds(c.american)}</div></div>
         <div class="kpi"><div class="k">${money(state.budget)} pays</div><div class="v pos">${money(state.budget * c.decimal)}</div></div>
         <div class="kpi"><div class="k">Model hit chance</div><div class="v">${pct(c.prob, 1)}</div></div></div>
@@ -194,6 +203,10 @@ export async function renderToday(ctx, q) {
       ${sameGame ? `<p class="small muted">Includes same-game legs: the book's price will differ from this estimate.</p>` : ""}
       ${legs.map((l) => legRow(l, { inMine: true })).join("")}`;
     $("#t-clear").onclick = () => { state.mine = []; renderAll(); };
+    $("#t-save-mine").onclick = () => {
+      saveTicket(sameGame ? "sgp" : legs.length > 1 ? "parlay" : "single", legs, Number(state.budget) || 10, c.american);
+      toast("Parlay saved · track it live under ★ My bets");
+    };
   }
 
   async function loadSgpLegs(key) {
@@ -205,11 +218,11 @@ export async function renderToday(ctx, q) {
     const sum = await api.summary(L, ev);
     const comp = sum.header.competitions[0];
     const h = comp.competitors.find((c) => c.homeAway === "home"), a = comp.competitors.find((c) => c.homeAway === "away");
-    const [standings, schedH, schedA, deep, props] = await Promise.all([
+    const [standings, schedH, schedA, deep, props, weather] = await Promise.all([
       api.standings(L).then(standingsTable).catch(() => null), api.schedule(L, h.team.id).catch(() => null), api.schedule(L, a.team.id).catch(() => null),
-      loadDeep(L).catch(() => null), api.propBets(L, ev).then((items) => parseProps(items, L.markets)).catch(() => null),
+      loadDeep(L).catch(() => null), api.propBets(L, ev).then((items) => parseProps(items, L.markets)).catch(() => null), gameWeather(L, sum).catch(() => null),
     ]);
-    const gc = gameContext(L, sum, standings, schedH, schedA);
+    const gc = gameContext(L, sum, standings, schedH, schedA, weather);
     const matchup = `${a.team.abbreviation} @ ${h.team.abbreviation}`;
     const st = defaultLines(gc.odds);
     const out = [];
@@ -223,7 +236,7 @@ export async function renderToday(ctx, q) {
     }
     if (props?.size) {
       const people = await loadPeople(L, [gc.H, gc.A]);
-      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum) }, standings, deep });
+      const rows = await scanRows(L, propRows(L, props, people), { game: { H: gc.H, A: gc.A, date: comp.date, lines: { spreadHome: gc.odds.spreadHome, total: gc.odds.total }, report: injuryReport(sum), weather }, standings, deep });
       for (const r of rows) {
         if (!r.res) continue;
         const side = r.res.verdict.lean;

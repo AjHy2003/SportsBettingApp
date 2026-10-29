@@ -1,4 +1,4 @@
-import { api, loadGamelogs, parseProps, standingsTable, pickcenterOdds } from "../espn.js";
+import { api, loadGamelogs, parseProps, parseMilestones, standingsTable, pickcenterOdds } from "../espn.js";
 import * as M from "../model.js";
 import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, hitTile, gameChart, wireChartTips, toast } from "../ui.js";
 import { addPick } from "../store.js";
@@ -7,6 +7,7 @@ import { mergeDeepStats } from "../scan.js";
 import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
 import { injuryReport, playerContext, roleChange } from "../context.js";
 import { articleOf } from "../news.js";
+import { gameWeather, weatherLine } from "../weather.js";
 import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderPlayer(ctx, L, id, q) {
@@ -36,15 +37,17 @@ export async function renderPlayer(ctx, L, id, q) {
   if (!ctx.alive()) return;
 
   const upcoming = next && next.state !== "post";
-  const [propsAll, standings, deep, deepPlayer, nextSum] = await Promise.all([
-    upcoming ? api.propBets(L, next.id).then((items) => parseProps(items, L.markets)).catch(() => null) : null,
+  const [propItems, standings, deep, deepPlayer, nextSum] = await Promise.all([
+    upcoming ? api.propBets(L, next.id).catch(() => null) : null,
     api.standings(L).then(standingsTable).catch(() => null),
     loadDeep(L).catch(() => null),
     loadDeepPlayer(L, id).catch(() => null),
     upcoming ? api.summary(L, next.id).catch(() => null) : null,
   ]);
   if (!ctx.alive()) return;
+  const propsAll = propItems ? parseProps(propItems, L.markets) : null;
   const myProps = propsAll?.get(String(id)) || {};
+  const myMiles = propItems ? parseMilestones(propItems, L.markets).get(String(id)) || {} : {};
   mergeDeepStats(L, games, deepPlayer);
   if (deepPlayer) {
     if (!a.position && deepPlayer.pos) a.position = { abbreviation: deepPlayer.pos };
@@ -76,13 +79,16 @@ export async function renderPlayer(ctx, L, id, q) {
   const nextOdds = nextSum ? pickcenterOdds(nextSum.pickcenter?.[0]) : null;
   const nextLines = nextOdds ? { spreadHome: nextOdds.spreadHome, total: nextOdds.total } : null;
   const report = nextSum ? injuryReport(nextSum) : null;
+  // Outdoor football: forecast for kickoff.
+  let nextWeather = null;
+  const weatherP = nextSum && fam === "football" ? gameWeather(L, nextSum).then((w) => (nextWeather = w)).catch(() => null) : Promise.resolve(null);
   const teamId = a.team?.id || games[0]?.teamId;
   const ctxCache = new Map();
   function contextFor(m) {
     if (!next || (!nextLines && !report)) return null;
     if (!ctxCache.has(m.key)) {
       ctxCache.set(m.key, null);
-      playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id })
+      weatherP.then((weather) => playerContext({ L, fam, m, games, teamId, teamAbbr: a.team?.abbreviation, isHome: next.home, lines: nextLines, standings, report, playerId: id, weather }))
         .then((c) => { ctxCache.set(m.key, c); if (ctx.alive() && state.market === m.key) render(); })
         .catch(() => { ctxCache.set(m.key, { factor: 1, minutesFactor: 1, notes: [] }); if (ctx.alive() && state.market === m.key) render(); });
     }
@@ -119,6 +125,7 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="row" style="justify-content:space-between"><h3 style="margin:0">Hit rate</h3><span class="small muted" id="hr-side"></span></div>
       <div class="hits" id="hits" style="margin-top:10px"></div>
     </div>
+    <div class="card" style="margin-top:14px" id="ladder"></div>
     <div class="card" style="margin-top:14px">
       <div class="row" style="margin-bottom:10px">
         <div class="seg" id="win">${["L5", "L10", "L20", "Season", "Last season", "All"].map((w) => `<button data-w="${w}">${w}</button>`).join("")}</div>
@@ -157,6 +164,7 @@ export async function renderPlayer(ctx, L, id, q) {
 
   function seedLine() {
     const m = market();
+    state.altOnly = false;
     const p = myProps[m.key];
     if (p) {
       state.line = p.line;
@@ -174,6 +182,50 @@ export async function renderPlayer(ctx, L, id, q) {
   }
   if (state.line == null) seedLine();
   else state.lineSource = "user";
+
+  // Alt-line ladder, always anchored to the book's main line (not to an alt line typed above).
+  function renderLadder(m, opp0, gctx, withVal, line) {
+    const box = $("#ladder");
+    const main = myProps[m.key];
+    const { res } = main
+      ? runProp(fam, m, games, { line: main.line, oddsOver: main.over, oddsUnder: main.under, opp: opp0, role: state.role, minutes: state.minutes, posted: main, context: gctx })
+      : runProp(fam, m, games, { line, opp: opp0, role: state.role, minutes: state.minutes, context: gctx });
+    if (!res.n || !res.probOver || !isFinite(res.projection)) { box.innerHTML = ""; return; }
+    const book = myMiles[m.key] || [];
+    let ats = book.length ? book.map((b) => b.at) : ladderRungs(res.projection, res.sd);
+    // Long ladders (NFL yards): the 12 rungs nearest the main line.
+    if (ats.length > 12) {
+      const c = main?.line ?? res.projection;
+      ats = [...ats].sort((a, b) => Math.abs(a - c) - Math.abs(b - c)).slice(0, 12).sort((a, b) => a - b);
+    }
+    const last10 = withVal.slice(0, 10).map((g) => g.value);
+    const rows = ats.map((at) => {
+      const p = res.probOver(at - 0.5)?.over;
+      const dk = book.find((b) => b.at === at)?.odds ?? null;
+      const edge = dk != null && p != null ? p - M.impliedProb(dk) : null;
+      return { at, p, dk, edge, hits: last10.filter((v) => v >= at).length, value: edge != null && edge >= 0.04 && p >= 0.15 && p <= 0.92 };
+    }).filter((r) => r.p != null);
+    const priced = book.some((b) => b.odds != null);
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🪜 Alt lines</h3><span class="small muted">${priced ? "vs DraftKings milestone prices" : book.length ? "DraftKings milestones (no prices posted)" : "Model only"}${main ? ` · anchored to the ${main.line} main line` : ""}</span></div>
+      <div class="table-wrap" style="margin-top:8px"><table class="ladder"><thead><tr><th>Line</th><th class="r">Model</th><th class="r">Fair odds</th>${priced ? `<th class="r">DraftKings</th><th class="r">Edge</th>` : ""}<th class="r">Last 10</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr data-at="${r.at}" class="${r.value ? "value" : ""} ${r.at - 0.5 === line ? "cur" : ""}" title="Analyze ${r.at}+ (over ${r.at - 0.5})">
+        <td><b>${r.at}+</b></td><td class="r">${pct(r.p, r.p < 0.1 || r.p > 0.9 ? 1 : 0)}</td><td class="r">${Math.abs(M.toAmerican(r.p)) <= 5000 ? M.fmtOdds(M.toAmerican(r.p)) : "—"}</td>
+        ${priced ? `<td class="r">${r.dk != null ? M.fmtOdds(r.dk) : "—"}</td><td class="r ${r.edge > 0 ? "pos" : r.edge < 0 ? "neg" : ""}">${r.edge != null ? `${signed(r.edge * 100, 1)}${r.value ? " ✓" : ""}` : "—"}</td>` : ""}
+        <td class="r">${r.hits}/${last10.length}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p class="small faint" style="margin:8px 0 0">X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot.</p>`;
+    box.querySelectorAll("tr[data-at]").forEach((tr) => tr.addEventListener("click", () => {
+      const r = rows.find((x) => String(x.at) === tr.dataset.at);
+      state.line = r.at - 0.5;
+      state.oddsOver = r.dk ?? null;
+      state.oddsUnder = null;
+      state.lineSource = "user";
+      state.altOnly = true;
+      syncInputs();
+      render();
+      $("#verdict").scrollIntoView({ behavior: "smooth", block: "center" });
+    }));
+  }
 
   function syncInputs() {
     $("#f-line").value = state.line ?? "";
@@ -212,6 +264,8 @@ export async function renderPlayer(ctx, L, id, q) {
     const { res, withVal } = runProp(fam, m, games, { line, oddsOver: state.oddsOver, oddsUnder: state.oddsUnder, opp: opp0, role: state.role, minutes: state.minutes, posted: myProps[m.key], context: gctx });
     if (gctx?.status?.maybe && res.verdict && ["A", "B"].includes(res.verdict.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
     if (gctx?.status?.out && res.verdict) { res.verdict.grade = "PASS"; res.verdict.side = null; }
+    // Alt lines from the ladder are over-only ("X+") at DraftKings.
+    if (state.altOnly && res.verdict?.lean === "UNDER") { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.altOnly = true; }
     const rc = res.verdict && roleChange(gctx, a.position?.abbreviation, res.verdict.lean, line, res.projection);
     if (rc) { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.roleChange = rc; }
 
@@ -233,6 +287,7 @@ export async function renderPlayer(ctx, L, id, q) {
           ${v.placeholder ? `<div class="small muted">No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade.</div>` : ""}
           ${v.capped && !v.placeholder ? `<div class="small faint">Capped at B: no market price to compare against.</div>` : ""}
           ${gctx?.status ? `<div class="notice warn" style="margin-top:6px">Injury report: <b>${esc(gctx.status.status)}</b>${gctx.status.out ? " — no grade; props are usually voided if the player doesn't play." : v.questionable ? " — grade capped at C until the status clears." : ""}</div>` : ""}
+          ${v.altOnly ? `<div class="notice" style="margin-top:6px">DraftKings only sells the over (${line + 0.5}+) on alt lines, and the model leans under here, so there's no bet at this line.</div>` : ""}
           ${v.roleChange ? `<div class="notice warn" style="margin-top:6px">${esc(v.roleChange.join(", "))} ${v.roleChange.length > 1 ? "are" : "is"} out tonight, and this player has rarely played without ${v.roleChange.length > 1 ? "them" : "that teammate"}. A line this far above the projection is likely the book pricing a bigger role. No grade on the under.</div>` : ""}
           ${v.mismatch && !v.placeholder ? `<div class="notice warn" style="margin-top:6px">The line (${line}) is far from recent production (projection ${fx(res.projection)}). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. ${v.grade === "PASS" ? "No grade until you've checked the news." : "Grade capped at C."}</div>` : ""}
           <div class="small muted">${v.lean ? `Model ${pct(v.prob, 1)} vs ${pct(M.impliedProb(v.lean === "OVER" ? res.oddsOver : res.oddsUnder), 1)} needed to break even · edge ${signed(v.edge * 100, 1)} pts · EV ${signed(v.ev * 100, 1)}%` : ""}</div>
@@ -279,6 +334,7 @@ export async function renderPlayer(ctx, L, id, q) {
       if (next.oppId) tiles.push([`vs ${next.opp}`, M.hitRate(vals(withVal.filter((g) => String(g.oppId) === String(next.oppId))), line)]);
     }
     $("#hits").innerHTML = tiles.map(([l, h]) => hitTile(l, h, side)).join("");
+    renderLadder(m, opp0, gctx, withVal, line);
 
     // Chart
     const wg = windowGames(withVal);
@@ -309,6 +365,7 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="small" style="display:grid;gap:8px">
         ${next ? `<div><b>Next:</b> ${next.home ? "vs" : "@"} ${esc(next.oppName || next.opp)} · ${fmtDate(next.date, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(next.date)}${restNext != null && restNext >= 0 && (fam === "basketball" || fam === "hockey") ? ` · ${restNext === 0 ? "<b>back-to-back</b>" : `${restNext} day${restNext === 1 ? "" : "s"} rest`}` : ""}</div>` : ""}
         <div><b>Opponent:</b> ${esc(opp.why)}</div>
+        ${nextWeather ? `<div><b>Weather:</b> ${esc(weatherLine(nextWeather))}</div>` : ""}
         ${opp.extra || ""}
         ${gctx?.notes?.length ? `<div><b>Tonight:</b><ul style="margin:4px 0 0;padding-left:18px">${gctx.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>` : state.useCtx && next && nextSum && !gctx ? `<div class="faint">Checking tonight's lines and injury report…</div>` : ""}
         ${gctx?.outMates?.length ? `<div><b>Out for ${esc(a.team?.abbreviation || "the team")}:</b> ${gctx.outMates.map((x) => `${esc(x.name)} <span class="faint">(${esc(x.status)})</span>`).join(", ")}</div>` : ""}
@@ -353,7 +410,8 @@ export async function renderPlayer(ctx, L, id, q) {
   $("#loc").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { state.loc = b.dataset.l; render(); } });
   $("#vsopp")?.addEventListener("click", () => { state.vsOpp = !state.vsOpp; render(); });
   const bind = (sel, key, parse = (v) => v) => $(sel).addEventListener("input", (e) => { state[key] = parse(e.target.value); render(); });
-  $("#f-line").addEventListener("input", () => { state.lineSource = "user"; });
+  $("#f-line").addEventListener("input", () => { state.lineSource = "user"; state.altOnly = false; });
+  ["#f-oo", "#f-uo"].forEach((sel) => $(sel).addEventListener("input", () => { state.altOnly = false; }));
   bind("#f-line", "line", (v) => (v === "" ? null : Number(v)));
   bind("#f-oo", "oddsOver", (v) => (v === "" ? null : Number(v)));
   bind("#f-uo", "oddsUnder", (v) => (v === "" ? null : Number(v)));
@@ -416,4 +474,15 @@ function header(L, a, next, ov) {
     ${inj ? `<div class="notice warn" style="margin-top:10px">Injury: ${esc(inj.status || "")} ${esc(inj.details?.type || "")}</div>` : ""}
     ${news?.headline ? `<p class="small muted" style="margin:10px 0 0"><b>Latest:</b> ${esc(news.headline)}${news.story ? ` <details class="more" style="display:inline"><summary>more</summary><span class="faint">${esc(news.story)}</span></details>` : ""}</p>` : ""}
   </div>`;
+}
+
+// Rungs around the projection: whole numbers for counts, round steps for yards.
+function ladderRungs(proj, sd) {
+  const spread = Math.max(2, (isFinite(sd) ? sd : proj * 0.4) * 2.2);
+  const raw = spread / 4;
+  const step = [1, 2, 5, 10, 20, 25, 50].find((s) => s >= raw) || 50;
+  const lo = Math.max(1, Math.ceil((proj - spread) / step) * step), hi = Math.floor((proj + spread) / step) * step;
+  const out = [];
+  for (let x = lo; x <= hi && out.length < 10; x += step) out.push(x);
+  return out.length ? out : [Math.max(1, Math.round(proj))];
 }

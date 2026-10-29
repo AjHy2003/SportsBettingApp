@@ -114,6 +114,53 @@ const pages = [
     }
     return { skipped: "no finished NBA game on today's slate" };
   });
+  // Weather on outdoor football game pages; alt-line ladders on player pages.
+  for (const g of (today?.games || []).filter((x) => x.weather && !x.weather.indoor).slice(0, 2)) {
+    await visit(`weather-${g.league}-${g.eventId}`, `#/l/${g.league}/g/${g.eventId}`, async (pg) => ({ weather: g.weather, header: (await pg.innerText(".card").catch(() => "")).replace(/\s+/g, " ").slice(0, 300) }));
+  }
+  for (const lg of ["nba", "nfl"]) {
+    const leg = today?.legs?.find((l) => l.kind === "prop" && l.league === lg && ["pts", "reb", "ast", "pra", "rec_yds", "pass_yds"].includes(l.marketKey));
+    if (leg) await visit(`ladder-${lg}`, `#/l/${lg}/p/${leg.playerId}?m=${leg.marketKey}`, async (pg) => {
+      const text = (await pg.innerText("#ladder").catch(() => "")).replace(/\s+/g, " ");
+      const row = await pg.$("#ladder tr[data-at]");
+      if (row) { await row.click(); await pg.waitForTimeout(400); }
+      return { ladder: text.slice(0, 700), afterClick: (await pg.innerText("#verdict").catch(() => "")).replace(/\s+/g, " ").slice(0, 200) };
+    });
+  }
+  // Live tracker: a ticket built from last night's finished NBA games must settle correctly.
+  try {
+    const W = "https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba";
+    const y = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(Date.now() - 864e5)).replaceAll("-", "");
+    const sb = await (await fetch(`${W}/scoreboard?dates=${y}`)).json();
+    const evs = (sb.events || []).filter((e) => e.status?.type?.state === "post").slice(0, 2);
+    const legs = [], expect = [];
+    for (const e of evs) {
+      const sum = await (await fetch(`${W}/summary?event=${e.id}`)).json();
+      const c = sum.header.competitions[0];
+      const home = c.competitors.find((x) => x.homeAway === "home"), away = c.competitors.find((x) => x.homeAway === "away");
+      const h = Number(home.score), a = Number(away.score);
+      const grp = sum.boxscore.players[0].statistics[0];
+      const pi = grp.keys.indexOf("points");
+      const ath = grp.athletes.find((x) => x.stats?.length);
+      const pts = Number(ath.stats[pi]);
+      const base = { league: "nba", eventId: e.id, eventDate: c.date };
+      legs.push({ ...base, athleteId: ath.athlete.id, athlete: ath.athlete.displayName, market: "pts", marketLabel: "Points", side: "OVER", line: pts - 0.5 }); expect.push("won");
+      legs.push({ ...base, athleteId: ath.athlete.id, athlete: ath.athlete.displayName, market: "pts", marketLabel: "Points", side: "OVER", line: pts + 0.5 }); expect.push("lost");
+      legs.push({ ...base, game: true, market: "total", marketLabel: "Total", side: `Under ${h + a + 0.5}`, line: h + a + 0.5, homeAbbr: home.team.abbreviation, awayAbbr: away.team.abbreviation, athlete: `${away.team.abbreviation} @ ${home.team.abbreviation}` }); expect.push("won");
+      const fav = h > a ? home : away;
+      legs.push({ ...base, game: true, market: "ml", marketLabel: "Moneyline", side: `${fav.team.abbreviation} ML`, line: null, homeAbbr: home.team.abbreviation, awayAbbr: away.team.abbreviation, athlete: `${away.team.abbreviation} @ ${home.team.abbreviation}` }); expect.push("won");
+    }
+    if (legs.length) {
+      const tickets = legs.map((l, i) => ({ id: `e2e${i}`, created: new Date().toISOString(), type: "single", stake: 1, american: -110, toWin: 0.91, legs: [l] }));
+      await ctx.addInitScript((t) => { if (!sessionStorage.getItem("seeded")) { localStorage.setItem("picklab.tickets.v1", t); sessionStorage.setItem("seeded", "1"); } }, JSON.stringify(tickets));
+      await visit("tracker", "#/picks?tab=live", async (pg) => {
+        await pg.waitForTimeout(3000);
+        const stored = await pg.evaluate(() => JSON.parse(localStorage.getItem("picklab.tickets.v1")).map((t) => t.result || null));
+        const want = expect.map((x) => (x === "won" ? "W" : "L"));
+        return { expect: want, got: stored, ok: JSON.stringify(stored) === JSON.stringify(want), text: (await pg.innerText("#b-body")).replace(/\s+/g, " ").slice(0, 800) };
+      });
+    }
+  } catch (e) { report.push({ name: "tracker", errors: ["setup: " + e.message] }); }
   await visit("home-with-picks", "#/");
   fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
   await browser.close();

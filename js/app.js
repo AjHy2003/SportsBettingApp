@@ -9,7 +9,7 @@ import { renderRacing, renderDriver } from "./views/racing.js";
 import { renderGolf } from "./views/golf.js";
 import { renderEvents } from "./views/events.js";
 import { renderCustom } from "./views/custom.js";
-import { renderPicks } from "./views/picks.js";
+import { renderPicks, liveBetsNow } from "./views/picks.js";
 import { renderToday } from "./views/today.js";
 import { renderNews } from "./views/news.js";
 
@@ -60,6 +60,15 @@ async function route() {
 
 window.addEventListener("hashchange", route);
 route();
+
+// Red dot on ★ My bets while a saved bet's game is probably in progress.
+function liveDot() {
+  const d = document.querySelector("#bets-btn .live-dot");
+  if (d) d.hidden = !liveBetsNow();
+}
+window.addEventListener("hashchange", liveDot);
+setInterval(liveDot, 60e3);
+liveDot();
 
 // ---------- global player search ----------
 const input = $("#search-input");

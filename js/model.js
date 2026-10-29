@@ -163,6 +163,10 @@ export function hitRate(values, line) {
   return { n: values.length, over, under, push, pct: decided ? over / decided : NaN };
 }
 
+const clampP = (p) => Math.min(0.995, Math.max(0.005, p));
+const logit = (p) => Math.log(p / (1 - p));
+const sigmoid = (z) => 1 / (1 + Math.exp(-z));
+
 // ---------- prop analysis ----------
 // games: [{ value, minutes?, ... }] most recent first.
 // opts: { line, oddsOver, oddsUnder, dist, oppFactor, paceFactor, roleAdj,
@@ -248,6 +252,7 @@ export function analyzeProp(games, opts) {
       final = (1 - marketWeight) * statsOver + marketWeight * mkt;
     }
     var marketProb = mkt;
+    var finalOver = mkt != null ? final : null;
     pPush = model.push;
     pOver = final * (1 - pPush);
     pUnder = (1 - final) * (1 - pPush);
@@ -277,7 +282,34 @@ export function analyzeProp(games, opts) {
   if ((gap >= 0.4 || ratio >= 2) && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
   else if ((gap >= 0.3 || ratio >= 1.6 || outside) && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
 
+  // Alt-line ladder: the same distribution and hit-rate blend at any line, shifted
+  // in log-odds so the posted line keeps its market-anchored probability.
+  // The hit-rate part leans on the model's own probability (not 50/50) so the tails
+  // aren't propped up when no past game got there.
+  const wStats = n >= 8 ? 0.65 : 0.8;
+  const statsAt = (x) => {
+    const mdl = distProbs(x, projection, scaledVar, dist);
+    if (!mdl) return null;
+    let o = 0, u = 0;
+    vals.forEach((v, i) => { if (v > x) o += gw[i]; else if (v < x) u += gw[i]; });
+    const dec = mdl.over + mdl.under;
+    const pm = dec > 0 ? mdl.over / dec : 0.5;
+    return { st: wStats * pm + (1 - wStats) * ((o + 2 * pm) / (o + u + 2)), push: mdl.push };
+  };
+  let shift = null;
+  const probOver = (x) => {
+    const s = statsAt(x);
+    if (!s) return null;
+    if (shift == null) {
+      const atLine = typeof finalOver === "number" && isFinite(line) ? statsAt(line) : null;
+      shift = atLine ? logit(clampP(finalOver)) - logit(clampP(atLine.st)) : 0;
+    }
+    const p = sigmoid(logit(clampP(s.st)) + shift);
+    return { over: p * (1 - s.push), under: (1 - p) * (1 - s.push), push: s.push };
+  };
+
   return {
+    probOver,
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,
     min: Math.min(...vals), max: Math.max(...vals),
     recent, projection, expMinutes, dist,

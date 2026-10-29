@@ -43,7 +43,7 @@ const split = (L) => L.espn.split("/");
 
 export const api = {
   scoreboard: (L, params = "") => getJSON(`${SITE}/${L.espn}/scoreboard${params ? "?" + params : ""}`, 60e3),
-  summary: (L, ev) => getJSON(`${SITE}/${L.espn}/summary?event=${ev}`, 2 * 60e3),
+  summary: (L, ev, ttl = 2 * 60e3) => getJSON(`${SITE}/${L.espn}/summary?event=${ev}`, ttl),
   schedule: (L, team, season) => getJSON(`${SITE}/${L.espn}/teams/${team}/schedule${season ? `?season=${season}` : ""}`),
   roster: (L, team) => getJSON(`${SITE}/${L.espn}/teams/${team}/roster`, 60 * 60e3),
   standings: (L) => getJSON(`${STAND}/${L.espn}/standings`, 30 * 60e3),
@@ -129,6 +129,51 @@ function derive(fam, s) {
     if (s.rec != null && s.tgt == null) s.tgt = null;
   }
   return s;
+}
+
+// Box-score groups whose column names mean something else than in the game log.
+const BOX_OVERRIDE = {
+  basketball: { rebounds: "reb" },
+  football: { "interceptions.interceptions": "def_int", "passing.sacks": "sacked", "defensive.sacks": "def_sacks" },
+};
+
+// Live or final box score from a game summary -> Map athleteId -> { stat: value },
+// using the same stat keys as the game logs (so MARKETS work unchanged).
+export function boxStats(sum, family) {
+  const out = new Map();
+  for (const team of sum?.boxscore?.players || []) {
+    for (const grp of team.statistics || []) {
+      const names = grp.keys || grp.names || [];
+      let fam = family;
+      if (family === "baseball" && grp.type === "pitching") fam = "baseballPitching";
+      const map = { ...(NAME_MAP[fam] || {}), ...(BOX_OVERRIDE[fam] || {}) };
+      const one = (n) => map[`${grp.name}.${n}`] ?? map[n] ?? null;
+      const cols = names.map((n) => {
+        const k = one(n);
+        if (k) return { k };
+        const sep = n.includes("/") ? "/" : n.includes("-") ? "-" : null;
+        return sep ? { split: sep, ks: n.split(sep).map(one) } : null;
+      });
+      for (const a of grp.athletes || []) {
+        const id = String(a.athlete?.id ?? "");
+        if (!id || !a.stats?.length) continue;
+        const s = out.get(id) || {};
+        a.stats.forEach((v, i) => {
+          const c = cols[i];
+          if (!c) return;
+          if (c.k) {
+            if (Array.isArray(c.k)) { const [x, y] = String(v).split("-").map(num); s[c.k[0]] = x; s[c.k[1]] = y; }
+            else s[c.k] = num(v);
+          } else {
+            String(v).split(c.split).map(num).forEach((x, j) => { if (c.ks[j]) s[c.ks[j]] = x; });
+          }
+        });
+        if (fam === "hockey" && s.pts == null && s.g != null && s.a != null) s.pts = s.g + s.a;
+        out.set(id, derive(fam, s));
+      }
+    }
+  }
+  return out;
 }
 
 // Returns { family, seasons:[{value,label}], games:[...] } with games newest first.
@@ -343,6 +388,56 @@ export function parseProps(items, family) {
     const m = out.get(aid) || {};
     m[market] = { line: best.line, over: best.over, under: best.under, open: best.open, type: best.type, alts: list.length };
     out.set(aid, m);
+  }
+  return out;
+}
+
+// DraftKings "Milestones" (alt lines: "25+ points" at a price), full game only.
+const MILESTONES = [
+  [/^points \+ (assists \+ rebounds|rebounds \+ assists)/i, "pra"], [/^points \+ rebounds/i, "pr"], [/^points \+ assists/i, "pa"],
+  [/^rebounds \+ assists/i, "ra"], [/^steals \+ blocks/i, "sb"], [/^points/i, "pts"], [/^rebounds/i, "reb"], [/^assists/i, "ast"],
+  [/^3-?point/i, "fg3m"], [/^steals/i, "stl"], [/^blocks/i, "blk"],
+  [/^passing \+ rushing yards/i, "pass_rush_yds"], [/^passing yards/i, "pass_yds"], [/^passing attempts/i, "pass_att"],
+  [/^passing completions/i, "pass_cmp"], [/^passing touchdown/i, "pass_td"], [/^interceptions/i, "pass_int"],
+  [/^rushing \+ receiving yards/i, "rush_rec_yds"], [/^rushing yards/i, "rush_yds"], [/^rushing attempts/i, "rush_att"],
+  [/^receiving yards/i, "rec_yds"], [/^receptions/i, "rec"],
+];
+
+// -> Map athleteId -> { market -> [{ at, odds }] } where "at" means at-least (X+).
+export function parseMilestones(items, family) {
+  const out = new Map();
+  for (const it of items || []) {
+    const name = it.type?.name || "";
+    if (!/milestones?$/i.test(name) || /quarter|half|period|inning|\b(1st|2nd|3rd|4th)\b/i.test(name)) continue;
+    const base = name.replace(/\s*milestones?$/i, "");
+    const key = MILESTONES.find(([re]) => re.test(base))?.[1];
+    const aid = it.athlete?.$ref?.match(/athletes\/(\d+)/)?.[1];
+    const at = it.current?.target?.value ?? Number(it.odds?.total?.value);
+    if (!key || !aid || !isFinite(at)) continue;
+    const odds = it.odds?.american?.value != null ? Number(String(it.odds.american.value).replace("+", "")) : null;
+    const m = out.get(aid) || {};
+    (m[key] ||= []).push({ at, odds: isFinite(odds) ? odds : null });
+    out.set(aid, m);
+  }
+  // The feed carries stale duplicates. "X or more" must get less likely as X rises,
+  // so walk down from the top rung keeping only prices consistent with that.
+  const imp = (o) => (o < 0 ? -o / (-o + 100) : 100 / (o + 100));
+  for (const m of out.values()) {
+    for (const k of Object.keys(m)) {
+      const ats = [...new Set(m[k].map((x) => x.at))].sort((a, b) => b - a);
+      const keep = [];
+      let floor = 0;
+      for (const at of ats) {
+        const cands = m[k].filter((x) => x.at === at);
+        const priced = cands.filter((x) => x.odds != null).sort((a, b) => imp(a.odds) - imp(b.odds));
+        if (!priced.length) { keep.push({ at, odds: null }); continue; }
+        const pick = priced.find((x) => imp(x.odds) >= floor);
+        if (!pick) continue;
+        floor = imp(pick.odds);
+        keep.push(pick);
+      }
+      m[k] = keep.sort((a, b) => a.at - b.at);
+    }
   }
   return out;
 }

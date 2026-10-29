@@ -7,6 +7,7 @@ import { gameContext, defaultLines, evaluateLines, sideOdds } from "../gamemodel
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { summaryClips, articleOf } from "../news.js";
+import { gameWeather, weatherLine } from "../weather.js";
 import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderGame(ctx, L, ev, q) {
@@ -25,16 +26,17 @@ export async function renderGame(ctx, L, ev, q) {
   const awayId = comp0.competitors.find((c) => c.homeAway === "away").team.id;
   const state0 = comp0.status?.type?.state;
 
-  const [standings, schedH, schedA, deep, propsAll] = await Promise.all([
+  const [standings, schedH, schedA, deep, propsAll, weather] = await Promise.all([
     api.standings(L).then(standingsTable).catch(() => null),
     api.schedule(L, homeId).catch(() => null),
     api.schedule(L, awayId).catch(() => null),
     loadDeep(L).catch(() => null),
     state0 !== "post" ? api.propBets(L, ev).then((items) => parseProps(items, L.markets)).catch(() => null) : null,
+    state0 === "pre" ? gameWeather(L, sum).catch(() => null) : null,
   ]);
   if (!ctx.alive()) return;
 
-  const gc = gameContext(L, sum, standings, schedH, schedA);
+  const gc = gameContext(L, sum, standings, schedH, schedA, weather);
   const { comp, home, away, H, A, status, resH, resA, rH, rA, lg, params, wModel, odds, fam } = gc;
   const isSoccer = fam === "soccer";
   const st = defaultLines(odds);
@@ -51,7 +53,7 @@ export async function renderGame(ctx, L, ev, q) {
     <div class="card">
       <div class="row" style="justify-content:space-between;gap:16px">
         <div class="row"><img src="${esc(logo(A))}" alt="" style="width:46px;height:46px"/><div><h2 style="margin:0">${esc(A.displayName)}</h2><div class="muted small">${esc(rec(away))} · Away</div></div></div>
-        <div style="text-align:center"><div style="font-weight:800;font-size:18px">${scoreLine}</div><div class="muted small">${esc(sum.gameInfo?.venue?.fullName || "")}</div></div>
+        <div style="text-align:center"><div style="font-weight:800;font-size:18px">${scoreLine}</div><div class="muted small">${esc(sum.gameInfo?.venue?.fullName || "")}</div>${weather ? `<div class="small" style="margin-top:2px">${esc(weatherLine(weather))}${gc.wx?.significant ? ` · <span style="color:var(--gold)" title="Model adjustment for wind, rain, snow and cold">scoring ×${gc.wx.total.toFixed(2)}, passing ×${gc.wx.pass.toFixed(2)}</span>` : ""}</div>` : ""}</div>
         <div class="row"><div style="text-align:right"><h2 style="margin:0">${esc(H.displayName)}</h2><div class="muted small">${esc(rec(home))} · Home</div></div><img src="${esc(logo(H))}" alt="" style="width:46px;height:46px"/></div>
       </div>
       ${status.state === "pre" ? `<div class="row" style="margin-top:10px"><a class="btn sm" href="#/today?sgp=${L.id}:${ev}">Build a same-game parlay ›</a></div>` : ""}
@@ -170,7 +172,7 @@ export async function renderGame(ctx, L, ev, q) {
     }));
   }
   renderModel();
-  renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, { spreadHome: odds.spreadHome, total: odds.total }, injuryReport(sum));
+  renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, { spreadHome: odds.spreadHome, total: odds.total }, injuryReport(sum), weather);
 }
 
 function recentTable(res) {
@@ -197,7 +199,7 @@ function h2h(sum, resH, A) {
 }
 
 // ---------- props board ----------
-async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, lines, report) {
+async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, deep, lines, report, weather) {
   const box = ctx.app.querySelector("#g-props");
   if (!propsAll || !propsAll.size) {
     box.innerHTML = `<h3>Player props</h3><div class="muted small">No player prop lines posted for this game yet. Open any player from search to analyze your own line.</div>`;
@@ -231,7 +233,7 @@ async function renderPropsBoard(ctx, L, ev, comp, H, A, propsAll, standings, dee
     btn.disabled = true;
     btn.textContent = "Scanning…";
     await scanRows(L, rows, {
-      game: { H, A, date: comp.date, lines, report }, standings, deep,
+      game: { H, A, date: comp.date, lines, report, weather }, standings, deep,
       onProgress: (d, n) => { if (ctx.alive()) btn.textContent = `Scanning ${d}/${n}…`; },
     });
     if (ctx.alive()) draw();
