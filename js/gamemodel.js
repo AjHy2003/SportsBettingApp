@@ -72,6 +72,7 @@ export function gameContext(L, sum, standings, schedH, schedA) {
     minGames,
     // Weight on our model vs the no-vig market: game lines are sharp, so the model only nudges.
     wModel: minGames >= 4 ? 0.35 : 0.2,
+    lineCap: league.includes("college") ? 0.15 : 0.25,
     params: M.gameParams(league, fam === "soccer" ? "soccer" : league),
     odds: pickcenterOdds(sum.pickcenter?.[0]) || {},
   };
@@ -98,7 +99,7 @@ export function evaluateLines(gc, st) {
     const dec = pA / (pA + pB);
     const fin = M.anchor(dec, oA, oB, wModel);
     const a = fin * (1 - push), b = (1 - fin) * (1 - push);
-    const v = guardLine(M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels), dec, M.noVig(oA, oB)?.a);
+    const v = guardLine(M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels), dec, M.noVig(oA, oB)?.a, gc.lineCap);
     return { v, model: dec, fin, push, sides: [{ label: labels[0], prob: fin, odds: oA, side: "A" }, { label: labels[1], prob: 1 - fin, odds: oB, side: "B" }] };
   };
   if (g.spread && st.spreadHome != null) {
@@ -130,11 +131,12 @@ export function evaluateLines(gc, st) {
 
 // Game lines are sharp: a team model 25+ points away from the market is far more
 // likely missing something (injuries, bad inputs) than finding value.
-export function guardLine(v, pModelA, marketA) {
+// College ratings ignore strength of schedule, so they get a tighter leash.
+export function guardLine(v, pModelA, marketA, capAt = 0.25) {
   if (!v || marketA == null || pModelA == null) return v;
   const gap = Math.abs(pModelA - marketA);
   if (gap >= 0.4 && v.grade !== "PASS") { v.grade = "PASS"; v.side = null; v.mismatch = true; }
-  else if (gap >= 0.25 && (v.grade === "A" || v.grade === "B")) { v.grade = "C"; v.mismatch = true; }
+  else if (gap >= capAt && (v.grade === "A" || v.grade === "B")) { v.grade = "C"; v.mismatch = true; }
   return v;
 }
 

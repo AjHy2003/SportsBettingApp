@@ -92,7 +92,7 @@ function lineLegs(L, gc, game, bookEv) {
       const [oA, oB] = r.sides.map((s) => s.odds ?? -110);
       const a = fin * (1 - push), b = (1 - fin) * (1 - push);
       // Same sanity check as the site's, against the all-book consensus.
-      v = guardLine(makeVerdict(a, b, push, oA, oB, expectedValue(a, push, oA), expectedValue(b, push, oB), gc.minGames, r.sides.map((s) => s.label)), r.model, cons);
+      v = guardLine(makeVerdict(a, b, push, oA, oB, expectedValue(a, push, oA), expectedValue(b, push, oB), gc.minGames, r.sides.map((s) => s.label)), r.model, cons, gc.lineCap);
       probs = [fin, 1 - fin];
     }
     r.sides.forEach((s, i) => {
