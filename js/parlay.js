@@ -106,7 +106,8 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
 export const breakEven = (odds) => impliedProb(odds ?? -110);
 
 const GRADE_WEIGHT = { A: 1, B: 0.85, C: 0.6 };
-export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0);
+// The market moving toward a pick is a small vote of confidence; away, a small knock.
+export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0) * (l.move?.toward ? 1.1 : l.move?.against ? 0.9 : 1);
 
 // Books post TD/INT-style lines (under 2.5) at lopsided prices, so a missing price
 // can't be assumed to be -110 there.

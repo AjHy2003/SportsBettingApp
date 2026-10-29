@@ -294,7 +294,20 @@ export function pickcenterOdds(pc) {
     mlAway: pc.awayTeamOdds?.moneyLine ?? null,
     draw: pc.drawOdds?.moneyLine ?? null,
     dk: dkLinks(pc.links),
+    open: openLines(pc),
   };
+}
+
+// Opening lines (for line movement): { spreadHome, spreadHomeOdds, spreadAwayOdds, total, overOdds, underOdds, mlHome, mlAway }.
+function openLines(pc) {
+  const n = (v) => { const x = parseFloat(String(v ?? "").replace(/^[ou]/i, "")); return isFinite(x) ? x : null; };
+  const sp = pc.pointSpread, tot = pc.total, ml = pc.moneyline;
+  const o = {
+    spreadHome: n(sp?.home?.open?.line), spreadHomeOdds: n(sp?.home?.open?.odds), spreadAwayOdds: n(sp?.away?.open?.odds),
+    total: n(tot?.over?.open?.line), overOdds: n(tot?.over?.open?.odds), underOdds: n(tot?.under?.open?.odds),
+    mlHome: n(ml?.home?.open?.odds), mlAway: n(ml?.away?.open?.odds),
+  };
+  return Object.values(o).some((x) => x != null) ? o : null;
 }
 
 // DraftKings bet-slip links ESPN attaches to its odds: each one opens DraftKings with
@@ -387,14 +400,16 @@ export function parseProps(items, family) {
     const line = it.current?.target?.value ?? Number(it.odds?.total?.value);
     if (line == null || !isFinite(line)) continue;
     const price = it.odds?.american?.value != null ? Number(String(it.odds.american.value).replace("+", "")) : null;
+    const openPrice = it.odds?.american?.open != null ? Number(String(it.odds.american.open).replace("+", "")) : null;
     const key = `${aid}|${market}`;
     const list = cands.get(key) || [];
     const last = list[list.length - 1];
     if (last && last.line === line && last.under == null && !last.closed) {
       last.under = price;
+      last.openUnder = isFinite(openPrice) ? openPrice : null;
       last.closed = true;
     } else {
-      list.push({ line, over: price, under: null, open: it.open?.target?.value ?? null, type: it.type?.name });
+      list.push({ line, over: price, under: null, open: it.open?.target?.value ?? null, openOver: isFinite(openPrice) ? openPrice : null, type: it.type?.name });
     }
     cands.set(key, list);
   }
@@ -408,7 +423,7 @@ export function parseProps(items, family) {
       ? priced.reduce((a, b) => (Math.abs(imp(a.over) - imp(a.under)) <= Math.abs(imp(b.over) - imp(b.under)) ? a : b))
       : [...list].sort((a, b) => a.line - b.line)[Math.floor((list.length - 1) / 2)];
     const m = out.get(aid) || {};
-    m[market] = { line: best.line, over: best.over, under: best.under, open: best.open, type: best.type, alts: list.length };
+    m[market] = { line: best.line, over: best.over, under: best.under, open: best.open, openOver: best.openOver, openUnder: best.openUnder, type: best.type, alts: list.length };
     out.set(aid, m);
   }
   return out;

@@ -14,6 +14,7 @@ import { planTicket, combine, compatible, choosePicks, bestSameGame, usableLeg }
 import { timeAgo } from "../news.js";
 import { placeBet } from "../sportsbooks.js";
 import { buildMoonshot, oneIn } from "../moonshot.js";
+import { moveText } from "../movement.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
@@ -126,6 +127,7 @@ export async function renderToday(ctx, q) {
         <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why ? ` · ${esc(l.why)}` : ""}</div>
         ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
         ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
+        ${l.move ? `<div class="small ${l.move.toward ? "pos" : l.move.strong ? "neg" : "muted"}">${esc(moveText(l.move))}${l.moveCap ? " — graded down to C" : ""}</div>` : ""}
         ${l.bestBook ? `<div class="small pos">Better price: ${M.fmtOdds(l.bestBook.odds)} at ${esc(l.bestBook.title)} (DraftKings ${M.fmtOdds(l.odds)})</div>` : ""}
         ${l.news?.url ? `<a class="news-line" href="${esc(l.news.url)}" target="_blank" rel="noopener">${l.news.video ? "🎬" : "📰"} ${esc(l.news.headline)} <span class="faint">· ${timeAgo(l.news.published)}</span></a>` : ""}
       </div>

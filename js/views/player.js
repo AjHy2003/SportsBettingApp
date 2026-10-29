@@ -273,7 +273,7 @@ export async function renderPlayer(ctx, L, id, q) {
     // Book info
     const p = myProps[m.key];
     $("#book").innerHTML = p
-      ? `DraftKings: <b>${p.line}</b> (o ${M.fmtOdds(p.over)} / u ${M.fmtOdds(p.under)})${p.open != null && p.open !== p.line ? ` · opened ${p.open}` : ""}${p.alts > 1 ? ` · ${p.alts} lines posted, showing the main one` : ""}`
+      ? `DraftKings: <b>${p.line}</b> (o ${M.fmtOdds(p.over)} / u ${M.fmtOdds(p.under)})${p.open != null && p.open !== p.line ? ` · opened ${p.open} <span class="${p.line > p.open ? "pos" : "neg"}">(money on the ${p.line > p.open ? "over" : "under"})</span>` : p.openOver != null && p.over != null && p.openOver !== p.over ? ` · over opened ${M.fmtOdds(p.openOver)}` : ""}${p.alts > 1 ? ` · ${p.alts} lines posted, showing the main one` : ""}`
       : next ? `No posted ${esc(m.label.toLowerCase())} line found for the next game; the starting line is set near the projection.` : "";
 
     // Verdict (no grade on a placeholder line the user hasn't confirmed)

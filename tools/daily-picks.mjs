@@ -45,6 +45,14 @@ const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
+const { propMove, gameMove } = await import("../js/movement.js");
+
+// A big move against an A/B pick usually means news or sharp money the stats don't see.
+function applyMove(leg, mv) {
+  if (!mv) return;
+  leg.move = mv;
+  if (leg.lean && mv.against && mv.strong && ["A", "B"].includes(leg.grade)) { leg.grade = "C"; leg.moveCap = true; }
+}
 const { loadBooks, matchEvent, shop } = await import("./books.mjs");
 const { leagueNews, isStory } = await import("../js/news.js");
 
@@ -121,6 +129,7 @@ function lineLegs(L, gc, game, bookEv) {
         const links = Object.fromEntries(sh.prices.filter((p) => p.link).map((p) => [p.book, p.link]));
         if (Object.keys(links).length) leg.bookLinks = links;
       }
+      applyMove(leg, gameMove(kind, leg.side, gc.odds, gc.odds.open));
       // DraftKings bet-slip link from ESPN's odds (adds this exact selection), else the game page.
       const dk = gc.odds.dk?.[kind]?.[s.side];
       leg.dk = dk || gc.odds.dk?.game || undefined;
@@ -146,7 +155,7 @@ function propLeg(L, game, r) {
     r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) / (r.context.weather?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
     r.context?.weather ? `weather: ${r.context.weather.why} ×${r.context.weather.factor.toFixed(2)}` : "",
   ].filter(Boolean).join(" · ");
-  return {
+  const leg = {
     id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:${side}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
     kind: "prop", player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation, pos: r.who.pos,
     marketKey: r.key, market: r.m.label, line: r.p.line, side, label: `${r.who.name} ${side === "OVER" ? "Over" : "Under"} ${r.p.line} ${r.m.label}`,
@@ -157,8 +166,11 @@ function propLeg(L, game, r) {
     questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
     roleChange: res.verdict.roleChange,
     dk: game.dk || undefined,
+    l10: r.l10?.n ? r.l10 : undefined,
     context: r.context?.notes?.length ? r.context.notes : undefined,
   };
+  applyMove(leg, propMove(side, { line: r.p.line, over: r.p.over, under: r.p.under }, { line: r.p.open, over: r.p.openOver, under: r.p.openUnder }));
+  return leg;
 }
 
 // Alt-line legs from DraftKings milestones ("30+ points" at a price): plus-money rungs

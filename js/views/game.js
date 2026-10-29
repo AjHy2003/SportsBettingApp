@@ -3,7 +3,7 @@ import * as M from "../model.js";
 import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, cmpRow, toast } from "../ui.js";
 import { addPick } from "../store.js";
 import { loadDeep, deepGamePanel } from "../deep.js";
-import { gameContext, defaultLines, evaluateLines, sideOdds } from "../gamemodel.js";
+import { gameContext, defaultLines, evaluateLines, sideOdds, fmtSpread } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { summaryClips, articleOf } from "../news.js";
@@ -62,6 +62,7 @@ export async function renderGame(ctx, L, ev, q) {
     <div class="grid two" style="margin-top:14px">
       <div class="card">
         <h3>Lines ${odds.provider ? `<span class="faint" style="text-transform:none;letter-spacing:0">· ${esc(odds.provider)}</span>` : ""}</h3>
+        ${odds.open ? `<div class="small muted" style="margin:-4px 0 8px">Opened: ${[odds.open.spreadHome != null ? `${esc(H.abbreviation)} ${fmtSpread(odds.open.spreadHome)}${odds.spreadHome != null && odds.spreadHome !== odds.open.spreadHome ? ` → ${fmtSpread(odds.spreadHome)}` : ""}` : "", odds.open.total != null ? `O/U ${odds.open.total}${odds.total != null && odds.total !== odds.open.total ? ` → ${odds.total}` : ""}` : "", odds.open.mlHome != null ? `${esc(H.abbreviation)} ML ${M.fmtOdds(odds.open.mlHome)}${odds.mlHome != null && odds.mlHome !== odds.open.mlHome ? ` → ${M.fmtOdds(odds.mlHome)}` : ""}` : ""].filter(Boolean).join(" · ")}</div>` : ""}
         <div class="form-row">
           ${isSoccer ? "" : `<div class="field"><label>${esc(H.abbreviation)} spread</label><input id="g-sp" type="number" step="0.5"/></div>
           <div class="field"><label>${esc(H.abbreviation)} odds</label><input id="g-spo-h" type="number"/></div>
