@@ -267,6 +267,12 @@ h3 { font-size: 12px; margin: 0 0 8px; color: var(--muted); text-transform: uppe
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); transition: color 0.12s, border-color 0.12s; }
 .chip:hover { color: var(--text); border-color: var(--line-2); }
+.chip .cnt { font-size: 11px; font-weight: 600; opacity: 0.7; margin-left: 2px; }
+.gamepick { margin-top: 10px; }
+.gamepick summary { cursor: pointer; list-style: none; font-size: 13px; padding: 8px 12px; border: 1px dashed var(--line-2); border-radius: 12px; }
+.gamepick summary::-webkit-details-marker { display: none; }
+.gamepick summary:hover { border-color: var(--accent); }
+.gamepick[open] summary { border-style: solid; }
 .chip.on { border-color: transparent; background: var(--grad) border-box; color: #fff; box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent); }
 
 /* ---------- player header ---------- */

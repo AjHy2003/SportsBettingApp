@@ -465,7 +465,21 @@ fs.mkdirSync(path.dirname(HISTORY), { recursive: true });
 fs.writeFileSync(HISTORY, JSON.stringify(history));
 
 const groups = { basketball: ["nba", "ncaab"], football: ["nfl", "ncaaf"], hockey: ["nhl"] };
-const parlayFor = (ids, n) => bestParlay(legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now), n);
+// Featured parlays use today's games (Eastern time). Too few games with an edge for a
+// regular parlay (a Thursday with one NFL game): the day's best same-game parlay. Only
+// when neither works do they move to the next day.
+const dayOf = (l) => etDate(new Date(l.start));
+const weekdayOf = (l) => new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short" }).format(new Date(l.start));
+const upcomingDays = [...new Set(legs.filter((l) => new Date(l.start) > now).map(dayOf))].sort();
+function parlayFor(ids, n) {
+  for (const d of upcomingDays) {
+    const pool = legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now && dayOf(l) === d);
+    const keys = [...new Set(pool.map((l) => l.gameKey))];
+    const p = bestParlay(pool, n) || keys.map((k) => bestSameGame(pool, k, n)).filter((x) => x && x.ev > 0).sort((a, b) => b.ev - a.ev)[0];
+    if (p) return { ...p, day: d, sgp: new Set(p.legs.map((l) => l.gameKey)).size === 1 || undefined };
+  }
+  return null;
+}
 const featured = {
   basketball: parlayFor(groups.basketball, 3),
   football: parlayFor(groups.football, 3),
@@ -473,26 +487,29 @@ const featured = {
   any: parlayFor(Object.values(groups).flat(), 3),
 };
 // Featured moonshots: $10 -> $10,000 with the best model chance, per sport.
-const moonPool = (ids) => [...legs, ...alts].filter((l) => ids.includes(l.league) && new Date(l.start) > now && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
+// Today's games first; the rest of the week only if today can't get there.
+const moonPool = (ids, day) => [...legs, ...alts].filter((l) => ids.includes(l.league) && new Date(l.start) > now && (!day || dayOf(l) === day) && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
 const moonshots = {};
 for (const [k, ids] of Object.entries({ all: Object.values(groups).flat(), ...groups })) {
-  const m = buildMoonshot(moonPool(ids), { stake: 10, target: 10000 });
-  if (m?.reached) moonshots[k] = { legs: m.legs.map((l) => l.id), american: m.american, decimal: Number(m.decimal.toFixed(2)), prob: m.prob, payout: Math.round(m.payout), ev: m.ev };
+  let m = buildMoonshot(moonPool(ids, todayET), { stake: 10, target: 10000 }), later = false;
+  if (!m?.reached) { m = buildMoonshot(moonPool(ids), { stake: 10, target: 10000 }); later = true; }
+  if (m?.reached) moonshots[k] = { legs: m.legs.map((l) => l.id), american: m.american, decimal: Number(m.decimal.toFixed(2)), prob: m.prob, payout: Math.round(m.payout), ev: m.ev, later: later || undefined };
 }
 console.log(`moonshots: ${Object.entries(moonshots).map(([k, m]) => `${k} ${m.legs.length} legs 1 in ${oneIn(m.prob)}`).join(", ") || "none"}`);
 
+// Best same-game parlays: up to 5 per day, so each day picked on the Today page has some.
 const sgps = games
-  .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, sgp: bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
+  .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, day: etDate(new Date(g.start)), sgp: bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
   .filter((x) => x.sgp && x.sgp.ev > 0)
   .sort((a, b) => b.sgp.ev - a.sgp.ev)
-  .slice(0, 5);
+  .filter((x, i, all) => all.slice(0, i).filter((y) => y.day === x.day).length < 5);
 
 const slim = (l) => ({ ...l, prob: Number(l.prob.toFixed(4)), edge: Number(l.edge.toFixed(4)), ev: Number(l.ev.toFixed(4)) });
 const today = {
   generated: issued, date: todayET, games, legs: legs.map(slim), picks: picks.map((p) => p.id),
   alts: alts.map(slim),
   moonshots,
-  featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev } : null])),
+  featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev, day: v.day, sgp: v.sgp } : null])),
   sgps: sgps.map((x) => ({ game: x.game, matchup: x.matchup, league: x.league, legs: x.sgp.legs.map((l) => l.id), american: x.sgp.american, prob: x.sgp.prob, ev: x.sgp.ev })),
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
   topStories,
@@ -504,12 +521,15 @@ fs.writeFileSync(path.join(outDir, "today.json"), JSON.stringify(today));
 fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
 
 // Phone notification text.
-const short = (l) => `${l.grade} · ${l.label}${l.kind === "prop" ? "" : ` (${l.matchup})`} ${fmtOdds(l.odds)}`;
-const counts = ["A", "B"].map((g) => `${picks.filter((p) => p.grade === g).length} ${g}`).join(", ");
-const lines = picks.slice(0, 6).map(short);
-if (featured.basketball) lines.push(`🏀 3-leg parlay ${fmtOdds(featured.basketball.american)} (${pctTxt(featured.basketball.prob)} to hit)`);
-if (featured.football) lines.push(`🏈 3-leg parlay ${fmtOdds(featured.football.american)} (${pctTxt(featured.football.prob)} to hit)`);
-if (moonshots.all) lines.push(`🚀 Moonshot: $10 → $${moonshots.all.payout.toLocaleString("en-US")} (${moonshots.all.legs.length} legs, est. 1 in ${oneIn(moonshots.all.prob)}; lottery money only)`);
+// Today's games lead; picks for later in the week fill in, marked with their day.
+const todayPicks = picks.filter((p) => dayOf(p) === todayET), laterPicks = picks.filter((p) => dayOf(p) !== todayET);
+const short = (l) => `${dayOf(l) === todayET ? "" : `${weekdayOf(l)} · `}${l.grade} · ${l.label}${l.kind === "prop" ? "" : ` (${l.matchup})`} ${fmtOdds(l.odds)}`;
+const counts = ["A", "B"].map((g) => `${todayPicks.filter((p) => p.grade === g).length} ${g}`).join(", ");
+const lines = [...todayPicks.slice(0, 6), ...laterPicks.slice(0, Math.max(0, 4 - todayPicks.length))].map(short);
+const parlayLine = (icon, f) => `${icon} ${f.legs.length}-leg ${f.sgp ? `same-game parlay (${f.legs[0].matchup})` : "parlay"}${f.day === todayET ? "" : ` for ${weekdayOf(f.legs[0])}`} ${fmtOdds(f.american)} (${pctTxt(f.prob)} to hit)`;
+if (featured.basketball) lines.push(parlayLine("🏀", featured.basketball));
+if (featured.football) lines.push(parlayLine("🏈", featured.football));
+if (moonshots.all) lines.push(`🚀 Moonshot: $10 → $${moonshots.all.payout.toLocaleString("en-US")} (${moonshots.all.legs.length} legs${moonshots.all.later ? ", includes later games" : ""}, est. 1 in ${oneIn(moonshots.all.prob)}; lottery money only)`);
 for (const id of ["nba", "nfl"]) {
   const st = topStories.find((x) => x.league === id);
   if (st) lines.push(`📰 ${leagueById(id).name}: ${st.headline}`);
@@ -524,7 +544,7 @@ if (weekday === "Mon" && wk.w + wk.l) {
 } else if (rec.w + rec.l) lines.push(`Last 30 days: ${rec.w}-${rec.l}, ${rec.units >= 0 ? "+" : ""}${rec.units.toFixed(1)}u`);
 fs.writeFileSync("notify.json", JSON.stringify({
   skip: failedLeagues === LEAGUES.length,
-  title: picks.length ? `PickLab: ${picks.length} picks today (${counts})` : "PickLab: no strong edges today",
+  title: todayPicks.length ? `PickLab: ${todayPicks.length} picks today (${counts})${laterPicks.length ? ` + ${laterPicks.length} later` : ""}` : picks.length ? `PickLab: ${picks.length} picks for later this week` : "PickLab: no strong edges today",
   body: picks.length ? lines.join("\n") : "Nothing cleared the bar. Sitting out is a pick too.",
   click: `${SITE_URL}#/today`,
 }));
