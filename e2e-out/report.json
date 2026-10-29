@@ -1,0 +1,463 @@
+[
+ {
+  "name": "home",
+  "hash": "#/",
+  "url": "http://localhost:8765/#/",
+  "errors": [],
+  "failed": [],
+  "text": "Research the bet before you make it. Game logs, hit rates, matchups and a projection for any prop, spread or total. Lines load automatically from DraftKings via ESPN when they're posted. Search any player above, or pick a league. 🔥 Today's picks Today's NBA This week's NFL 📰 News & highlights Custom calculator 🔥 TODAY'S TOP PICKS Build my ticket › A Kyren Williams Over 59.5 Rushing Yards -110 · NFL · 9:05 PM A Chuba Hubbard Under 16.5 Rush Attempts -110 · NFL · 12:15 AM B Kenneth Walker III Under 3.5 Receptions -110 · NFL · 9:25 PM B Rashod Bateman Under 2.5 Receptions -110 · NFL · 6:00 PM 🎬 Latest highlights All news & highlights › ▶ 1:11 LAL 103 – LAC 87 Los Angeles Lakers vs. LA Clippers: Game Highlights 🏀 NBA · 5h ago ▶ 1:09 OKC 96 – DAL 120 Mavericks hand the Thunder their first loss of the season 🏀 NBA · 6h ago ▶ 1:14 SA 117 – UTAH 111 San Antonio Spurs vs. Utah Jazz: Game Highlights 🏀 NBA · 7h ago ▶ 1:14 GS 119 – MIN 114 Golden State Warriors vs. Minnesota Timberwolves: Game Highlights 🏀 NBA · 8h ago 🗞️ TOP STORIES Ranking the best 2026 NFL rookies: Arvell Reese, Denzel Boston, others in top 10 Who are the NFL's most impressive rookies through Week 7? Who is overperforming or underperforming? We stacked the top 10 -- and have a tie at No. 1. 🏈 NFL · Matt Bowen, Kalyn Kahler, Jeff Legwold, Jordan Reid and Ben Solak · 2m ago Why Vikings' astronomical 70% blitz rate isn't a gimmick Minnesota blitzed Indianapolis 85% of the time Sunday, as they redefine what a 'n"
+ },
+ {
+  "name": "nba-slate",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA 🏀 NBA Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 Fri 12:00 AM State Farm Arena Cavaliers3-1 Hawks2-3 Spread ATL -1.5 O/U 239.5 ML -110 / -110 Fri 12:00 AM Smoothie King Center Kings0-4 Pelicans0-4 Spread NO -5.5 O/U 237.5 ML +180 / -218 Fri 2:00 AM Moda Center Grizzlies4-0 Trail Blazers3-0 Spread POR -7.5 O/U 234.5 ML +215 / -265"
+ },
+ {
+  "name": "lebron",
+  "hash": "#/l/nba/p/1966",
+  "url": "http://localhost:8765/#/l/nba/p/1966",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nba/teams.json",
+   "404 http://localhost:8765/data/nba/players/1966.json",
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909280/competitions/401909280/odds/100/propBets?limit=500",
+   "404 http://localhost:8765/data/nba/lineups/PHI.json"
+  ],
+  "text": "Home › NBA › LeBron James LeBron James Philadelphia 76ers · F · #23 Next: vs NY · Fri, Oct 30 11:30 PM · game page › Latest: James finished with 18 points (8-15 FG, 0-3 3Pt, 2-6 FT), two rebounds, five assists and two steals across 33 minutes in Sunday's 106-93 loss to the Pistons. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted points line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 18.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 55.8% vs 52.4% needed to break even · edge +3.4 pts · EV +6.5% Over: stats only 44% · no market anchor PROJECTION 18.3 P(OVER) 44% FAIR ODDS -126 u AVG / MED 19.1 / 19.0 L10 OVER 6/10 EXP. MIN 35.0 ★ Save pick HIT RATE Showing under hit rates at 18.5 L5 80% 4/5 L10 40% 4/10 L20 40% 8/20 This season 100% 4/4 Last season 36% 26/73 Home 45% 9/20 vs NY 50% 1/2 L5 L10 L20 Season Last season All All Home Away vs NY only 0 10 20 30 14"
+ },
+ {
+  "name": "embiid",
+  "hash": "#/l/nba/p/3059318",
+  "url": "http://localhost:8765/#/l/nba/p/3059318",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909280/competitions/401909280/odds/100/propBets?limit=500",
+   "404 http://localhost:8765/data/nba/players/3059318.json",
+   "404 http://localhost:8765/data/nba/teams.json",
+   "404 http://localhost:8765/data/nba/lineups/PHI.json",
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909280/competitions/401909280/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NBA › Joel Embiid Joel Embiid Philadelphia 76ers · C · #21 Next: vs NY · Fri, Oct 30 11:30 PM · game page › Latest: Embiid closed Wednesday's 114-109 win over the Pacers with 21 points (9-17 FG, 0-3 3Pt, 3-3 FT), 11 rebounds, two assists and one block across 39 minutes. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted points line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 25.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 51.1% vs 52.4% needed to break even · edge -1.3 pts · EV -2.5% Over: stats only 49% · no market anchor PROJECTION 25.2 P(OVER) 49% FAIR ODDS -104 u AVG / MED 27.8 / 27.5 L10 OVER 3/10 EXP. MIN 34.3 ★ Save pick HIT RATE Showing under hit rates at 25.5 L5 80% 4/5 L10 70% 7/10 L20 40% 8/20 This season 75% 3/4 Last season 40% 18/45 Home 30% 6/20 vs NY 67% 4/6 L5 L10 L20 Season Last season All All Home Away vs NY only 0 10 20 30 35 LAL 2"
+ },
+ {
+  "name": "nfl-slate",
+  "hash": "#/l/nfl",
+  "url": "http://localhost:8765/#/l/nfl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL 🏈 NFL Custom calculator ‹ Week 7 Week 8 Week 9 › Fri 12:15 AM Lambeau Field Panthers3-3 Packers4-3 Spread GB -3.5 O/U 47.5 ML +160 / -192 Sun 6:00 PM Highmark Stadium Ravens4-3 Bills5-1 Spread BUF -3 O/U 54.5 ML +145 / -175 Sun 6:00 PM Paycor Stadium Titans1-6 Bengals4-2 Spread CIN -10 O/U 46.5 ML +380 / -500 Sun 6:00 PM AT&T Stadium Cardinals2-5 Cowboys3-4 Spread DAL -7 O/U 54.5 ML +260 / -325 Sun 6:00 PM Ford Field Vikings6-0 Lions4-2 Spread DET -3 O/U 46.5 ML +142 / -170 Sun 6:00 PM MetLife Stadium Raiders3-4 Jets2-5 Spread NYJ -1.5 O/U 45.5 ML +105 / -125 Sun 6:00 PM Acrisure Stadium Browns5-2 Steelers5-2 Spread PIT -3.5 O/U 39.5 ML +154 / -185 Sun 6:00 PM Raymond James Stadium Falcons3-4 Buccaneers2-5 Spread TB -2.5 O/U 44.5 ML +120 / -142 Sun 6:00 PM EverBank Stadium Colts2-5 Jaguars4-2 Spread JAX -10 O/U 46.5 ML +370 / -485 Sun 9:05 PM SoFi Stadium Chargers0-6 Rams3-4 Spread LAR -6.5 O/U 45.5 ML +230 / -285 Sun 9:25 PM Empower Field at Mile High Chiefs5-1 Broncos5-2 Spread KC -1.5 O/U 40.5 ML -118 / -102 Sun 9:25 PM Hard Rock Stadium Patriots4-3 Dolphins1-5 Spread NE -7 O/U 43.5 ML -310 / +250 Mon 1:20 AM Northwest Stadium Eagles2-5 Commanders1-4-1 Spread WSH -6 O/U 40.5 ML +190 / -230 Tue 1:15 AM Lumen Field Bears5-2 Seahawks4-3 Spread SEA -3 O/U 46.5 ML +140 / -166"
+ },
+ {
+  "name": "chase",
+  "hash": "#/l/nfl/p/4362628",
+  "url": "http://localhost:8765/#/l/nfl/p/4362628",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nfl/teams.json",
+   "404 http://localhost:8765/data/nfl/players/4362628.json",
+   "404 http://localhost:8765/data/nfl/lineups/CIN.json"
+  ],
+  "text": "Home › NFL › Ja'Marr Chase Ja'Marr Chase Cincinnati Bengals · WR · #1 Next: vs TEN · Sun, Nov 1 6:00 PM · game page › Injury: Questionable Ankle Latest: Chase was listed as a non-participant in Wednesday's practice due to an ankle injury and rest, Ben Baby of ESPN.com reports. more MARKET Receptions 6.5 Receiving Yards 80.5 Targets Longest Reception Rush + Rec Yards Total TDs (rush + rec) YOUR LINE Line Over odds Under odds DraftKings: 80.5 (o — / u —) · opened 75.5 Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under Injury report: Questionable Model 53.8% vs 52.4% needed to break even · edge +1.4 pts · EV +2.6% Over: stats only 42% · market 50% · blended 46% PROJECTION 75.3 P(OVER) 46% FAIR ODDS -116 u AVG / MED 80.1 / 84.0 L10 OVER 4/10 ★ Save pick HIT RATE Showing under hit rates at 80.5 L5 80% 4/5 L10 60% 6/10 L20 50% 10/20 This season 83% 5/6 Last season 38% 6/16 Home 30% 3/10 vs TEN — no games L5 L10 L20 Season Last season All All Home Away vs TEN only 0 50 100 150 50 MIN 9/21 23 DEN 9/30 110 DET 10/5 94 GB 10/12 161 PIT 10/17 91 NYJ 10/26 111 CHI 11/2 30 PIT 11/16 110 BAL 11/28 44 BUF 12/7 132 BAL 12/14 109 MIA 12/21 60 ARI 12/28 96 CLE 1/4 12 TB 9/13 75 HOU 9/20 98 PIT 9/27 27 JAX 10/4 77 MIA 10/11 62 BAL 10/25 Line 80.5 Proj 75.3"
+ },
+ {
+  "name": "lamar",
+  "hash": "#/l/nfl/p/3916387",
+  "url": "http://localhost:8765/#/l/nfl/p/3916387",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nfl/players/3916387.json",
+   "404 http://localhost:8765/data/nfl/teams.json",
+   "404 http://localhost:8765/data/nfl/lineups/BAL.json"
+  ],
+  "text": "Home › NFL › Lamar Jackson Lamar Jackson Baltimore Ravens · QB · #8 Next: @ BUF · Sun, Nov 1 6:00 PM · game page › Injury: Questionable Ankle Latest: Jackson (ankle) was listed as a full participant in Wednesday's practice. more MARKET Passing Yards 235.5 Pass Attempts 30.5 Completions 20.5 Passing TDs 1.5 Interceptions 0.5 Rushing Yards 26.5 Rush Attempts 4.5 Longest Rush Pass + Rush Yards YOUR LINE Line Over odds Under odds DraftKings: 235.5 (o — / u —) Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. C UNDER 235.5 Passing Yards Injury report: Questionable Model 55.5% vs 52.4% needed to break even · edge +3.1 pts · EV +6.0% Over: stats only 39% · market 50% · blended 44% PROJECTION 226.2 P(OVER) 44% FAIR ODDS -125 u AVG / MED 206.8 / 209.0 L10 OVER 3/10 ★ Save pick HIT RATE Showing under hit rates at 235.5 L5 60% 3/5 L10 70% 7/10 L20 76% 13/17 This season 75% 3/4 Last season 77% 10/13 Away 75% 6/8 vs BUF 100% 1/1 L5 L10 L20 Season Last season All All Home Away vs BUF only 0 100 200 300 209 BUF 9/8 225 CLE 9/14 288 DET 9/23 147 KC 9/28 204 MIA 10/31 176 MIN 11/9 193 CLE 11/16 153 NYJ 11/23 246 CIN 11/28 219 PIT 12/7 150 CIN 12/14 101 NE 12/22 238 PIT 1/5 324 IND 9/13 235 NO 9/20 186 DAL 9/27 222 TEN 10/4 Line 235.5 Proj 226.2 SPLITS SPLIT G AVG OVER 235.5 Ho"
+ },
+ {
+  "name": "mahomes",
+  "hash": "#/l/nfl/p/3139477",
+  "url": "http://localhost:8765/#/l/nfl/p/3139477",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nfl/teams.json",
+   "404 http://localhost:8765/data/nfl/players/3139477.json",
+   "404 http://localhost:8765/data/nfl/lineups/KC.json"
+  ],
+  "text": "Home › NFL › Patrick Mahomes Patrick Mahomes Kansas City Chiefs · QB · #15 Next: @ DEN · Sun, Nov 1 9:25 PM · game page › Latest: Mahomes completed 19 of 33 passes for 165 yards, no touchdowns and one interception in Sunday's 20-3 loss to the Seahawks. He added two rushing attempts for 14 yards. more MARKET Passing Yards 223.5 Pass Attempts 33.5 Completions 20.5 Passing TDs 1.5 Interceptions 0.5 Rushing Yards 12.5 Rush Attempts Longest Rush Pass + Rush Yards YOUR LINE Line Over odds Under odds DraftKings: 223.5 (o — / u —) · opened 221.5 Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans over Model 53.8% vs 52.4% needed to break even · edge +1.4 pts · EV +2.7% Over: stats only 58% · market 50% · blended 54% PROJECTION 229.2 P(OVER) 54% FAIR ODDS -117 o AVG / MED 253.1 / 257.5 L10 OVER 6/10 ★ Save pick HIT RATE Showing over hit rates at 223.5 L5 80% 4/5 L10 60% 6/10 L20 75% 15/20 This season 67% 4/6 Last season 79% 11/14 Away 88% 7/8 vs DEN 50% 1/2 L5 L10 L20 Season Last season All All Home Away vs DEN only 0 200 400 258 LAC 9/6 187 PHI 9/14 224 NYG 9/22 270 BAL 9/28 318 JAX 10/7 257 DET 10/13 286 LV 10/19 299 WSH 10/28 250 BUF 11/2 276 DEN 11/16 352 IND 11/23 261 DAL 11/27 160 HOU 12/8 189 LAC 12/14 184 DEN 9/15 382 IND 9/21 246 MIA 9/27 225 L"
+ },
+ {
+  "name": "mlb-judge",
+  "hash": "#/l/mlb/p/33192",
+  "url": "http://localhost:8765/#/l/mlb/p/33192",
+  "errors": [],
+  "failed": [],
+  "text": "Home › MLB › Aaron Judge Aaron Judge New York Yankees · RF · #99 Latest: Yankees general manager Brian Cashman said Wednesday that Judge has a follow-up exam scheduled with Dr. Gregory Pearl regarding his rib, Bryan Hoch of MLB.com reports. more MARKET Hits Total Bases Hits + Runs + RBIs Home Runs RBIs Runs Walks (batter) Strikeouts (batter) YOUR LINE Line Over odds Under odds Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 1.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 63.7% vs 52.4% needed to break even · edge +11.3 pts · EV +21.6% Over: stats only 36% · no market anchor PROJECTION 1.5 P(OVER) 36% FAIR ODDS -176 u AVG / MED 1.7 / 1.0 L10 OVER 2/10 ★ Save pick HIT RATE Showing under hit rates at 1.5 L5 80% 4/5 L10 80% 8/10 L20 75% 15/20 This season 56% 37/66 Last season 47% 75/160 L5 L10 L20 Season Last season All All Home Away 0 2 4 0 NYM 5/17 1 TOR 5/18 0 TOR 5/19 0 TOR 5/20 0 TOR 5/21 0 TB 5/22 5 TB 5/24 2 KC 5/25 3 KC 5/26 0 KC 5/27 1 ATH 5/30 0 ATH 5/31 1 ATH 5/31 0 COL 9/8 2 COL 9/9 1 NYM 9/11 0 NYM 9/12 0 NYM 9/13 4 MIN 9/14 0 MIN 9/16 Line 1.5 Proj 1.5 SPLITS SPLIT G AVG OVER 1.5 Home 112 2.3 58/112 Away 114 2.2 56/114 Wins 134 2.4 74/134 Losses "
+ },
+ {
+  "name": "nhl-slate",
+  "hash": "#/l/nhl",
+  "url": "http://localhost:8765/#/l/nhl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NHL 🏒 NHL Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 Thu 11:00 PM Benchmark International Arena Jets4-5-3 Lightning7-3-1 Spread TB -245 O/U 6.5 ML +200 / -245 Thu 11:00 PM PPG Paints Arena Mammoth8-5-0 Penguins5-6-1 Spread UTAH -130 O/U 6.5 ML -130 / +110 Thu 11:00 PM Lenovo Center Blue Jackets5-5-0 Hurricanes10-2-2 Spread CAR -230 O/U 6.5 ML +190 / -230 Thu 11:30 PM Little Caesars Arena Blackhawks4-8-0 Red Wings5-4-3 Spread DET -180 O/U 5.5 ML +150 / -180 Fri 12:00 AM Enterprise Center Bruins9-3-1 Blues5-6-1 Spread STL -115 O/U 5.5 ML -105 / -115 Fri 12:00 AM Bridgestone Arena Capitals7-4-0 Predators4-3-5 Spread NSH -108 O/U 6.5 ML -112 / -108 Fri 12:00 AM American Airlines Center Canadiens7-3-2 Stars7-4-1 Spread DAL -162 O/U 6.5 ML +136 / -162 Fri 12:00 AM Grand Casino Arena Islanders6-4-2 Wild9-3-2 Spread MIN -192 O/U 5.5 ML +160 / -192 Fri 2:00 AM Honda Center Sabres5-4-3 Ducks5-6-1 Spread BUF -130 O/U 6.5 ML -130 / +110 Fri 2:00 AM crypto.com Arena Senators8-5-0 Kings3-6-2 Spread OTT -115 O/U 5.5 ML -115 / -105 Fri 2:00 AM SAP Center at San Jose Canucks3-10-1 Sharks6-6-1 Spread SJ -192 O/U 6.5 ML +160 / -192"
+ },
+ {
+  "name": "mcdavid",
+  "hash": "#/l/nhl/p/3895074",
+  "url": "http://localhost:8765/#/l/nhl/p/3895074",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nhl/teams.json",
+   "404 http://localhost:8765/data/nhl/players/3895074.json",
+   "404 https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/events/401892617/competitions/401892617/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NHL › Connor McDavid Connor McDavid Edmonton Oilers · C · #97 Next: @ NYI · Sat, Oct 31 6:00 PM · game page › Latest: McDavid had two assists in a 7-2 loss to Toronto on Saturday. more MARKET Shots on Goal Points Goals Assists Time on Ice (min) YOUR LINE Line Over odds Under odds No posted points line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 2.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 62.6% vs 52.4% needed to break even · edge +10.3 pts · EV +19.6% Over: stats only 37% · no market anchor PROJECTION 2.2 P(OVER) 37% FAIR ODDS -168 u AVG / MED 1.9 / 2.0 L10 OVER 5/10 EXP. MIN 23.3 ★ Save pick HIT RATE Showing under hit rates at 2.5 L5 60% 3/5 L10 50% 5/10 L20 65% 13/20 This season 54% 7/13 Last season 81% 71/88 Away 65% 13/20 vs NYI 100% 2/2 L5 L10 L20 Season Last season All All Home Away vs NYI only 0 2 4 4 VAN 4/17 0 ANA 4/21 0 ANA 4/23 2 ANA 4/25 2 ANA 4/27 2 ANA 4/29 0 ANA 5/1 2 VAN 9/30 5 VAN 10/2 2 SEA 10/3 3 ANA 10/8 1 SJ 10/10 4 LA 10/14 1 UTA 10/16 5 UTA 10/18 3 MIN 10/21 5 CAR 10/23 2 TOR 10/24 1 DET 10/27 2 CGY 10/29 Line 2.5 Proj 2.2 SPLITS SP"
+ },
+ {
+  "name": "epl-slate",
+  "hash": "#/l/epl",
+  "url": "http://localhost:8765/#/l/epl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League ⚽ Premier League Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 No Premier League games on this day. Try another date."
+ },
+ {
+  "name": "haaland",
+  "hash": "#/l/epl/p/253989",
+  "url": "http://localhost:8765/#/l/epl/p/253989",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League › Erling Haaland Erling Haaland Manchester City · F · #9 Next: vs BHA · Sat, Oct 31 3:00 PM · game page › MARKET Shots Shots on Target Goals Goals + Assists Fouls Committed YOUR LINE Line Over odds Under odds No posted shots line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans over 3.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 51.0% vs 52.4% needed to break even · edge -1.3 pts · EV -2.5% Over: stats only 51% · no market anchor PROJECTION 3.6 P(OVER) 51% FAIR ODDS -104 o AVG / MED 3.6 / 4.0 L10 OVER 6/10 ★ Save pick HIT RATE Showing over hit rates at 3.5 L5 40% 2/5 L10 60% 6/10 L20 61% 11/18 This season 63% 5/8 Last season 60% 6/10 Home 89% 8/9 vs BHA — no games L5 L10 L20 Season Last season All All Home Away vs BHA only 0 2 4 6 4 NAP 9/18 4 MON 10/1 4 VIL 10/21 4 DOR 11/5 4 B04 11/25 3 RMA 12/10 3 BODO 1/20 2 GAL 1/28 0 RMA 3/11 7 RMA 3/17 5 BOU 8/23 5 CRY 8/28 4 COV 9/5 2 MAN 9/13 4 SUN 9/20 2 LIV 10/11 5 IPS 10/17 3 AVL 10/24 Line 3.5 Proj 3.6 SPLITS SPLIT G AVG OVER 3.5 Home 9 4.3 8/9 Away 9 2.9 3/9 Wins 12 3.7 8/12 Losses 5 3.4 2/5 vs BHA 0 — — MATCHUP & CONTEXT N"
+ },
+ {
+  "name": "f1",
+  "hash": "#/l/f1",
+  "url": "http://localhost:8765/#/l/f1",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Formula 1 🏎️ Formula 1 Next: Mexico City Grand Prix Autódromo Hermanos Rodríguez · Sun, Nov 1 Probabilities update once qualifying is posted. BET CHECKER Driver Andrea Kimi Antonelli Max Verstappen Charles Leclerc George Russell Lewis Hamilton Isack Hadjar Lando Norris Oscar Piastri Nico Hülkenberg Liam Lawson Yuki Tsunoda Pierre Gasly Franco Colapinto Gabriel Bortoleto Arvid Lindblad Fernando Alonso Oliver Bearman Esteban Ocon Carlos Sainz Sergio Pérez Alexander Albon Lance Stroll Valtteri Bottas Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds Andrea Kimi Antonelli wins: 21.3% fair +369 ANDREA KIMI ANTONELLI · RECENT FINISHES AVG FINISH 3.3 TOP 10S 16/18 MODEL AVG 5.2 Bars are finishing positions (lower is better); green = top 10. 0 5 10 15 1 Japane 3/29 1 Miami 5/3 1 Canadi 5/24 1 Monaco 6/7 16 Barcel 6/14 3 Austri 6/28 15 Britis 7/5 1 Belgia 7/19 3 Hungar 7/26 2 Dutch 8/23 1 Italia 9/6 1 Spanis 9/13 5 Azerba 9/26 2 Bahrai 10/4 3 Singap 10/11 1 United 10/25 Line 10.5 Proj 4.7 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN AT TRACK WINS DNF LAST 5 Andrea Kimi Antonelli Mercedes 21.3% 53% 70% 87% +369 3.3 6.0 (1) 9 1 1 3 2 5 1 Max Verstappen Red Bull 19.3% 39% 52% 67% +419 6.9 3.0 (1) 2 4 3 1 1 2 2 Charles Leclerc Ferrari 15.6% 38% 52% 71% +542 6.2 2.0 (1) 1 3 2 2 4 4 4 George Russell Mercedes 11.2% 28% 40% 60% +794 6.9 7.0 (1) 3 3 8 9 20 1 5 Lewis Hamilton Ferrari 10.5% 34% 52% 78% +851 5.1 8.0 (1) 1 1 4 6 3 6 22 Isack Hadjar Re"
+ },
+ {
+  "name": "nascar",
+  "hash": "#/l/nascar",
+  "url": "http://localhost:8765/#/l/nascar",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nascar/summary.json"
+  ],
+  "text": "Home › NASCAR Cup 🏁 NASCAR Cup Next: Xfinity 500 Martinsville Speedway · Sun, Nov 1 Probabilities update once qualifying is posted. · Recent races only BET CHECKER Driver Kyle Larson Ryan Blaney Tyler Reddick Christopher Bell William Byron Chase Briscoe Gray Gaulding Carson Hocevar Josh Berry Harrison Burton Ty Gibbs Ross Chastain Joey Logano Alex Bowman Chase Elliott Austin Cindric Denny Hamlin Bubba Wallace Daniel Dye Austin Dillon Joey Gase BJ McLeod Ricky Stenhouse Jr Ryan Preece Daniel Suárez Corey Heim Cole Custer Chad Finchum Casey Mears Michael McDowell Chris Buescher Josh Bilicki Connor Zilisch Todd Gilliland Shane Van Gisbergen Noah Gragson Brad Keselowski Erik Jones Zane Smith AJ Allmendinger John H. Nemechek Riley Herbst Austin Hill Ty Dillon Cody Ware Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds Kyle Larson wins: 11.8% fair +749 KYLE LARSON · RECENT FINISHES AVG FINISH 10.6 TOP 10S 9/12 MODEL AVG 15.6 LAPS LED 601 Bars are finishing positions (lower is better); green = top 10. 0 10 20 30 33 Iowa C 8/9 6 Cook O 8/15 5 Dollar 8/23 31 Coke Z 8/29 5 Cook O 9/6 1 Enjoy 9/13 2 Bass P 9/19 1 Hollyw 9/27 2 South 10/4 6 Bank o 10/11 34 Freewa 10/18 1 YellaW 10/25 Line 10.5 Proj 11.5 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN AT TRACK WINS DNF LAST 5 Kyle Larson Hendrick Motorsports 11.8% 25% 34% 49% +749 10.6 — 3 1 1 34 6 2 1 Ryan Blaney Team Penske 7.2% 16% 21% 31% +1297 14.6 — 1 4 38 2 3 5 5 Tyler Reddick 23XI Racing 7.0% 1"
+ },
+ {
+  "name": "indycar",
+  "hash": "#/l/indycar",
+  "url": "http://localhost:8765/#/l/indycar",
+  "errors": [],
+  "failed": [],
+  "text": "Home › IndyCar 🏁 IndyCar Season complete — table shows season form. BET CHECKER Driver David Malukas Scott McLaughlin Christian Lundgaard Kyle Kirkwood Will Power Pato O'Ward Álex Palou Felix Rosenqvist Marcus Ericsson Conor Daly Takuma Sato Josef Newgarden Rinus VeeKay Jack Harvey Alexander Rossi Jacob Abel Helio Castroneves Christian Rasmussen Ed Carpenter Graham Rahal Marcus Armstrong Ryan Hunter-Reay Katherine Legge Romain Grosjean Kyffin Simpson Santino Ferrucci Louis Foster Nolan Siegel Mick Schumacher Scott Dixon Dennis Hauger Caio Collet Sting Ray Robb Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds David Malukas wins: 9.2% fair +985 DAVID MALUKAS · RECENT FINISHES AVG FINISH 7.8 TOP 10S 11/16 MODEL AVG 10.9 Bars are finishing positions (lower is better); green = top 10. 0 10 20 13 of St. 3/1 3 of Pho 3/7 6 of Arl 3/15 4 of Ala 3/29 2 of Ind 5/9 2 Indian 5/24 18 of Det 5/31 2 of Roa 6/21 8 of Mid 7/5 3 of Nas 7/20 12 of Por 8/9 17 of Ont 8/16 24 of Was 8/23 2 of Mil 8/29 4 of Mil 8/30 5 of Mon 9/6 Line 10.5 Proj 9.4 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN WINS DNF LAST 5 David Malukas 9.2% 23% 35% 57% +985 7.8 — 0 0 5 4 2 24 17 Scott McLaughlin 8.9% 24% 37% 60% +1026 9.1 — 1 0 1 2 4 22 8 Christian Lundgaard 7.6% 28% 45% 74% +1209 6.2 — 2 0 6 3 6 2 6 Kyle Kirkwood 7.0% 21% 34% 59% +1320 7.0 — 2 0 2 6 15 1 21 Will Power 6.9% 16% 24% 40% +1349 12.9 — 0 0 13 14 25 3 3 Pato O'Ward 6.8% 23% 36% 65% +1366 7.6 — 3 0 11 1 1 16 5 Á"
+ },
+ {
+  "name": "pga",
+  "hash": "#/l/pga",
+  "url": "http://localhost:8765/#/l/pga",
+  "errors": [],
+  "failed": [],
+  "text": "Home › PGA Tour ⛳ PGA Tour VidantaWorld Mexico Open Oct 29 · · 120 players Tap a golfer in the field (or search one) to see recent finishes and price top-5/10/20, make-cut and round-score bets. FIELD (TEE SHEET) # PLAYER SCORE ROUNDS Patton Kizzire E David Lipsky E Patrick Rodgers E Denny McCarthy E Danny Walker E Austin Eckroat E Camilo Villegas E Mark Hubbard E Erik van Rooyen E Jordan Smith E Zach Bauchou E Nick Dunlap E Emiliano Grillo E Beau Hossler E Justin Lower E Christiaan Bezuidenhout E Jeremy Paul E Rasmus Neergaard-Petersen E Tony Finau E Max Homa E Corey Conners E Taylor Pendrith E Aaron Wise E Steven Fisk E Joel Dahmen E Davis Riley E Cam Davis E Andrew Novak E Ben Griffin E Aldrich Potgieter E Ben Martin E Harry Higgs E Tyler Duncan E Taylor Moore E Kevin Roy E Sudarshan Yellamaraju E Peter Malnati E Chad Ramey E Rico Hoey E Hank Lebioda E Lee Hodges E Pierceson Coody E Isaiah Salinda E Chandler Blanchet E Cameron Tankersley E Santiago de la Fuente E A.J. Ewart E David Ford E Trace Crowe E Tayler Termeer E John VanDerLaan E Trent Phillips E Kensei Hirata E Gordon Sargent E Paul Peterson E Christo Lamprecht E Marco Penge E Ben James E John Daly II E Eli Ortego E John Parry E Andrew Putnam E Max McGreevy E Vince Whaley E Takumi Kanaya E Dylan Wu E Rafael Campos E Chan Kim E Mackenzie Hughes E Ben Silverman E Zac Blair E Adam Svensson E Brice Garnett E David Skinns E Doug Ghim E Chandler Phillips E Jackson Suber E Johnny Keefer E Brian Campbell E Wyndham Clark E K"
+ },
+ {
+  "name": "atp",
+  "hash": "#/l/atp",
+  "url": "http://localhost:8765/#/l/atp",
+  "errors": [],
+  "failed": [],
+  "text": "Home › ATP Tennis 🎾 ATP Tennis ESPN doesn't publish per-match stats for ATP Tennis, so these cards show the market's fair (no-vig) price and grade your own estimate. For stat props (aces, games, significant strikes, rounds), use the custom calculator with recent results. Upcoming & live Men's Singles · Round 2 Thu, Oct 29 12:30 PM Daniil Medvedev Cameron Norrie Price check Men's Singles · Round 2 Thu, Oct 29 12:30 PM Luciano Darderi Tommy Paul Price check Men's Singles · Round 2 Thu, Oct 29 2:00 PM Carlos Alcaraz Nikoloz Basilashvili Price check Men's Singles · Round 2 Thu, Oct 29 4:00 PM Lorenzo Musetti Arthur Fery Price check Men's Singles · Round 2 Thu, Oct 29 4:30 PM Tallon Griekspoor Alexander Zverev Price check Men's Singles · Round 2 Thu, Oct 29 7:00 PM Matteo Berrettini Flavio Cobolli Price check Men's Singles · Quarterfinal Fri, Oct 30 4:00 AM TBD TBD Price check Men's Singles · Quarterfinal Fri, Oct 30 4:00 AM Alex de Minaur TBD Price check Men's Singles · Quarterfinal Fri, Oct 30 4:00 AM TBD Adrian Mannarino Price check Men's Singles · Quarterfinal Fri, Oct 30 4:00 AM TBD TBD Price check Men's Singles · Semifinal Sat, Oct 31 4:00 AM TBD TBD Price check Men's Singles · Semifinal Sat, Oct 31 4:00 AM TBD TBD Price check Men's Singles · Final Sun, Nov 1 4:00 AM TBD TBD Price check Men's Doubles · Round 1 Thu, Oct 29 1:30 PM TBD TBD Price check Men's Doubles · Round 1 Thu, Oct 29 2:00 PM TBD TBD Price check Men's Doubles · Round 1 Thu, Oct 29 3:30 PM TBD TBD Price chec"
+ },
+ {
+  "name": "ufc",
+  "hash": "#/l/ufc",
+  "url": "http://localhost:8765/#/l/ufc",
+  "errors": [],
+  "failed": [],
+  "text": "Home › UFC 🥊 UFC ESPN doesn't publish per-match stats for UFC, so these cards show the market's fair (no-vig) price and grade your own estimate. For stat props (aces, games, significant strikes, rounds), use the custom calculator with recent results. Upcoming & live UFC Fight Night: Moicano vs. Nolan · W Flyweight Sat, Oct 31 9:00 PM Tainara Lisboa 7-4-0 Lucia Szabová 12-0-0 Price check UFC Fight Night: Moicano vs. Nolan · W Strawweight Sat, Oct 31 9:00 PM Piera Rodriguez 12-2-0 Talita Alencar 8-1-1 Price check UFC Fight Night: Moicano vs. Nolan · Middleweight Sat, Oct 31 9:00 PM Joe Kropschot 9-3-0 Nick Klein 6-3-0 Price check UFC Fight Night: Moicano vs. Nolan · Middleweight Sat, Oct 31 9:00 PM Mickey Gall 7-7-0 Zach Reese 10-4-0 Price check UFC Fight Night: Moicano vs. Nolan · Featherweight Sat, Oct 31 9:00 PM Julian Erosa 31-14-0 JeongYeong Lee 11-3-0 Price check UFC Fight Night: Moicano vs. Nolan · Welterweight Sat, Oct 31 9:00 PM Theodor Berggren 8-4-0 Rodrigo Sezinando 9-2-0 Price check UFC Fight Night: Moicano vs. Nolan · Featherweight Sat, Oct 31 9:00 PM Dakota Hope 11-2-0 Francis Marshall 10-3-0 Price check UFC Fight Night: Moicano vs. Nolan · Welterweight Sun, Nov 1 12:00 AM Jean-Paul Lebosnoyani 11-2-0 Farman Hasanov 5-0-0 Price check UFC Fight Night: Moicano vs. Nolan · W Bantamweight Sun, Nov 1 12:00 AM Yana Santos 17-8-0 Luana Santos 11-2-0 Price check UFC Fight Night: Moicano vs. Nolan · Flyweight Sun, Nov 1 12:00 AM Ode' Osbourne 13-9-0 Cody Durden 18-11-1 P"
+ },
+ {
+  "name": "ncaaf",
+  "hash": "#/l/ncaaf",
+  "url": "http://localhost:8765/#/l/ncaaf",
+  "errors": [],
+  "failed": [],
+  "text": "Home › College Football 🏈 College Football Custom calculator ‹ Week 8 Week 9 Week 10 › Thu 11:30 PM DATCU Stadium FAU5-2 North Texas5-2 Spread UNT -14.5 O/U 76.5 ML +410 / -550 Thu 11:30 PM Bridgeforth Stadium Troy3-4 James Madison7-1 Spread JMU -19.5 O/U 49.5 ML +800 / -1350 Final Houchens Industries-L.T. Smith Stadium Delaware4-4 35 Western KY3-5 21 No lines posted yet Final Robert W. Plaster Stadium Sam Houston1-7 3 Missouri St3-5 24 No lines posted yet Final Johnny \"Red\" Floyd Stadium Kennesaw St2-6 44 MTSU4-4 28 No lines posted yet Final Aggie Memorial Stadium Jax State6-2 24 New Mexico St3-5 0 No lines posted yet Fri 11:00 PM Jerry Richardson Stadium Tulane3-4 Charlotte1-6 Spread TULN -9.5 O/U 47.5 ML -345 / +275 Fri 11:30 PM Acrisure Bounce House Baylor4-3 UCF4-3 Spread UCF -1.5 O/U 47.5 ML -105 / -115 Sat 2:30 AM Hornet Stadium Kent State3-5 Sacramento St1-7 Spread KENT -8.5 O/U 46.5 ML -325 / +260 Sat 4:00 PM Gillette Stadium Notre Dame6-1 Navy2-5 Spread ND -30.5 O/U 56.5 ML -6500 / +2000 Sat 4:00 PM Galaxy Stadium Arizona6-1 Texas Tech6-1 Spread TTU -3.5 O/U 54.5 ML +140 / -166 Sat 4:00 PM JMA Wireless Dome SMU6-1 Syracuse3-4 Spread SMU -10.5 O/U 57.5 ML -380 / +300 Sat 4:00 PM Kinnick Stadium Wisconsin5-2 Iowa5-2 Spread IOWA -3.5 O/U 36.5 ML +142 / -170 Sat 4:00 PM Carter-Finley Stadium California3-5 NC State3-4 Spread NCSU -7 O/U 56.5 ML +215 / -265 Sat 4:00 PM Wallace Wade Stadium Boston College4-3 Duke5-2 Spread DUKE -7 O/U 48.5 ML +225 / -278 Sat 4:00 PM SECU "
+ },
+ {
+  "name": "ncaab",
+  "hash": "#/l/ncaab",
+  "url": "http://localhost:8765/#/l/ncaab",
+  "errors": [],
+  "failed": [],
+  "text": "Home › College Basketball 🏀 College Basketball Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 No College Basketball games on this day. Try another date."
+ },
+ {
+  "name": "custom",
+  "hash": "#/custom",
+  "url": "http://localhost:8765/#/custom",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Custom calculator 🧮 Custom prop calculator For any sport or stat that isn't covered automatically — boxing, cricket, swimming, darts, esports, tennis aces. Paste recent results (most recent first) and your line. What are you betting? Recent results (most recent first) Tennis — aces UFC — significant strikes Cricket — batter runs Boxing — rounds lasted Darts — 180s Line Over odds Under odds Stat type Auto-detect Count (strikes, aces, shots) Rare count (goals, TDs, 180s) Large total (yards, runs, points) Time / decimal (seconds, distance) Matchup adj. % Matchup adj.: your read on the opponent, venue or conditions, e.g. −10 vs an elite returner, +10 on a fast court. Enter at least 3 results and a line. HIT RATE RESULTS ODDS TOOLS American odds Implied % Parlay legs (odds, comma separated)"
+ },
+ {
+  "name": "picks",
+  "hash": "#/picks",
+  "url": "http://localhost:8765/#/picks",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Saved picks ★ Saved picks Auto-grade finished games Stored in this browser only. Units assume 1 unit per pick at the saved odds. RECORD 0-0 WIN % — UNITS 0.00 ROI — PENDING 0 No saved picks yet. Hit ★ Save on any analysis."
+ },
+ {
+  "name": "nba-game",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba/g/401909893",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nba/teams.json",
+   "404 http://localhost:8765/data/nba/players/2490149.json",
+   "404 http://localhost:8765/data/nba/players/3908809.json",
+   "404 http://localhost:8765/data/nba/players/4869342.json",
+   "404 http://localhost:8765/data/nba/players/4432158.json",
+   "404 http://localhost:8765/data/nba/players/4701230.json",
+   "404 http://localhost:8765/data/nba/players/3992.json",
+   "404 http://localhost:8765/data/nba/players/4066328.json",
+   "404 http://localhost:8765/data/nba/players/4278039.json",
+   "404 http://localhost:8765/data/nba/players/4431680.json",
+   "404 http://localhost:8765/data/nba/players/4576087.json",
+   "404 http://localhost:8765/data/nba/lineups/ATL.json"
+  ],
+  "text": "Home › NBA › CLE @ ATL Cleveland Cavaliers 3-1 · Away Friday, Oct 30 · 12:00 AM State Farm Arena Atlanta Hawks 2-3 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 Hawks face the Cavaliers on 3-game skid Cleveland Cavaliers (3-1, fifth in the Eastern Conference) vs. Atlanta Hawks (2-3, seventh in the Eastern Conference) Preview · 5h ago LINES · Draft Kings ATL spread ATL odds CLE odds Total Over odds Under odds CLE ML ATL ML MODEL CLE 115.3 ATL 118.9 MARGIN (H) +3.7 TOTAL 234.2 MARKET PICK PROB EDGE GRADE Spread ATL covers: model 57% → blended 51% lean ATL -1.5 51.0% +1.0 PASS ★ Total Over: model 38% → blended 45% lean Under 239.5 54.8% +1.3 PASS ★ Moneyline ATL wins: model 62% → blended 54% lean ATL ML 54.0% +1.7 PASS ★ ESPN Matchup Predictor: ATL 52.3% to win. How this is calculated TEAM COMPARISON CLE ATL 119.8 PPG (season) 120.2 117.8 PPG allowed 115.2 119.8 PPG last 5 120.2 117.8 Allowed last 5 115.2 +2.0 Avg margin +5.0 CLE RECENT DATE OPP SCORE MARGIN Oct 28 vs WSH W 121-111 +10 Oct 26 vs MIN W 127-125 +2 Oct 24 vs BKN W 125-121 +4 Oct 22 @ PHI L 106-114 -8 ATL RECENT DATE OPP SCORE MARGIN Oct 28 vs MIA L 117-129 -12 Oct 27 @ HOU L 110-120 -10 Oct 25 vs HOU L 114-121 -7 Oct 23 @ CHA W 128-81 +47 Oct 21 @ ORL W 132-125 +7 INJURIES ATL Mouhamed Gueye F Out ATL Henri Veesaar C Out HEAD TO HEAD No meetings yet this season. PLAYER PROPS · DRAFTKINGS Re-scan Scan runs the full model on every posted line (game logs for each player, so it takes a few seconds) and sorts b"
+ },
+ {
+  "name": "nfl-game",
+  "hash": "#/l/nfl",
+  "url": "http://localhost:8765/#/l/nfl/g/401873023",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nfl/teams.json",
+   "404 http://localhost:8765/data/nfl/players/4685720.json",
+   "404 http://localhost:8765/data/nfl/players/4248528.json",
+   "404 http://localhost:8765/data/nfl/players/4241416.json",
+   "404 http://localhost:8765/data/nfl/players/2576925.json",
+   "404 http://localhost:8765/data/nfl/players/4695883.json",
+   "404 http://localhost:8765/data/nfl/players/4567096.json",
+   "404 http://localhost:8765/data/nfl/players/4036378.json",
+   "404 http://localhost:8765/data/nfl/players/4047365.json",
+   "404 http://localhost:8765/data/nfl/players/4429023.json",
+   "404 http://localhost:8765/data/nfl/players/4701936.json",
+   "404 http://localhost:8765/data/nfl/players/4685472.json",
+   "404 http://localhost:8765/data/nfl/players/4372780.json",
+   "404 http://localhost:8765/data/nfl/players/4572680.json",
+   "404 http://localhost:8765/data/nfl/lineups/CAR.json"
+  ],
+  "text": "Home › NFL › CAR @ GB Carolina Panthers 3-3 · Away Friday, Oct 30 · 12:15 AM Lambeau Field Green Bay Packers 4-3 · Home Build a same-game parlay › 📰 PREVIEW & NEWS Packers and Panthers trying to bounce back as they face off at Lambeau Field — A pair of ticked-off teams will square off when the Green Bay Packers face the Carolina Panthers on Thursday night. Preview · 14h ago Ranking the best 2026 NFL rookies: Arvell Reese, Denzel Boston, others in top 10 Who are the NFL's most impressive rookies through Week 7? Who is overperforming or underperforming? We stacked the top 10 -- and have a tie at No. 1. Matt Bowen, Kalyn Kahler, Jeff Legwold, Jordan Reid and Ben Solak · 4m ago Panthers' consistency starts in the trenches, rests with DC Ejiro Evero From offensive line woes to a troubled run defense, Carolina (3-3) faces its problems entering Thursday night's game at Green Bay. Mike Kaye · 36m ago Why Micah Parsons' ACL recovery is taking longer than Patrick Mahomes' They were injured the same day, but while Mahomes was ready for Week 1, Parsons has yet to practice. Rob Demovsky · 36m ago LINES · Draft Kings GB spread GB odds CAR odds Total Over odds Under odds CAR ML GB ML MODEL CAR 21.7 GB 23.8 MARGIN (H) +2.2 TOTAL 45.5 MARKET PICK PROB EDGE GRADE Spread GB covers: model 46% → blended 49% lean CAR +3.5 51.1% -0.8 PASS ★ Total Over: model 44% → blended 47% lean Under 47.5 52.8% -0.7 PASS ★ Moneyline GB wins: model 56% → blended 61% lean CAR ML 39.3% +0.8 PASS ★ ESPN Matchup Pre"
+ },
+ {
+  "name": "nhl-game",
+  "hash": "#/l/nhl",
+  "url": "http://localhost:8765/#/l/nhl/g/401892601",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nhl/teams.json",
+   "404 http://localhost:8765/data/nhl/players/3941973.json",
+   "404 http://localhost:8765/data/nhl/players/4065019.json",
+   "404 http://localhost:8765/data/nhl/players/3151187.json",
+   "404 http://localhost:8765/data/nhl/players/4588175.json",
+   "404 http://localhost:8765/data/nhl/players/4697392.json",
+   "404 http://localhost:8765/data/nhl/players/4233583.json",
+   "404 http://localhost:8765/data/nhl/players/3042083.json",
+   "404 http://localhost:8765/data/nhl/players/5118.json",
+   "404 http://localhost:8765/data/nhl/players/3899952.json",
+   "404 http://localhost:8765/data/nhl/players/2562632.json",
+   "404 http://localhost:8765/data/nhl/players/3988847.json",
+   "404 http://localhost:8765/data/nhl/players/2563060.json"
+  ],
+  "text": "Home › NHL › WPG @ TB Winnipeg Jets 4-5-3 · Away Thursday, Oct 29 · 11:00 PM Benchmark International Arena Tampa Bay Lightning 7-3-1 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 Winnipeg takes losing streak into matchup with Tampa Bay Winnipeg Jets (4-5-3, in the Central Division) vs. Tampa Bay Lightning (7-3-1, in the Atlantic Division) Preview · 1d ago LINES · Draft Kings TB spread TB odds WPG odds Total Over odds Under odds WPG ML TB ML MODEL WPG 2.52 TB 3.41 MARGIN (H) +0.90 TOTAL 5.93 MARKET PICK PROB EDGE GRADE Spread TB covers: model 40% → blended 44% lean WPG +1.5 56.4% -0.1 PASS ★ Total Over: model 38% → blended 42% lean Under 6.5 58.2% -0.4 PASS ★ Moneyline TB wins: model 65% → blended 67% lean WPG ML 32.9% -0.4 PASS ★ How this is calculated TEAM COMPARISON WPG TB 2.3 Goals/G (season) 3.5 3.0 Goals/G allowed 3.1 1.4 Goals/G last 5 4.2 3.0 Allowed last 5 3.6 -0.8 Avg margin +0.8 WPG RECENT DATE OPP SCORE MARGIN Oct 28 vs FLA L 1-5 -4 Oct 25 vs MTL L 1-2 -1 Oct 23 @ DAL L 2-3 -1 Oct 21 @ STL L 1-2 -1 Oct 17 vs CAR L 2-3 -1 Oct 16 @ CHI L 3-4 -1 Oct 14 vs MIN W 5-2 +3 Oct 10 vs ANA L 1-5 -4 TB RECENT DATE OPP SCORE MARGIN Oct 25 @ UTA L 4-5 -1 Oct 24 @ COL L 3-6 -3 Oct 21 @ VGK W 6-2 +4 Oct 17 vs VAN W 4-2 +2 Oct 15 vs SEA W 4-3 +1 Oct 13 @ NYR L 1-4 -3 Oct 10 @ NYI W 5-3 +2 Oct 8 vs MIN W 3-2 +1 INJURIES TB Brandon Hagel LW Day-To-Day TB Zemgus Girgensons C Out TB Victor Hedman D Day-To-Day TB Yanni Gourde C Injured Reserve WPG Vladislav Namestnikov C Injure"
+ },
+ {
+  "name": "epl-game",
+  "hash": "#/l/epl",
+  "url": "http://localhost:8765/#/l/epl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League ⚽ Premier League Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 No Premier League games on this day. Try another date."
+ },
+ {
+  "name": "mlb-game",
+  "hash": "#/l/mlb",
+  "url": "http://localhost:8765/#/l/mlb",
+  "errors": [],
+  "failed": [],
+  "text": "Home › MLB ⚾ MLB Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 No MLB games on this day. Try another date — the MLB season may be over; player pages still show last season's game logs."
+ },
+ {
+  "name": "today",
+  "hash": "#/today",
+  "url": "http://localhost:8765/#/today",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Today 🔥 Today's picks Updated Thu, Oct 29 10:33 AM SPORT All 🏀 Basketball 🏈 Football NBA NFL College BB College FB BUDGET $5 $10 $25 $50 $100 BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs YOUR $10 TICKET Copy ★ Save all TOTAL STAKE $10 IF EVERYTHING HITS $34.24 MODEL EXPECTATION +3.24 Straight $3.50 to win $3.18 · -110 • Kyren Williams Over 59.5 Rushing Yards LAC @ LAR -110 Model: 62% to hit · expected +0.65 on $3.50 Straight $3.50 to win $3.18 · -110 • Jonah Coleman Over 53.5 Rush + Rec Yards KC @ DEN -110 Model: 62% to hit · expected +0.64 on $3.50 3-leg parlay $3 to win $17.87 · +596 • Kyren Williams Over 59.5 Rushing Yards LAC @ LAR -110 • Jonah Coleman Over 53.5 Rush + Rec Yards KC @ DEN -110 • Chuba Hubbard Under 16.5 Rush Attempts CAR @ GB -110 Model: 24% to hit · expected +1.96 on $3 TOP PICKS · ALL A Kyren Williams Over 59.5 Rushing Yards -110 est. NFL · LAC @ LAR · Sun 9:05 PM 62% to hit vs 52.4% break-even · edge +9.7 · Projection 79.5 vs line 59.5 · over in 5/10 of last 10 · team total 26.0 📰 With Davante Adams out, Rams leaning on the run game · 19h ago + A Chuba Hubbard Under 16.5 Rush Attempts -110 est. NFL · CAR @ GB · Fri 12:15 AM 62% to hit vs 52.4% break-even · edge +9.3 · Projection 11.4 vs line 16.5 · under in 7/10 of last 10 · team total 22.0 + B Kenneth Walker III Under 3.5 Receptions -110 est. NFL · KC @ DEN · Sun 9:25 PM 60% to hit vs 52.4% break-even · edge +7.8 · Projection 2.6 vs line 3.5 · under in 6/10 of last 10 · team to"
+ },
+ {
+  "name": "today-bball-5-parlay",
+  "hash": "#/today?sport=basketball",
+  "url": "http://localhost:8765/#/today?sport=basketball",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Today 🔥 Today's picks Updated Thu, Oct 29 10:33 AM SPORT All 🏀 Basketball 🏈 Football NBA NFL College BB College FB BUDGET $5 $10 $25 $50 $100 BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs YOUR $5 TICKET No 🏀 Basketball picks with an edge right now. Try another sport, or build a same-game parlay below. TOP PICKS · 🏀 BASKETBALL C Jeremiah Fears Over 11.5 Points -108 NBA · SAC @ NO · Fri 12:00 AM 56% to hit vs 51.9% break-even · edge +3.8 · Projection 17.4 vs line 11.5 · over in 6/10 of last 10 · team total 121.5 + C Jarrett Allen Over 1.5 Blocks +122 NBA · CLE @ ATL · Fri 12:00 AM 49% to hit vs 45.0% break-even · edge +3.7 · Projection 1.7 vs line 1.5 · over in 6/10 of last 10 + C Zion Williamson Under 5.5 Rebounds -121 NBA · SAC @ NO · Fri 12:00 AM 58% to hit vs 54.8% break-even · edge +3.3 · Projection 4.8 vs line 5.5 · under in 6/10 of last 10 🎬 Denver Nuggets vs. New Orleans Pelicans: Game Highlights · 8h ago + C Evan Mobley Over 17.5 Points -106 NBA · CLE @ ATL · Fri 12:00 AM 54% to hit vs 51.5% break-even · edge +2.7 · Projection 19.0 vs line 17.5 · over in 7/10 of last 10 🎬 Washington Wizards vs. Cleveland Cavaliers: Game Highlights · 9h ago + Tap + to add legs to your own parlay. MY PARLAY Add legs with + from the picks or the same-game builder. You'll see the combined odds and what $5 pays. SAME-GAME PARLAY Pick a game… NBA · SAC @ NO · Fri 12:00 AM NBA · CLE @ ATL · Fri 12:00 AM NBA · MEM @ POR · Fri 2:00 AM Choose a game to see every leg th"
+ },
+ {
+  "name": "today-sgp-football",
+  "hash": "#/today?sport=football",
+  "url": "http://localhost:8765/#/today?sport=football",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Today 🔥 Today's picks Updated Thu, Oct 29 10:33 AM SPORT All 🏀 Basketball 🏈 Football NBA NFL College BB College FB BUDGET $5 $10 $25 $50 $100 BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs YOUR $5 TICKET Copy ★ Save all TOTAL STAKE $5 IF EVERYTHING HITS $34.79 MODEL EXPECTATION +3.26 3-leg parlay $5 to win $29.79 · +596 • Kyren Williams Over 59.5 Rushing Yards LAC @ LAR -110 • Jonah Coleman Over 53.5 Rush + Rec Yards KC @ DEN -110 • Chuba Hubbard Under 16.5 Rush Attempts CAR @ GB -110 Model: 24% to hit · expected +3.26 on $5 TOP PICKS · 🏈 FOOTBALL A Kyren Williams Over 59.5 Rushing Yards -110 est. NFL · LAC @ LAR · Sun 9:05 PM 62% to hit vs 52.4% break-even · edge +9.7 · Projection 79.5 vs line 59.5 · over in 5/10 of last 10 · team total 26.0 📰 With Davante Adams out, Rams leaning on the run game · 19h ago + A Chuba Hubbard Under 16.5 Rush Attempts -110 est. NFL · CAR @ GB · Fri 12:15 AM 62% to hit vs 52.4% break-even · edge +9.3 · Projection 11.4 vs line 16.5 · under in 7/10 of last 10 · team total 22.0 + B Kenneth Walker III Under 3.5 Receptions -110 est. NFL · KC @ DEN · Sun 9:25 PM 60% to hit vs 52.4% break-even · edge +7.8 · Projection 2.6 vs line 3.5 · under in 6/10 of last 10 · team total 21.0 + B Rashod Bateman Under 2.5 Receptions -110 est. NFL · BAL @ BUF · Sun 6:00 PM 60% to hit vs 52.4% break-even · edge +7.3 · Projection 2.1 vs line 2.5 · under in 8/10 of last 10 · team total 25.8 + B Darren Waller Over 19.5 Receiving Yards -110 est. NFL ·"
+ },
+ {
+  "name": "today-sgp-ncaaf",
+  "hash": "#/today?sport=ncaaf",
+  "url": "http://localhost:8765/#/today?sport=ncaaf",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Today 🔥 Today's picks Updated Thu, Oct 29 10:33 AM SPORT All 🏀 Basketball 🏈 Football NBA NFL College BB College FB BUDGET $5 $10 $25 $50 $100 BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs YOUR $5 TICKET Copy ★ Save all TOTAL STAKE $5 IF EVERYTHING HITS $342 MODEL EXPECTATION +4.24 3-leg parlay $5 to win $337 · +6740 • ARIZ ML +140 • CSU ML +200 • MSST ML +850 Model: 2.7% to hit · expected +4.24 on $5 TOP PICKS · COLLEGE FB C ARIZ ML +140 College Football · ARIZ @ TTU · Sat 4:00 PM 47% to hit vs 41.7% break-even · edge +5.1 · TTU wins: model 26% → blended 53% 📰 Bottom 10: Texas Tech enters the spooky rankings · 1d ago + C CSU ML +200 College Football · CSU @ USU · Sat 7:30 PM 38% to hit vs 33.3% break-even · edge +4.9 · USU wins: model 50% → blended 62% + C MSST ML +850 College Football · MSST @ TEX · Sat 11:30 PM 15% to hit vs 10.5% break-even · edge +4.6 · TEX wins: model 65% → blended 85% 📰 Sources: Texas LT Trevor Goosby has successful knee surgery · 21h ago + C NEV ML +1100 College Football · NEV @ UCLA · Sat 8:15 PM 13% to hit vs 8.3% break-even · edge +4.3 · UCLA wins: model 79% → blended 87% + C ASU ML +525 College Football · ASU @ BYU · Sat 7:30 PM 20% to hit vs 16.0% break-even · edge +4.0 · BYU wins: model 62% → blended 80% 📰 UCF fined for fans' chants at BYU; Big 12 sets policy with in-game penalties · 7h ago + C SAC +8.5 -108 College Football · KENT @ SAC · Sat 2:30 AM 56% to hit vs 51.9% break-even · edge +3.9 · SAC covers: model 67% → b"
+ },
+ {
+  "name": "today-sgp-basketball",
+  "hash": "#/today?sport=basketball",
+  "url": "http://localhost:8765/#/today?sport=basketball",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Today 🔥 Today's picks Updated Thu, Oct 29 10:33 AM SPORT All 🏀 Basketball 🏈 Football NBA NFL College BB College FB BUDGET $5 $10 $25 $50 $100 BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs YOUR $5 TICKET No 🏀 Basketball picks with an edge right now. Try another sport, or build a same-game parlay below. TOP PICKS · 🏀 BASKETBALL C Jeremiah Fears Over 11.5 Points -108 NBA · SAC @ NO · Fri 12:00 AM 56% to hit vs 51.9% break-even · edge +3.8 · Projection 17.4 vs line 11.5 · over in 6/10 of last 10 · team total 121.5 ✓ C Jarrett Allen Over 1.5 Blocks +122 NBA · CLE @ ATL · Fri 12:00 AM 49% to hit vs 45.0% break-even · edge +3.7 · Projection 1.7 vs line 1.5 · over in 6/10 of last 10 + C Zion Williamson Under 5.5 Rebounds -121 NBA · SAC @ NO · Fri 12:00 AM 58% to hit vs 54.8% break-even · edge +3.3 · Projection 4.8 vs line 5.5 · under in 6/10 of last 10 🎬 Denver Nuggets vs. New Orleans Pelicans: Game Highlights · 8h ago ✓ C Evan Mobley Over 17.5 Points -106 NBA · CLE @ ATL · Fri 12:00 AM 54% to hit vs 51.5% break-even · edge +2.7 · Projection 19.0 vs line 17.5 · over in 7/10 of last 10 🎬 Washington Wizards vs. Cleveland Cavaliers: Game Highlights · 9h ago + Tap + to add legs to your own parlay. MY PARLAY · 3 LEGS Clear ODDS +460 $5 PAYS $28 MODEL HIT CHANCE 20.8% Includes same-game legs: the book's price will differ from this estimate. C Jeremiah Fears Over 11.5 Points -108 NBA · SAC @ NO · Fri 12:00 AM 56% to hit vs 51.9% break-even · edge +3.8 · Projection"
+ },
+ {
+  "name": "context-nba",
+  "hash": "#/l/nba/p/4576087?m=ast",
+  "url": "http://localhost:8765/#/l/nba/p/4576087?m=ast",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nba/teams.json",
+   "404 http://localhost:8765/data/nba/players/4576087.json"
+  ],
+  "text": "Home › NBA › Peyton Watson Peyton Watson Cleveland Cavaliers · G · #8 Next: @ ATL · Fri, Oct 30 12:00 AM · game page › Latest: Watson recorded 22 points (9-17 FG, 1-4 3Pt, 3-3 FT), six rebounds, two assists and one block in 28 minutes during Wednesday's 121-111 victory over the Wizards. more MARKET Points 14.5 Rebounds 4.5 Assists 6.5 3-Pointers Made 1.5 Pts + Reb + Ast 21.5 Pts + Reb 19.5 Pts + Ast 16.5 Reb + Ast Steals 1.5 Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds DraftKings: 6.5 (o -144 / u +109) · 2 lines posted, showing the main one Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under The line (6.5) is far from recent production (projection 2.3). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. No grade until you've checked the news. Model 69.9% vs 47.8% needed to break even · edge +22.1 pts · EV +46.2% Over: stats only 5% · market 55% · blended 30% PROJECTION 2.3 P(OVER) 30% FAIR ODDS -233 u AVG / MED 2.3 / 2.0 L10 OVER 0/10 EXP. MIN 28.8 ★ Save pick HIT RATE Showing under hit rates at 6.5 L5 100% 5/5 L10 100% 10/10 L20 100% 20/20 This sea"
+ },
+ {
+  "name": "context-nfl",
+  "hash": "#/l/nfl/p/4711533?m=rec_yds",
+  "url": "http://localhost:8765/#/l/nfl/p/4711533?m=rec_yds",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/nfl/teams.json",
+   "404 http://localhost:8765/data/nfl/players/4711533.json"
+  ],
+  "text": "Home › NFL › Ollie Gordon II Ollie Gordon II Miami Dolphins · RB · #0 Next: vs NE · Sun, Nov 1 9:25 PM · game page › Latest: Gordon rushed 25 times for 103 yards and a touchdown while catching one of three targets for no gain in Sunday's 28-25 win over the Jets. more MARKET Rushing Yards 61.5 Rush Attempts 15.5 Receptions 1.5 Receiving Yards 9.5 Targets Longest Reception Longest Rush Rush + Rec Yards 76.5 Total TDs (rush + rec) YOUR LINE Line Over odds Under odds DraftKings: 9.5 (o — / u —) Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under The line (9.5) is far from recent production (projection 2.0). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. No grade until you've checked the news. Model 69.5% vs 52.4% needed to break even · edge +17.1 pts · EV +32.7% Over: stats only 11% · market 50% · blended 30% PROJECTION 2.0 P(OVER) 30% FAIR ODDS -228 u AVG / MED 2.0 / 0.0 L10 OVER 1/10 ★ Save pick HIT RATE Showing under hit rates at 9.5 L5 80% 4/5 L10 90% 9/10 L20 90% 18/20 This season 83% 5/6 Last season 94% 16/17 Home 91% 10/11 vs NE 100% 2/2 L5 L10 L20 Season Last season All All Home Away vs NE only 0 10 20 0 NYJ 9/29 0 CAR 10/5 1 LAC 10/12 2 CLE 10/19 20 ATL 10/2"
+ },
+ {
+  "name": "news",
+  "hash": "#/news?sport=all",
+  "url": "http://localhost:8765/#/news?sport=all",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (26) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:11 LAL 103 – LAC 87 Los Angeles Lakers vs. LA Clippers: Game Highlights 🏀 NBA · 5h ago ▶ 1:09 OKC 96 – DAL 120 Mavericks hand the Thunder their first loss of the season 🏀 NBA · 6h ago ▶ 1:14 SA 117 – UTAH 111 San Antonio Spurs vs. Utah Jazz: Game Highlights 🏀 NBA · 7h ago ▶ 1:14 GS 119 – MIN 114 Golden State Warriors vs. Minnesota Timberwolves: Game Highlights 🏀 NBA · 8h ago ▶ 1:14 NY 133 – CHI 127 New York Knicks vs. Chicago Bulls: Game Highlights 🏀 NBA · 8h ago ▶ 1:13 HOU 132 – MIL 100 Houston Rockets vs. Milwaukee Bucks: Game Highlights 🏀 NBA · 8h ago ▶ 1:13 DEN 104 – NO 91 Denver Nuggets vs. New Orleans Pelicans: Game Highlights 🏀 NBA · 8h ago ▶ 1:15 ORL 99 – TOR 129 Orlando Magic vs. Toronto Raptors: Game Highlights 🏀 NBA · 8h ago ▶ 1:08 PHI 114 – IND 109 Tyrese Maxey, 76ers take down Pacers in thriller 🏀 NBA · 9h ago ▶ 1:13 CHA 89 – DET 97 Charlotte Hornets vs. Detroit Pistons: Game Highlights 🏀 NBA · 9h ago ▶ 1:15 WSH 111 – CLE 121 Washington Wizards vs. Cleveland Cavaliers: Game Highlights 🏀 NBA · 9h ago ▶ 1:12 MIA 129 – ATL 117 Miami Heat vs. Atlanta Hawks: Game Highlights 🏀 NBA · 9h ago Show 14 more 🗞️ Top stories Ranking the best 2026 NFL rookies: Arvell Reese, Denzel Bost",
+  "extra": {
+   "first": {
+    "count": "1 of 26",
+    "title": "Los Angeles Lakers vs. LA Clippers: Game Highlights",
+    "src": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1029/00abd6a2-62e4-4b0e-84c4-7ac7923a1659/00abd6a2-62e4-4b0",
+    "readyState": 4,
+    "time": 5.747381,
+    "duration": 71.215601,
+    "paused": false,
+    "error": null,
+    "msg": ""
+   },
+   "next": {
+    "count": "2 of 26",
+    "time": 3.686388,
+    "error": null
+   }
+  }
+ },
+ {
+  "name": "news-videos",
+  "hash": "#/news?sport=nba",
+  "url": "http://localhost:8765/#/news?sport=nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (12) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:11 LAL 103 – LAC 87 Los Angeles Lakers vs. LA Clippers: Game Highlights 5h ago ▶ 1:09 OKC 96 – DAL 120 Mavericks hand the Thunder their first loss of the season 6h ago ▶ 1:14 SA 117 – UTAH 111 San Antonio Spurs vs. Utah Jazz: Game Highlights 7h ago ▶ 1:14 GS 119 – MIN 114 Golden State Warriors vs. Minnesota Timberwolves: Game Highlights 8h ago ▶ 1:14 NY 133 – CHI 127 New York Knicks vs. Chicago Bulls: Game Highlights 8h ago ▶ 1:13 HOU 132 – MIL 100 Houston Rockets vs. Milwaukee Bucks: Game Highlights 8h ago ▶ 1:13 DEN 104 – NO 91 Denver Nuggets vs. New Orleans Pelicans: Game Highlights 8h ago ▶ 1:15 ORL 99 – TOR 129 Orlando Magic vs. Toronto Raptors: Game Highlights 8h ago ▶ 1:08 PHI 114 – IND 109 Tyrese Maxey, 76ers take down Pacers in thriller 9h ago ▶ 1:13 CHA 89 – DET 97 Charlotte Hornets vs. Detroit Pistons: Game Highlights 9h ago ▶ 1:15 WSH 111 – CLE 121 Washington Wizards vs. Cleveland Cavaliers: Game Highlights 9h ago ▶ 1:12 MIA 129 – ATL 117 Miami Heat vs. Atlanta Hawks: Game Highlights 9h ago 🗞️ Top stories Stephen Curry torches Wolves for 44 as Warriors win 2nd straight after 0-3 start Stephen Curry exploded for 44 points to lead the Warriors to their second straight win Wednesday nig",
+  "extra": {
+   "first": {
+    "count": "",
+    "title": "Jalen Brunson takes over with 38-point performance in Knicks' win",
+    "src": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1029/9d7c77f2-cdeb-44d9-9669-de85febc5615/9d7c77f2-cdeb-44d",
+    "readyState": 4,
+    "time": 5.742775,
+    "duration": 56.37805,
+    "paused": false,
+    "error": null,
+    "msg": ""
+   },
+   "next": {
+    "count": "",
+    "time": 9.99057,
+    "error": null
+   }
+  }
+ },
+ {
+  "name": "news-football",
+  "hash": "#/news?sport=football",
+  "url": "http://localhost:8765/#/news?sport=football",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (14) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:18 HOU 13 – UTAH 21 Houston Cougars vs. Utah Utes: Full Highlights 🏈 College Football · 4d ago ▶ 1:15 MISS 27 – TEX 34 Texas survives with thrilling 34-27 win over Ole Miss 🏈 College Football · 4d ago ▶ 1:18 ISU 3 – ARIZ 39 Iowa State Cyclones vs. Arizona Wildcats: Full Highlights 🏈 College Football · 4d ago ▶ 1:19 VAN 17 – UK 34 Vanderbilt Commodores vs. Kentucky Wildcats: Full Highlights 🏈 College Football · 4d ago ▶ 2:00 BYU 31 – UCF 39 UCF hands No. 2 BYU first loss in dramatic fashion in 2OT 🏈 College Football · 4d ago ▶ 1:59 MSU 10 – UCLA 28 Michigan State Spartans vs. UCLA Bruins: Full Highlights 🏈 College Football · 4d ago ▶ 1:16 BYU 31 – UCF 39 BYU Cougars vs. UCF Knights: Full Highlights 🏈 College Football · 4d ago ▶ 1:12 TENN 24 – SC 27 Tennessee Volunteers vs. South Carolina Gamecocks: Full Highlights 🏈 College Football · 4d ago ▶ 1:18 TA&M 20 – ALA 31 Texas A&M Aggies vs. Alabama Crimson Tide: Full Highlights 🏈 College Football · 4d ago ▶ 0:51 PITT 23 – MIA 52 Pittsburgh Panthers vs. Miami Hurricanes: Full Highlights 🏈 College Football · 5d ago ▶ 1:16 PITT 23 – MIA 52 Pittsburgh Panthers vs. Miami Hurricanes: Full Highlights 🏈 College Football · 5d ago ▶ 1:17 TTU 24 – CIN "
+ },
+ {
+  "name": "news-nhl",
+  "hash": "#/news?sport=nhl",
+  "url": "http://localhost:8765/#/news?sport=nhl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (4) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:16 TOR 4 – SEA 5 Toronto Maple Leafs vs. Seattle Kraken: Game Highlights 6h ago ▶ 1:27 NJ 2 – COL 5 New Jersey Devils vs. Colorado Avalanche: Game Highlights 7h ago ▶ 1:19 CGY 0 – EDM 4 Calgary Flames vs. Edmonton Oilers: Game Highlights 7h ago ▶ 1:19 PHI 2 – WSH 5 Philadelphia Flyers vs. Washington Capitals: Game Highlights 8h ago 🗞️ Top stories The NHL's one-month breakout, rebound players: Who keeps it up? Each team has played at least 10 games, giving us a sample of players with an elevated level of play. Rachel Kryshak · 21h ago NHL Tonight: Previewing Devils-Avalanche, Wednesday's three other games Find game previews, betting intel, broadcast information, stats and highlights here. ESPN Staff · 22h ago Why Devin Cooley is the most interesting man in hockey His postgame quotes have become the stuff of legend. Here's what teammates, coaches and others have to say about him. Salim Valji · 1d ago Islanders' Matthew Schaefer first on record to skate all 5 minutes of overtime Islanders star defenseman Matthew Schaefer on Tuesday night became the first skater on record to skate all five minutes of an overtime period. Greg Wyshynski · 1d ago 📺 Videos & analysis ▶ Isola: Hellebuyck confirmed he's s"
+ },
+ {
+  "name": "news-mlb",
+  "hash": "#/news?sport=mlb",
+  "url": "http://localhost:8765/#/news?sport=mlb",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:48 MIL 4 – TB 1 Brewers top Rays to capture first World Series in franchise history 7h ago 🗞️ Top stories Brewers close out Rays in Game 5 for first World Series title The Brewers dispatched the Rays in Game 5 of the World Series on Wednesday night, cementing the first title in the franchise's 57-year history. Alden Gonzalez · 2h ago Rays proud of expectation-defying season despite World Series loss There were tears and heartache in the Rays' clubhouse after their season ended in Wednesday's Game 5 loss to the Brewers, but, above all, there was pride. Jorge Castillo · 3h ago At last, Milwaukee Brewers are World Series champions After a 57-year drought, one of the game's great franchises has its first championship. Bradford Doolittle · 4h ago Brewers' William Contreras eighth catcher to earn World Series MVP honors Brewers catcher William Contreras capped his stellar postseason run by winning World Series MVP honors after batting .381 and winning 10 of 13 ABS appeals. 4h ago Which MLB teams have never won a World Series? Four MLB franchises have yet to hoist the Commissioner's Trophy. Let's examine each team and how close they've come to winning a World Series. Alex Kennedy · 5h ago Way-Too-Early 2027 MLB Power "
+ },
+ {
+  "name": "news-soccer",
+  "hash": "#/news?sport=soccer",
+  "url": "http://localhost:8765/#/news?sport=soccer",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 10:36 AM ↻ Refresh All 🏀 Basketball 🏈 Football NBA NFL College FB College BB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights Every finished game from yesterday and today (this week and last week for football). Tap to watch here. No finished Soccer games with highlights yet. Check back after tonight's games. 🗞️ Top stories Transfer rumors, news: Everton eye loan for Man United's Rashford Everton are weighing up a January loan for Manchester United forward Marcus Rashford. Transfer Talk has the latest. ⚽ Premier League · ESPN · 2h ago Messi tracker: Goals, assists, key moments in 2026 ESPN provides game-by-game analysis of Lionel Messi's performances for Inter Miami and Argentina. ⚽ MLS · ESPN · 8h ago MLS sprint season to kick off on Feb. 19 in Miami The 2027 MLS sprint season will kick off with a standalone match between Inter Miami and FC Cincinnati on Feb. 19 at Nu Stadium in Miami, Florida. ⚽ MLS · Lizzy Becherano · 10h ago Ranked: Every Premier League team's money-per-points (after Man City cheated) How much did Premier League teams spend for points -- after Man City cheated? We find out which clubs were wasteful and which spent smart. ⚽ Premier League · Ryan O'Hanlon · 11h ago Enzo Maresca: Man City 'never practiced penalties' before shootout win Man City boss Enzo Maresca said his players had not practiced penalties after edging past Brighton in a Carabao Cup shootout on Wednesday. ⚽ Premier League · PA · 11h ago Transfer rumors, new"
+ },
+ {
+  "name": "nba-game-highlights",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA 🏀 NBA Custom calculator Tue 10/27 Wed 10/28 Today 10/29 Fri 10/30 Sat 10/31 Sun 11/1 Mon 11/2 Tue 11/3 Wed 11/4 Fri 12:00 AM State Farm Arena Cavaliers3-1 Hawks2-3 Spread ATL -1.5 O/U 239.5 ML -110 / -110 Fri 12:00 AM Smoothie King Center Kings0-4 Pelicans0-4 Spread NO -5.5 O/U 237.5 ML +180 / -218 Fri 2:00 AM Moda Center Grizzlies4-0 Trail Blazers3-0 Spread POR -7.5 O/U 234.5 ML +215 / -265",
+  "extra": {
+   "skipped": "no finished NBA game on today's slate"
+  }
+ },
+ {
+  "name": "home-with-picks",
+  "hash": "#/",
+  "url": "http://localhost:8765/#/",
+  "errors": [],
+  "failed": [],
+  "text": "Research the bet before you make it. Game logs, hit rates, matchups and a projection for any prop, spread or total. Lines load automatically from DraftKings via ESPN when they're posted. Search any player above, or pick a league. 🔥 Today's picks Today's NBA This week's NFL 📰 News & highlights Custom calculator 🔥 TODAY'S TOP PICKS Build my ticket › A Kyren Williams Over 59.5 Rushing Yards -110 · NFL · 9:05 PM A Chuba Hubbard Under 16.5 Rush Attempts -110 · NFL · 12:15 AM B Kenneth Walker III Under 3.5 Receptions -110 · NFL · 9:25 PM B Rashod Bateman Under 2.5 Receptions -110 · NFL · 6:00 PM 🎬 Latest highlights All news & highlights › ▶ 1:11 LAL 103 – LAC 87 Los Angeles Lakers vs. LA Clippers: Game Highlights 🏀 NBA · 5h ago ▶ 1:09 OKC 96 – DAL 120 Mavericks hand the Thunder their first loss of the season 🏀 NBA · 6h ago ▶ 1:14 SA 117 – UTAH 111 San Antonio Spurs vs. Utah Jazz: Game Highlights 🏀 NBA · 7h ago ▶ 1:14 GS 119 – MIN 114 Golden State Warriors vs. Minnesota Timberwolves: Game Highlights 🏀 NBA · 8h ago 🗞️ TOP STORIES Ranking the best 2026 NFL rookies: Arvell Reese, Denzel Boston, others in top 10 Who are the NFL's most impressive rookies through Week 7? Who is overperforming or underperforming? We stacked the top 10 -- and have a tie at No. 1. 🏈 NFL · Matt Bowen, Kalyn Kahler, Jeff Legwold, Jordan Reid and Ben Solak · 5m ago Why Vikings' astronomical 70% blitz rate isn't a gimmick Minnesota blitzed Indianapolis 85% of the time Sunday, as they redefine what a 'n"
+ }
+]

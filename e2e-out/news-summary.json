@@ -1,0 +1,104 @@
+{
+ "legs": 884,
+ "picks": 15,
+ "legsWithNews": 298,
+ "picksWithNews": [
+  "Kyren Williams Over 59.5 Rushing Yards -> With Davante Adams out, Rams leaning on the run game",
+  "Kyler Murray Under 219.5 Passing Yards -> What Jordan Rodgers wants to see from Kyler Murray",
+  "Jonah Coleman Over 53.5 Rush + Rec Yards -> Fantasy football buzz: Vikings defensive dilemma? Check in on the Jaguars",
+  "T.J. Hockenson Under 4.5 Receptions -> Fantasy football matchup rankings: Upgrade Irving, downgrade Williams",
+  "Malik Willis Under 28.5 Pass Attempts -> Why Malik Willis is Daniel Dopp's QB15 for Week 8",
+  "Caleb Douglas Over 37.5 Receiving Yards -> Fantasy football buzz: Vikings defensive dilemma? Check in on the Jaguars"
+ ],
+ "newsSamples": [
+  "nba POR -7.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba MEM +7.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba Over 234.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba Under 234.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba POR ML -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba MEM ML -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
+  "nba Zion Williamson Over 20.5 Points -> Denver Nuggets vs. New Orleans Pelicans: Game Highlights (2026-10-29T02:35:15Z)",
+  "nba Zion Williamson Under 5.5 Rebounds -> Denver Nuggets vs. New Orleans Pelicans: Game Highlights (2026-10-29T02:35:15Z)",
+  "nba Evan Mobley Over 17.5 Points -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Under 3.5 Assists -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Under 8.5 Rebounds -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Over 1.5 3-Pointers Made -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Over 1.5 Blocks -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Over 21.5 Pts + Ast -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Over 26.5 Pts + Reb -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)"
+ ],
+ "topStories": [
+  {
+   "league": "nba",
+   "headline": "Golden State Warriors' Charles Bassey reflects on 'long, adverse' NBA journey thanks to injuries",
+   "url": "https://www.espn.com/espn/story/_/id/50315423/golden-state-warriors-charles-bassey-reflects-long-adverse-nba-journey-thanks-injuries",
+   "published": "2026-10-29T07:02:21Z"
+  },
+  {
+   "league": "nba",
+   "headline": "Stephen Curry torches Wolves for 44 as Warriors win 2nd straight after 0-3 start",
+   "url": "https://www.espn.com/nba/story/_/id/50315043/stephen-curry-torches-wolves-44-warriors-win-2nd-straight",
+   "published": "2026-10-29T07:48:37Z"
+  },
+  {
+   "league": "nba",
+   "headline": "Nikola Jokic records 200th career triple-double in Nuggets' win over Pelicans",
+   "url": "https://www.espn.com/nba/story/_/id/50314211/nuggets-nikola-jokic-notches-200th-career-triple-double-win-vs-pelicans",
+   "published": "2026-10-29T04:18:55Z"
+  },
+  {
+   "league": "nfl",
+   "headline": "Ranking the best 2026 NFL rookies: Arvell Reese, Denzel Boston, others in top 10",
+   "url": "https://www.espn.com/nfl/story/_/id/50308697/2026-rookies-ranking-top-10-reese-styles-boston-concepcion",
+   "published": "2026-10-29T10:32:13Z"
+  },
+  {
+   "league": "nfl",
+   "headline": "Why Vikings' astronomical 70% blitz rate isn't a gimmick",
+   "url": "https://www.espn.com/nfl/story/_/id/50306991/vikings-astronomical-blitz-rate-brian-flores-sack",
+   "published": "2026-10-29T10:00:13Z"
+  },
+  {
+   "league": "nfl",
+   "headline": "Panthers' consistency starts in the trenches, rests with DC Ejiro Evero",
+   "url": "https://www.espn.com/nfl/story/_/id/50308348/carolina-panthers-consistency-packers-week-8-tnf-evero",
+   "published": "2026-10-29T10:00:12Z"
+  },
+  {
+   "league": "ncaaf",
+   "headline": "UCF fined for fans' chants at BYU; Big 12 sets policy with in-game penalties",
+   "url": "https://www.espn.com/college-football/story/_/id/50312595/big-12-fines-ucf-fans-chant-aimed-byu-mormon-church",
+   "published": "2026-10-29T03:14:05Z"
+  },
+  {
+   "league": "ncaaf",
+   "headline": "Study: Estimated 75% of NFL players who died from 2008 to 2023 had CTE",
+   "url": "https://www.espn.com/nfl/story/_/id/50311853/study-nearly-75-nfl-players-died-2008-23-had-cte",
+   "published": "2026-10-29T00:32:37Z"
+  },
+  {
+   "league": "ncaaf",
+   "headline": "Sam Houston fires football coach Phil Longo amid 1-7 start to season",
+   "url": "https://www.espn.com/college-football/story/_/id/50311165/sam-houston-fires-football-coach-phil-longo-amid-1-7-start-season",
+   "published": "2026-10-28T21:32:31Z"
+  },
+  {
+   "league": "ncaab",
+   "headline": "Bill Raftery hopes to avoid confessional booth after calling game in pope's honor",
+   "url": "https://www.espn.com/mens-college-basketball/story/_/id/50316165/bill-raftery-avoid-famous-catchphrases-rome-opener",
+   "published": "2026-10-29T10:25:20Z"
+  },
+  {
+   "league": "ncaab",
+   "headline": "Judge OK's RJ Luis Jr. to join LSU; lawyer says Will Wade now in 'crosshairs'",
+   "url": "https://www.espn.com/mens-college-basketball/story/_/id/50312271/rj-luis-jr-eligible-join-lsu-judge-injunction",
+   "published": "2026-10-29T00:32:11Z"
+  },
+  {
+   "league": "ncaab",
+   "headline": "Lewis Uvwo, the No. 1 center in 2027, commits to Providence",
+   "url": "https://www.espn.com/mens-college-basketball/story/_/id/50310553/lewis-uvwo-no-1-center-2027-commits-providence",
+   "published": "2026-10-28T20:22:06Z"
+  }
+ ]
+}
