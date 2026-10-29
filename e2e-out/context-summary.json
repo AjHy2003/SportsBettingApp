@@ -1,0 +1,186 @@
+{
+ "games": 68,
+ "legs": 1045,
+ "picks": 15,
+ "props": 637,
+ "withContext": 608,
+ "withWithout": 163,
+ "questionable": 43,
+ "mismatch": 24,
+ "gamesWithOut": [],
+ "bestBook": 0,
+ "books": null,
+ "byGrade": {
+  "A": 18,
+  "B": 41,
+  "C": 173,
+  "PASS": 609
+ },
+ "topPicks": [
+  "A Rachaad White Under 12.5 Rush Attempts -110 p=0.6676 | Projection 8.4 vs line 12.5 · under in 10/10 of last 10 · matchup ×1.07 · team total 23.3 | Vegas has WSH at 23.3 points tonight vs a usual 22.3 → ×1.016 ; Game script: favored by 6 → ×1.060",
+  "A Bhayshul Tuten Under 2.5 Receptions -110 p=0.6598 | Projection 1.3 vs line 2.5 · under in 9/10 of last 10 · matchup ×0.92 | Vegas has JAX at 28.3 points tonight vs a usual 24.8 → ×1.054 ; Game script: favored by 10 → ×0.950",
+  "A Jrue Holiday Over 20.5 Pts + Reb + Ast -103 p=0.6335 | Projection 28.9 vs line 20.5 · over in 9/10 of last 10 · Shaedon Sharpe out: 27.5 pts + reb + ast in 31 games without vs 26.2 with → ×1.041 | Vegas has POR at 121 points tonight vs a usual 118.4 → ×1.014 ; Shaedon Sharpe out: 27.5 pts + reb + ast in 31 games without vs 26.2 with → ×1.041",
+  "A Ollie Gordon II Under 15.5 Rush Attempts -110 p=0.6384 | Projection 7.7 vs line 15.5 · under in 7/10 of last 10 · matchup ×0.97 · team total 18.3 | Vegas has MIA at 18.3 points tonight vs a usual 18.6 → ×0.993 ; Game script: 7-point underdog → ×0.930",
+  "A MarShawn Lloyd Over 5.5 Rush Attempts -110 p=0.6274 | Projection 8.7 vs line 5.5 · over in 6/7 of last 7 · matchup ×1.03 · team total 25.5 | Vegas has GB at 25.5 points tonight vs a usual 21.3 → ×1.075 ; Game script: favored by 3.5 → ×1.035",
+  "A Jeremy McNichols Under 23.5 Rushing Yards -110 p=0.6137 | Projection 13.1 vs line 23.5 · under in 8/10 of last 10 · matchup ×1.08 · team total 23.3 | Vegas has WSH at 23.3 points tonight vs a usual 22.3 → ×1.024 ; Game script: favored by 6 → ×1.060",
+  "A Chuba Hubbard Under 16.5 Rush Attempts -110 p=0.6133 | Projection 11.6 vs line 16.5 · under in 7/10 of last 10 · matchup ×1.02 · team total 22.0 | Vegas has CAR at 22 points tonight vs a usual 25.3 → ×0.945 ; Game script: 3.5-point underdog → ×0.965",
+  "A Kenneth Walker III Under 3.5 Receptions -110 p=0.6106 | Projection 2.4 vs line 3.5 · under in 6/10 of last 10 · Brashard Smith out: 2.5 receptions in 4 games without vs 4.0 with → ×0.934 · team total 21.0 | Vegas has KC at 21 points tonight vs a usual 23.6 → ×0.955 ; Game script: favored by 1.5 → ×0.993 ; Brashard Smith out: 2.5 receptions in 4 games without vs 4.0 with → ×0.934",
+  "A Ja Morant Under 9.5 Assists -120 p=0.6292 | Projection 7.4 vs line 9.5 · under in 6/10 of last 10 | Vegas has POR at 121 points tonight vs a usual 118.4 → ×1.013",
+  "C Darius Acuff Jr. Under 7.5 Assists -114 p=0.6407 | Projection 5.0 vs line 7.5 · under in 4/4 of last 4 · matchup ×1.02 · team total 116.0 | Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021",
+  "B Jeremiah Fears Over 17.5 Pts + Reb + Ast -110 p=0.5984 | Projection 28.0 vs line 17.5 · over in 8/10 of last 10 · Yves Missi out: 26.2 pts + reb + ast in 18 games without vs 19.6 with → ×1.116 · team total 121.5 | Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.037 ; Yves Missi out: 26.2 pts + reb + ast in 18 games without vs 19.6 with → ×1.116",
+  "B Joshua Palmer Over 11.5 Receiving Yards -110 p=0.5972 | Projection 25.4 vs line 11.5 · over in 6/10 of last 10 · matchup ×1.07 · Tyrell Shavers out: 24.0 receiving yards in 9 games without vs 25.5 with → ×1.072 · team total 28.8 | Vegas has BUF at 28.8 points tonight vs a usual 29.6 → ×0.983 ; Game script: favored by 3 → ×0.988 ; Tyrell Shavers out: 24.0 receiving yards in 9 games without vs 25.5 with → ×1.072",
+  "B Joe Burrow Over 5.5 Rushing Yards -110 p=0.5917 | Projection 9.9 vs line 5.5 · over in 7/10 of last 10 · matchup ×1.03 · team total 28.3 | Vegas has CIN at 28.3 points tonight vs a usual 25.8 → ×1.056 ; Game script: favored by 10 → ×1.100",
+  "B Travis Kelce Under 4.5 Receptions -110 p=0.5913 | Projection 3.7 vs line 4.5 · under in 7/10 of last 10 · matchup ×1.04 · Brashard Smith out: 3.3 receptions in 4 games without vs 4.6 with → ×0.912 · team total 21.0 | Vegas has KC at 21 points tonight vs a usual 23.6 → ×0.955 ; Game script: favored by 1.5 → ×0.993 ; Brashard Smith out: 3.3 receptions in 4 games without vs 4.6 with → ×0.912",
+  "B Rashod Bateman Under 2.5 Receptions -110 p=0.5904 | Projection 2.2 vs line 2.5 · under in 8/10 of last 10 · matchup ×1.06 · team total 25.8 | Vegas has BAL at 25.8 points tonight vs a usual 23.8 → ×1.032 ; Game script: 3-point underdog → ×1.015"
+ ],
+ "sampleContext": [
+  "nba Zach LaVine Under 21.5 Points: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 22.6 points in 9 games without vs 19.2 with → ×1.058",
+  "nba Zach LaVine Under 6.5 Assists: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 3.1 assists in 9 games without vs 2.2 with → ×1.132",
+  "nba Zach LaVine Under 3.5 Rebounds: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.009 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 3.4 rebounds in 9 games without vs 2.7 with → ×1.151",
+  "nba Zach LaVine Under 2.5 3-Pointers Made: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 2.7 3-pointers made in 9 games without vs 2.6 with → ×1.042",
+  "nba Zach LaVine Under 25.5 Pts + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 25.7 pts + ast in 9 games without vs 21.4 with → ×1.066",
+  "nba Zach LaVine Under 25.5 Pts + Reb: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.024 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 26.0 pts + reb in 9 games without vs 21.9 with → ×1.069",
+  "nba Zach LaVine Under 28.5 Pts + Reb + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.022 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 29.1 pts + reb + ast in 9 games without vs 24.1 with → ×1.075",
+  "nba Domantas Sabonis Over 17.5 Points: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud and Dylan Cardwell out: 18.1 points in 11 games without vs 14.8 with → ×1.042",
+  "nba Domantas Sabonis Under 6.5 Assists: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud and Dylan Cardwell out: 5.1 assists in 11 games without vs 4.3 with → ×0.971",
+  "nba Domantas Sabonis Over 13.5 Rebounds: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.009 ; Maxime Raynaud and Dylan Cardwell out: 14.2 rebounds in 11 games without vs 10.5 with → ×1.064",
+  "nba Domantas Sabonis Under 24.5 Pts + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud and Dylan Cardwell out: 23.2 pts + ast in 11 games without vs 19.1 with → ×1.025",
+  "nba Domantas Sabonis Over 31.5 Pts + Reb: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.024 ; Maxime Raynaud and Dylan Cardwell out: 32.3 pts + reb in 11 games without vs 25.3 with → ×1.051",
+  "nba Domantas Sabonis Under 38.5 Pts + Reb + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.022 ; Maxime Raynaud and Dylan Cardwell out: 37.4 pts + reb + ast in 11 games without vs 29.6 with → ×1.039",
+  "nba Dejounte Murray Under 17.5 Points: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.045 ; Yves Missi out: 15.5 points in 4 games without vs 17.4 with → ×0.967",
+  "nba Dejounte Murray Under 11.5 Assists: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.034 ; Yves Missi out: 5.8 assists in 4 games without vs 6.4 with → ×0.963",
+  "nba Dejounte Murray Under 5.5 Rebounds: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.014 ; Yves Missi out: 4.8 rebounds in 4 games without vs 5.6 with → ×0.929",
+  "nba Dejounte Murray Under 1.5 3-Pointers Made: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.034 ; Yves Missi out: 1.0 3-pointers made in 4 games without vs 1.3 with → ×0.983",
+  "nba Dejounte Murray Under 23.5 Pts + Ast: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.045 ; Yves Missi out: 21.3 pts + ast in 4 games without vs 23.8 with → ×0.966",
+  "nba Dejounte Murray Under 23.5 Pts + Reb: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.040 ; Yves Missi out: 20.3 pts + reb in 4 games without vs 23.0 with → ×0.957",
+  "nba Dejounte Murray Under 29.5 Pts + Reb + Ast: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.037 ; Yves Missi out: 26.0 pts + reb + ast in 4 games without vs 29.4 with → ×0.958",
+  "nba De'Andre Hunter Under 12.5 Points: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Dylan Cardwell and Maxime Raynaud out: 10.3 points in 4 games without vs 8.0 with → ×1.013",
+  "nba De'Andre Hunter Under 6.5 Assists: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Dylan Cardwell and Maxime Raynaud out: 1.3 assists in 4 games without vs 0.3 with → ×1.083",
+  "nba De'Andre Hunter Under 4.5 Rebounds: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.009 ; Dylan Cardwell and Maxime Raynaud out: 5.3 rebounds in 4 games without vs 1.0 with → ×1.103",
+  "nba De'Andre Hunter Over 1.5 3-Pointers Made: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Dylan Cardwell and Maxime Raynaud out: 2.3 3-pointers made in 4 games without vs 1.0 with → ×1.058",
+  "nba De'Andre Hunter Under 14.5 Pts + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Dylan Cardwell and Maxime Raynaud out: 11.5 pts + ast in 4 games without vs 8.3 with → ×1.020"
+ ],
+ "wwSamples": [
+  "nba Zach LaVine Under 21.5 Points: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 22.6 points in 9 games without vs 19.2 with → ×1.058",
+  "nba Zach LaVine Under 6.5 Assists: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 3.1 assists in 9 games without vs 2.2 with → ×1.132",
+  "nba Zach LaVine Under 3.5 Rebounds: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.009 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 3.4 rebounds in 9 games without vs 2.7 with → ×1.151",
+  "nba Zach LaVine Under 2.5 3-Pointers Made: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 2.7 3-pointers made in 9 games without vs 2.6 with → ×1.042",
+  "nba Zach LaVine Under 25.5 Pts + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 25.7 pts + ast in 9 games without vs 21.4 with → ×1.066",
+  "nba Zach LaVine Under 25.5 Pts + Reb: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.024 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 26.0 pts + reb in 9 games without vs 21.9 with → ×1.069",
+  "nba Zach LaVine Under 28.5 Pts + Reb + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.022 ; Maxime Raynaud, Dylan Cardwell and Keegan Murray out: 29.1 pts + reb + ast in 9 games without vs 24.1 with → ×1.075",
+  "nba Domantas Sabonis Over 17.5 Points: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud and Dylan Cardwell out: 18.1 points in 11 games without vs 14.8 with → ×1.042",
+  "nba Domantas Sabonis Under 6.5 Assists: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.021 ; Maxime Raynaud and Dylan Cardwell out: 5.1 assists in 11 games without vs 4.3 with → ×0.971",
+  "nba Domantas Sabonis Over 13.5 Rebounds: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.009 ; Maxime Raynaud and Dylan Cardwell out: 14.2 rebounds in 11 games without vs 10.5 with → ×1.064",
+  "nba Domantas Sabonis Under 24.5 Pts + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.028 ; Maxime Raynaud and Dylan Cardwell out: 23.2 pts + ast in 11 games without vs 19.1 with → ×1.025",
+  "nba Domantas Sabonis Over 31.5 Pts + Reb: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.024 ; Maxime Raynaud and Dylan Cardwell out: 32.3 pts + reb in 11 games without vs 25.3 with → ×1.051",
+  "nba Domantas Sabonis Under 38.5 Pts + Reb + Ast: Vegas has SAC at 116 points tonight vs a usual 112.1 → ×1.022 ; Maxime Raynaud and Dylan Cardwell out: 37.4 pts + reb + ast in 11 games without vs 29.6 with → ×1.039",
+  "nba Dejounte Murray Under 17.5 Points: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.045 ; Yves Missi out: 15.5 points in 4 games without vs 17.4 with → ×0.967",
+  "nba Dejounte Murray Under 11.5 Assists: Vegas has NO at 121.5 points tonight vs a usual 114.9 → ×1.034 ; Yves Missi out: 5.8 assists in 4 games without vs 6.4 with → ×0.963"
+ ],
+ "record": {
+  "all": {
+   "w": 2,
+   "l": 0,
+   "units": 2.00743119266055,
+   "byGrade": {
+    "A": {
+     "w": 2,
+     "l": 0,
+     "units": 2.00743119266055
+    },
+    "B": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    },
+    "C": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    }
+   }
+  },
+  "last30": {
+   "w": 2,
+   "l": 0,
+   "units": 2.00743119266055,
+   "byGrade": {
+    "A": {
+     "w": 2,
+     "l": 0,
+     "units": 2.00743119266055
+    },
+    "B": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    },
+    "C": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    }
+   }
+  },
+  "last7": {
+   "w": 2,
+   "l": 0,
+   "units": 2.00743119266055,
+   "byGrade": {
+    "A": {
+     "w": 2,
+     "l": 0,
+     "units": 2.00743119266055
+    },
+    "B": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    },
+    "C": {
+     "w": 0,
+     "l": 0,
+     "units": 0
+    }
+   }
+  },
+  "graded": 2,
+  "clv": {
+   "moved": 4,
+   "beat": 2,
+   "rate": 0.5,
+   "tracked": 13
+  },
+  "calibration": [
+   {
+    "lo": 0.5,
+    "hi": 0.55,
+    "n": 0,
+    "predicted": null,
+    "actual": null
+   },
+   {
+    "lo": 0.55,
+    "hi": 0.6,
+    "n": 0,
+    "predicted": null,
+    "actual": null
+   },
+   {
+    "lo": 0.6,
+    "hi": 0.65,
+    "n": 2,
+    "predicted": 0.62665,
+    "actual": 1
+   },
+   {
+    "lo": 0.65,
+    "hi": 1,
+    "n": 0,
+    "predicted": null,
+    "actual": null
+   }
+  ],
+  "snapshots": 13
+ }
+}
