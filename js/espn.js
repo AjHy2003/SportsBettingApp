@@ -392,6 +392,56 @@ export function parseProps(items, family) {
   return out;
 }
 
+// DraftKings "Milestones" (alt lines: "25+ points" at a price), full game only.
+const MILESTONES = [
+  [/^points \+ (assists \+ rebounds|rebounds \+ assists)/i, "pra"], [/^points \+ rebounds/i, "pr"], [/^points \+ assists/i, "pa"],
+  [/^rebounds \+ assists/i, "ra"], [/^steals \+ blocks/i, "sb"], [/^points/i, "pts"], [/^rebounds/i, "reb"], [/^assists/i, "ast"],
+  [/^3-?point/i, "fg3m"], [/^steals/i, "stl"], [/^blocks/i, "blk"],
+  [/^passing \+ rushing yards/i, "pass_rush_yds"], [/^passing yards/i, "pass_yds"], [/^passing attempts/i, "pass_att"],
+  [/^passing completions/i, "pass_cmp"], [/^passing touchdown/i, "pass_td"], [/^interceptions/i, "pass_int"],
+  [/^rushing \+ receiving yards/i, "rush_rec_yds"], [/^rushing yards/i, "rush_yds"], [/^rushing attempts/i, "rush_att"],
+  [/^receiving yards/i, "rec_yds"], [/^receptions/i, "rec"],
+];
+
+// -> Map athleteId -> { market -> [{ at, odds }] } where "at" means at-least (X+).
+export function parseMilestones(items, family) {
+  const out = new Map();
+  for (const it of items || []) {
+    const name = it.type?.name || "";
+    if (!/milestones?$/i.test(name) || /quarter|half|period|inning|\b(1st|2nd|3rd|4th)\b/i.test(name)) continue;
+    const base = name.replace(/\s*milestones?$/i, "");
+    const key = MILESTONES.find(([re]) => re.test(base))?.[1];
+    const aid = it.athlete?.$ref?.match(/athletes\/(\d+)/)?.[1];
+    const at = it.current?.target?.value ?? Number(it.odds?.total?.value);
+    if (!key || !aid || !isFinite(at)) continue;
+    const odds = it.odds?.american?.value != null ? Number(String(it.odds.american.value).replace("+", "")) : null;
+    const m = out.get(aid) || {};
+    (m[key] ||= []).push({ at, odds: isFinite(odds) ? odds : null });
+    out.set(aid, m);
+  }
+  // The feed carries stale duplicates. "X or more" must get less likely as X rises,
+  // so walk down from the top rung keeping only prices consistent with that.
+  const imp = (o) => (o < 0 ? -o / (-o + 100) : 100 / (o + 100));
+  for (const m of out.values()) {
+    for (const k of Object.keys(m)) {
+      const ats = [...new Set(m[k].map((x) => x.at))].sort((a, b) => b - a);
+      const keep = [];
+      let floor = 0;
+      for (const at of ats) {
+        const cands = m[k].filter((x) => x.at === at);
+        const priced = cands.filter((x) => x.odds != null).sort((a, b) => imp(a.odds) - imp(b.odds));
+        if (!priced.length) { keep.push({ at, odds: null }); continue; }
+        const pick = priced.find((x) => imp(x.odds) >= floor);
+        if (!pick) continue;
+        floor = imp(pick.odds);
+        keep.push(pick);
+      }
+      m[k] = keep.sort((a, b) => a.at - b.at);
+    }
+  }
+  return out;
+}
+
 // ---------- team helpers ----------
 export function competitorsOf(evOrComp) {
   const comp = evOrComp.competitions ? evOrComp.competitions[0] : evOrComp;

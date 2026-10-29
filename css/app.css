@@ -350,3 +350,9 @@ body.no-scroll { overflow: hidden; }
 .lbar { height: 6px; border-radius: 4px; background: var(--card-2); border: 1px solid var(--line); margin-top: 6px; overflow: hidden; max-width: 360px; }
 .lbar span { display: block; height: 100%; background: var(--over); transition: width 0.4s; }
 .lbar span.behind { background: var(--gold); }
+
+/* ---------- alt-line ladder ---------- */
+table.ladder tbody tr { cursor: pointer; }
+table.ladder tbody tr:hover td { background: var(--card-2); }
+table.ladder tr.value td { background: var(--over-bg); }
+table.ladder tr.cur td:first-child { box-shadow: inset 3px 0 0 var(--accent); }

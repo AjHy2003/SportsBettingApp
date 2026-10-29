@@ -1,4 +1,4 @@
-import { api, loadGamelogs, parseProps, standingsTable, pickcenterOdds } from "../espn.js";
+import { api, loadGamelogs, parseProps, parseMilestones, standingsTable, pickcenterOdds } from "../espn.js";
 import * as M from "../model.js";
 import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, hitTile, gameChart, wireChartTips, toast } from "../ui.js";
 import { addPick } from "../store.js";
@@ -36,15 +36,17 @@ export async function renderPlayer(ctx, L, id, q) {
   if (!ctx.alive()) return;
 
   const upcoming = next && next.state !== "post";
-  const [propsAll, standings, deep, deepPlayer, nextSum] = await Promise.all([
-    upcoming ? api.propBets(L, next.id).then((items) => parseProps(items, L.markets)).catch(() => null) : null,
+  const [propItems, standings, deep, deepPlayer, nextSum] = await Promise.all([
+    upcoming ? api.propBets(L, next.id).catch(() => null) : null,
     api.standings(L).then(standingsTable).catch(() => null),
     loadDeep(L).catch(() => null),
     loadDeepPlayer(L, id).catch(() => null),
     upcoming ? api.summary(L, next.id).catch(() => null) : null,
   ]);
   if (!ctx.alive()) return;
+  const propsAll = propItems ? parseProps(propItems, L.markets) : null;
   const myProps = propsAll?.get(String(id)) || {};
+  const myMiles = propItems ? parseMilestones(propItems, L.markets).get(String(id)) || {} : {};
   mergeDeepStats(L, games, deepPlayer);
   if (deepPlayer) {
     if (!a.position && deepPlayer.pos) a.position = { abbreviation: deepPlayer.pos };
@@ -119,6 +121,7 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="row" style="justify-content:space-between"><h3 style="margin:0">Hit rate</h3><span class="small muted" id="hr-side"></span></div>
       <div class="hits" id="hits" style="margin-top:10px"></div>
     </div>
+    <div class="card" style="margin-top:14px" id="ladder"></div>
     <div class="card" style="margin-top:14px">
       <div class="row" style="margin-bottom:10px">
         <div class="seg" id="win">${["L5", "L10", "L20", "Season", "Last season", "All"].map((w) => `<button data-w="${w}">${w}</button>`).join("")}</div>
@@ -174,6 +177,44 @@ export async function renderPlayer(ctx, L, id, q) {
   }
   if (state.line == null) seedLine();
   else state.lineSource = "user";
+
+  // Alt-line ladder, always anchored to the book's main line (not to an alt line typed above).
+  function renderLadder(m, opp0, gctx, withVal, line) {
+    const box = $("#ladder");
+    const main = myProps[m.key];
+    const { res } = main
+      ? runProp(fam, m, games, { line: main.line, oddsOver: main.over, oddsUnder: main.under, opp: opp0, role: state.role, minutes: state.minutes, posted: main, context: gctx })
+      : runProp(fam, m, games, { line, opp: opp0, role: state.role, minutes: state.minutes, context: gctx });
+    if (!res.n || !res.probOver || !isFinite(res.projection)) { box.innerHTML = ""; return; }
+    const book = myMiles[m.key] || [];
+    const ats = book.length ? book.map((b) => b.at) : ladderRungs(res.projection, res.sd);
+    const last10 = withVal.slice(0, 10).map((g) => g.value);
+    const rows = ats.map((at) => {
+      const p = res.probOver(at - 0.5)?.over;
+      const dk = book.find((b) => b.at === at)?.odds ?? null;
+      const edge = dk != null && p != null ? p - M.impliedProb(dk) : null;
+      return { at, p, dk, edge, hits: last10.filter((v) => v >= at).length, value: edge != null && edge >= 0.04 && p >= 0.15 && p <= 0.92 };
+    }).filter((r) => r.p != null);
+    const priced = book.some((b) => b.odds != null);
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🪜 Alt lines</h3><span class="small muted">${priced ? "vs DraftKings milestone prices" : book.length ? "DraftKings milestones (no prices posted)" : "Model only"}${main ? ` · anchored to the ${main.line} main line` : ""}</span></div>
+      <div class="table-wrap" style="margin-top:8px"><table class="ladder"><thead><tr><th>Line</th><th class="r">Model</th><th class="r">Fair odds</th>${priced ? `<th class="r">DraftKings</th><th class="r">Edge</th>` : ""}<th class="r">Last 10</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr data-at="${r.at}" class="${r.value ? "value" : ""} ${r.at - 0.5 === line ? "cur" : ""}" title="Analyze ${r.at}+ (over ${r.at - 0.5})">
+        <td><b>${r.at}+</b></td><td class="r">${pct(r.p, r.p < 0.1 || r.p > 0.9 ? 1 : 0)}</td><td class="r">${Math.abs(M.toAmerican(r.p)) <= 5000 ? M.fmtOdds(M.toAmerican(r.p)) : "—"}</td>
+        ${priced ? `<td class="r">${r.dk != null ? M.fmtOdds(r.dk) : "—"}</td><td class="r ${r.edge > 0 ? "pos" : r.edge < 0 ? "neg" : ""}">${r.edge != null ? `${signed(r.edge * 100, 1)}${r.value ? " ✓" : ""}` : "—"}</td>` : ""}
+        <td class="r">${r.hits}/${last10.length}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p class="small faint" style="margin:8px 0 0">X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot.</p>`;
+    box.querySelectorAll("tr[data-at]").forEach((tr) => tr.addEventListener("click", () => {
+      const r = rows.find((x) => String(x.at) === tr.dataset.at);
+      state.line = r.at - 0.5;
+      state.oddsOver = r.dk ?? null;
+      state.oddsUnder = null;
+      state.lineSource = "user";
+      syncInputs();
+      render();
+      $("#verdict").scrollIntoView({ behavior: "smooth", block: "center" });
+    }));
+  }
 
   function syncInputs() {
     $("#f-line").value = state.line ?? "";
@@ -279,6 +320,7 @@ export async function renderPlayer(ctx, L, id, q) {
       if (next.oppId) tiles.push([`vs ${next.opp}`, M.hitRate(vals(withVal.filter((g) => String(g.oppId) === String(next.oppId))), line)]);
     }
     $("#hits").innerHTML = tiles.map(([l, h]) => hitTile(l, h, side)).join("");
+    renderLadder(m, opp0, gctx, withVal, line);
 
     // Chart
     const wg = windowGames(withVal);
@@ -416,4 +458,15 @@ function header(L, a, next, ov) {
     ${inj ? `<div class="notice warn" style="margin-top:10px">Injury: ${esc(inj.status || "")} ${esc(inj.details?.type || "")}</div>` : ""}
     ${news?.headline ? `<p class="small muted" style="margin:10px 0 0"><b>Latest:</b> ${esc(news.headline)}${news.story ? ` <details class="more" style="display:inline"><summary>more</summary><span class="faint">${esc(news.story)}</span></details>` : ""}</p>` : ""}
   </div>`;
+}
+
+// Rungs around the projection: whole numbers for counts, round steps for yards.
+function ladderRungs(proj, sd) {
+  const spread = Math.max(2, (isFinite(sd) ? sd : proj * 0.4) * 2.2);
+  const raw = spread / 4;
+  const step = [1, 2, 5, 10, 20, 25, 50].find((s) => s >= raw) || 50;
+  const lo = Math.max(1, Math.ceil((proj - spread) / step) * step), hi = Math.floor((proj + spread) / step) * step;
+  const out = [];
+  for (let x = lo; x <= hi && out.length < 10; x += step) out.push(x);
+  return out.length ? out : [Math.max(1, Math.round(proj))];
 }
