@@ -1,0 +1,75 @@
+{
+ "legs": 1679,
+ "nhlLegs": 587,
+ "nhlGames": 11,
+ "withDk": 1679,
+ "dkExact": 478,
+ "bookLinks": 0,
+ "alts": 143,
+ "altSamples": [
+  "Zach LaVine 35+ Points 840 p=0.1212 edge=0.0148",
+  "Zach LaVine 40+ Pts + Ast 970 p=0.0947 edge=0.0013",
+  "Dejounte Murray 6+ Rebounds 108 p=0.4925 edge=0.0117",
+  "De'Andre Hunter 4+ 3-Pointers Made 660 p=0.1317 edge=0.0001",
+  "Trey Murphy III 25+ Points 379 p=0.211 edge=0.0022",
+  "Trey Murphy III 6+ Rebounds 148 p=0.4121 edge=0.0089",
+  "Trey Murphy III 4+ 3-Pointers Made 199 p=0.3601 edge=0.0256",
+  "Trey Murphy III 25+ Pts + Ast 186 p=0.3718 edge=0.0221",
+  "Trey Murphy III 30+ Pts + Reb + Ast 175 p=0.3803 edge=0.0167",
+  "Trey Murphy III 35+ Pts + Reb + Ast 437 p=0.1898 edge=0.0036"
+ ],
+ "moonshots": {
+  "all": {
+   "american": 102275,
+   "payout": 10228,
+   "oneIn": 187,
+   "legs": [
+    "Erik Gustafsson Under 0.5 Assists -175",
+    "Rachaad White Under 62.5 Rush + Rec Yards -110",
+    "Jrue Holiday 7+ Assists 600",
+    "Evan Mobley 4+ 3-Pointers Made 1400",
+    "Darius Acuff Jr. 7+ Assists 225"
+   ]
+  },
+  "basketball": {
+   "american": 155300,
+   "payout": 15530,
+   "oneIn": 239,
+   "legs": [
+    "Jrue Holiday 7+ Assists 600",
+    "Evan Mobley 4+ 3-Pointers Made 1400",
+    "Jeremiah Fears 30+ Pts + Reb 1380"
+   ]
+  },
+  "football": {
+   "american": 101567,
+   "payout": 10157,
+   "oneIn": 528,
+   "legs": [
+    "NAVY ML 2000",
+    "Rachaad White Under 62.5 Rush + Rec Yards -110",
+    "Jonah Coleman Over 54.5 Rush + Rec Yards -110",
+    "Drake Maye Over 23.5 Rushing Yards -110",
+    "Kyren Williams Over 59.5 Rushing Yards -110",
+    "Chuba Hubbard Under 15.5 Rush Attempts -110",
+    "Rashod Bateman Under 2.5 Receptions -110"
+   ]
+  },
+  "hockey": {
+   "american": 100089,
+   "payout": 10009,
+   "oneIn": 679,
+   "legs": [
+    "Jacob Trouba Under 1.5 Shots on Goal 105",
+    "Jake Sanderson 2+ Points 390",
+    "Jackson LaCombe Under 1.5 Shots on Goal -125",
+    "Oliver Kapanen Under 0.5 Points -225",
+    "Alex Tuch 2+ Points 425",
+    "Morgan Geekie Under 1.5 Shots on Goal 115",
+    "Mikhail Sergachev Over 0.5 Assists -105",
+    "Elias Salomonsson Under 1.5 Shots on Goal -135"
+   ]
+  }
+ },
+ "picks": 15
+}
