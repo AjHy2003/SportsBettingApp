@@ -60,6 +60,7 @@ jobs:
               withWithout: props.filter((l) => l.context?.some((n) => / out: /.test(n))).length,
               questionable: props.filter((l) => l.questionable).length,
               mismatch: props.filter((l) => l.mismatch).length,
+              roleChange: props.filter((l) => l.roleChange).map((l) => `${l.label}: ${l.roleChange.join(", ")} out`),
               gamesWithOut: t.games.filter((g) => g.out?.length).map((g) => `${g.matchup}: ${g.out.slice(0, 4).join(", ")}`).slice(0, 8),
               bestBook: t.legs.filter((l) => l.bestBook).length, books: t.books,
               byGrade: Object.fromEntries(["A", "B", "C", "PASS"].map((g) => [g, t.legs.filter((l) => l.lean && l.grade === g).length])),

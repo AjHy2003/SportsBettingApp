@@ -267,8 +267,15 @@ export function analyzeProp(games, opts) {
   // Same idea in probability terms: stats saying 80%+ where the book says 50% is
   // almost always missing information, not a gift.
   const gap = marketProb != null && statsOver != null ? Math.abs(statsOver - marketProb) : 0;
-  if (gap >= 0.4 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
-  else if (gap >= 0.3 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  // And in plain numbers: a line twice (or half) the projection, or outside everything
+  // the player did in the last 5 games, is the book pricing a new role.
+  const lo = Math.min(projection, line), hi = Math.max(projection, line);
+  const ratio = isFinite(line) && line >= 2.5 && lo > 0 ? hi / lo : 1;
+  const last5 = vals.slice(0, 5);
+  const outside = isFinite(line) && line >= 2.5 && last5.length === 5 &&
+    ((verdict.lean === "UNDER" && line > Math.max(...last5)) || (verdict.lean === "OVER" && line < Math.min(...last5)));
+  if ((gap >= 0.4 || ratio >= 2) && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
+  else if ((gap >= 0.3 || ratio >= 1.6 || outside) && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
 
   return {
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,
