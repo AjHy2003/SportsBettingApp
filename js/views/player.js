@@ -6,6 +6,8 @@ import { loadDeep, loadDeepPlayer, deepPlayerPanel } from "../deep.js";
 import { mergeDeepStats } from "../scan.js";
 import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
 import { injuryReport, playerContext, roleChange } from "../context.js";
+import { articleOf } from "../news.js";
+import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderPlayer(ctx, L, id, q) {
   const { app } = ctx;
@@ -130,8 +132,23 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="card"><h3>Matchup & context</h3><div id="context"></div></div>
     </div>
     <div id="deep"></div>
+    <div id="p-news"></div>
     <div class="card" style="margin-top:14px"><h3>Game log</h3><div class="table-wrap" id="log"></div></div>
     <details class="explain card" style="margin-top:14px"><summary>How this was calculated</summary><div id="notes"></div></details>`;
+
+  // Player news and video from ESPN.
+  const pNews = (ov?.news || []).map((x) => articleOf(x, L)).filter((x) => x.headline);
+  const pClips = pNews.filter((x) => x.kind === "video").slice(0, 6);
+  const pStories = pNews.filter((x) => x.kind !== "video").slice(0, 5);
+  if (pNews.length) {
+    const box = app.querySelector("#p-news");
+    box.innerHTML = `<div class="card" style="margin-top:14px">
+      <h3>📰 ${esc(a.displayName)} news</h3>
+      ${pStories.length ? `<div class="story-list">${pStories.map((x) => storyRow(x)).join("")}</div>` : ""}
+      ${pClips.length ? `<div class="clip-grid compact" id="p-clips" style="margin-top:12px">${pClips.map((c, i) => clipCard(c, i)).join("")}</div>` : ""}
+    </div>`;
+    box.querySelector("#p-clips")?.addEventListener("click", (e) => { const b = e.target.closest("[data-clip]"); if (b) openPlayer(pClips, Number(b.dataset.clip)); });
+  }
 
   const $ = (s) => app.querySelector(s);
   wireChartTips(app);

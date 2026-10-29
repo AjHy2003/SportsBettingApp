@@ -44,6 +44,7 @@ const { injuryReport } = await import("../js/context.js");
 const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks } = await import("../js/parlay.js");
 const { loadBooks, matchEvent, shop } = await import("./books.mjs");
+const { leagueNews, isStory } = await import("../js/news.js");
 
 const LEAGUES = [
   { id: "nba", window: "day", props: true },
@@ -314,6 +315,22 @@ const results = [];
 for (const cfg of LEAGUES) results.push(await scanLeague(cfg));
 const games = results.flatMap((r) => r.games).sort((a, b) => new Date(a.start) - new Date(b.start));
 const legs = results.flatMap((r) => r.legs);
+
+// News: the latest ESPN story or video about each pick's player (props) or either
+// team (game lines), and the top stories for the notification.
+const news = new Map(await Promise.all(LEAGUES.map(async (c) => [c.id, await leagueNews(leagueById(c.id), { limit: 50 }).catch(() => [])])));
+const gameTeams = new Map(games.map((g) => [g.key, [String(g.home.id), String(g.away.id)]]));
+const within = (a, h) => a.published && now - new Date(a.published) < h * 3600e3;
+for (const l of legs) {
+  const list = (news.get(l.league) || []).filter((a) => isStory(a) || a.kind === "video");
+  const hit = l.kind === "prop"
+    ? list.find((a) => within(a, 72) && a.athletes.includes(String(l.playerId)))
+    : list.find((a) => within(a, 36) && isStory(a) && a.teams.some((t) => gameTeams.get(l.gameKey)?.includes(t)));
+  if (hit?.url) l.news = { headline: hit.headline, url: hit.url, published: hit.published, video: hit.kind === "video" || undefined };
+}
+const topStories = ["nba", "nfl", "ncaaf", "ncaab"].flatMap((id) => (news.get(id) || []).filter((a) => isStory(a) && within(a, 24)).slice(0, 3).map((a) => ({ league: id, headline: a.headline, url: a.url, published: a.published })));
+console.log(`news: ${[...news.values()].reduce((s, x) => s + x.length, 0)} articles, ${legs.filter((l) => l.news).length} legs with a related story`);
+
 const picks = choosePicks(legs);
 
 const history = loadHistory();
@@ -351,6 +368,7 @@ const today = {
   featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev } : null])),
   sgps: sgps.map((x) => ({ game: x.game, matchup: x.matchup, league: x.league, legs: x.sgp.legs.map((l) => l.id), american: x.sgp.american, prob: x.sgp.prob, ev: x.sgp.ev })),
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
+  topStories,
   record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded, clv: clvSummary(history), calibration: calibration(history), snapshots },
 };
 const outDir = path.join(SITE, "data", "picks");
@@ -364,6 +382,10 @@ const counts = ["A", "B"].map((g) => `${picks.filter((p) => p.grade === g).lengt
 const lines = picks.slice(0, 6).map(short);
 if (featured.basketball) lines.push(`🏀 3-leg parlay ${fmtOdds(featured.basketball.american)} (${pctTxt(featured.basketball.prob)} to hit)`);
 if (featured.football) lines.push(`🏈 3-leg parlay ${fmtOdds(featured.football.american)} (${pctTxt(featured.football.prob)} to hit)`);
+for (const id of ["nba", "nfl"]) {
+  const st = topStories.find((x) => x.league === id);
+  if (st) lines.push(`📰 ${leagueById(id).name}: ${st.headline}`);
+}
 const rec = today.record.last30;
 if (rec.w + rec.l) lines.push(`Last 30 days: ${rec.w}-${rec.l}, ${rec.units >= 0 ? "+" : ""}${rec.units.toFixed(1)}u`);
 fs.writeFileSync("notify.json", JSON.stringify({

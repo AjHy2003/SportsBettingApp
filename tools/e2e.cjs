@@ -26,7 +26,8 @@ const pages = [
 ];
 
 (async () => {
-  const browser = await chromium.launch();
+  // Google Chrome (E2E_CHANNEL=chrome) plays H.264 video; bundled Chromium doesn't.
+  const browser = await chromium.launch(process.env.E2E_CHANNEL ? { channel: process.env.E2E_CHANNEL } : {});
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const report = [];
   const visit = async (name, hash, after) => {
@@ -40,10 +41,11 @@ const pages = [
       await pg.goto("http://localhost:8765/" + hash, { waitUntil: "networkidle", timeout: 45000 });
     } catch (e) { errors.push("goto: " + e.message.slice(0, 200)); }
     await pg.waitForTimeout(1500);
-    if (after) { try { await after(pg); } catch (e) { errors.push("after: " + e.message.slice(0, 200)); } }
+    let extra = null;
+    if (after) { try { extra = await after(pg); } catch (e) { errors.push("after: " + e.message.slice(0, 200)); } }
     await pg.screenshot({ path: path.join(outDir, name + ".png"), fullPage: true });
     const text = (await pg.innerText("main").catch(() => "")).replace(/\s+/g, " ");
-    report.push({ name, hash, url: pg.url(), errors, failed: failed.slice(0, 15), text: text.slice(0, 1500) });
+    report.push({ name, hash, url: pg.url(), errors, failed: failed.slice(0, 15), text: text.slice(0, 1500), ...(extra ? { extra } : {}) });
     console.log(name, errors.length ? errors : "ok");
     await pg.close();
   };
@@ -84,6 +86,34 @@ const pages = [
     const leg = today?.legs?.filter((l) => l.kind === "prop" && l.league === lg && l.lean).sort((a, b) => (b.context?.length || 0) - (a.context?.length || 0) || b.edge - a.edge)[0];
     if (leg) await visit(`context-${lg}`, `#/l/${lg}/p/${leg.playerId}?m=${leg.marketKey}`);
   }
+  // News & highlights: play the reel and check the video really plays and advances.
+  const playback = async (pg, startSel) => {
+    const b = await pg.$(startSel);
+    if (!b) return { skipped: `no ${startSel}` };
+    await b.click();
+    await pg.waitForTimeout(6000);
+    const st = await pg.evaluate(() => { const v = document.querySelector("#pm-video"); return v && { count: document.querySelector("#pm-count")?.textContent, title: document.querySelector("#pm-title")?.textContent, src: v.currentSrc.slice(0, 120), readyState: v.readyState, time: v.currentTime, duration: v.duration, paused: v.paused, error: v.error?.code ?? null, msg: document.querySelector("#pm-msg").hidden ? "" : document.querySelector("#pm-msg").textContent }; });
+    await pg.screenshot({ path: path.join(outDir, `player-${startSel.replace(/\W+/g, "")}.png`) });
+    await pg.keyboard.press("ArrowRight");
+    await pg.waitForTimeout(4000);
+    const next = await pg.evaluate(() => { const v = document.querySelector("#pm-video"); return v && { count: document.querySelector("#pm-count")?.textContent, time: v.currentTime, error: v.error?.code ?? null }; });
+    await pg.keyboard.press("Escape");
+    return { first: st, next };
+  };
+  await visit("news", "#/news?sport=all", (pg) => playback(pg, "#n-playall"));
+  await visit("news-videos", "#/news?sport=nba", async (pg) => playback(pg, "#n-videos [data-clip]"));
+  for (const sport of ["football", "nhl", "mlb", "soccer"]) await visit(`news-${sport}`, `#/news?sport=${sport}`);
+  await visit("nba-game-highlights", "#/l/nba", async (pg) => {
+    const final = await pg.$$("a.game-card");
+    for (const a of final) {
+      if (!/final/i.test(await a.innerText())) continue;
+      await a.click();
+      await pg.waitForLoadState("networkidle").catch(() => {});
+      await pg.waitForTimeout(2500);
+      return playback(pg, "#g-clips [data-clip]");
+    }
+    return { skipped: "no finished NBA game on today's slate" };
+  });
   await visit("home-with-picks", "#/");
   fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
   await browser.close();

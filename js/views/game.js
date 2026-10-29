@@ -6,6 +6,8 @@ import { loadDeep, deepGamePanel } from "../deep.js";
 import { gameContext, defaultLines, evaluateLines, sideOdds } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
+import { summaryClips, articleOf } from "../news.js";
+import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderGame(ctx, L, ev, q) {
   const { app } = ctx;
@@ -54,6 +56,7 @@ export async function renderGame(ctx, L, ev, q) {
       </div>
       ${status.state === "pre" ? `<div class="row" style="margin-top:10px"><a class="btn sm" href="#/today?sgp=${L.id}:${ev}">Build a same-game parlay ›</a></div>` : ""}
     </div>
+    <div id="g-media"></div>
     <div class="grid two" style="margin-top:14px">
       <div class="card">
         <h3>Lines ${odds.provider ? `<span class="faint" style="text-transform:none;letter-spacing:0">· ${esc(odds.provider)}</span>` : ""}</h3>
@@ -96,6 +99,24 @@ export async function renderGame(ctx, L, ev, q) {
   for (const [sel, key] of Object.entries(binds)) $(sel)?.addEventListener("input", (e) => { st[key] = e.target.value === "" ? null : Number(e.target.value); renderModel(); });
 
   $("#g-deep").innerHTML = deep ? deepGamePanel(L, deep, H, A) || "" : "";
+
+  // Highlights (the full-game package first) and this game's recap/preview plus team news.
+  const mine = (a) => a.teams.includes(String(H.id)) || a.teams.includes(String(A.id));
+  const feed = (sum.news?.articles || []).map((a) => articleOf(a, L)).filter(mine);
+  const clips = [
+    ...summaryClips(sum, { league: L.id }).sort((a, b) => /game highlights/i.test(b.headline) - /game highlights/i.test(a.headline)),
+    ...feed.filter((a) => a.kind === "video").slice(0, 4),
+  ];
+  const stories = [sum.article?.headline ? articleOf(sum.article, L) : null, ...feed.filter((a) => a.kind === "news" || a.kind === "story").slice(0, 3)].filter(Boolean);
+  if (clips.length || stories.length) {
+    $("#g-media").innerHTML = `<div class="card" style="margin-top:14px">
+      ${clips.length ? `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🎬 Highlights</h3>${clips.length > 1 ? `<button class="btn sm" id="g-playall">▶ Play all (${clips.length})</button>` : ""}</div>
+      <div class="clip-grid compact" id="g-clips" style="margin-top:10px">${clips.map((c, i) => clipCard(c, i)).join("")}</div>` : ""}
+      ${stories.length ? `<h3 style="margin:${clips.length ? "16px" : "0"} 0 4px">📰 ${stories[0].kind === "recap" ? "Recap & news" : stories[0].kind === "preview" ? "Preview & news" : "News"}</h3><div class="story-list">${stories.map((a) => storyRow(a)).join("")}</div>` : ""}
+    </div>`;
+    $("#g-clips")?.addEventListener("click", (e) => { const b = e.target.closest("[data-clip]"); if (b) openPlayer(clips, Number(b.dataset.clip)); });
+    $("#g-playall")?.addEventListener("click", () => openPlayer(clips, 0, { autoNext: true }));
+  }
 
   const unit = { basketball: "PPG", football: "PPG", baseball: "Runs/G", hockey: "Goals/G", soccer: "Goals/G" }[fam] || "PPG";
   const statRows = [

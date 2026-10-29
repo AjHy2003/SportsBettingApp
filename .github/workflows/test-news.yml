@@ -1,0 +1,54 @@
+name: test-news
+# Temporary: live check of news & highlights on the claude/news branch. Writes
+# nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/news"]
+    paths-ignore: ["e2e-out/**", "probe-news/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Daily picks (with news)
+        run: node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+          google-chrome --version || true
+      - name: End-to-end in Google Chrome (plays H.264 video)
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const withNews = t.legs.filter((l) => l.news);
+            const out = { legs: t.legs.length, picks: t.picks.length, legsWithNews: withNews.length,
+              picksWithNews: t.picks.map((id) => t.legs.find((l) => l.id === id)).filter((l) => l.news).map((l) => `${l.label} -> ${l.news.headline}`),
+              newsSamples: withNews.slice(0, 15).map((l) => `${l.league} ${l.label} -> ${l.news.headline} (${l.news.published})`),
+              topStories: t.topStories };
+            fs.writeFileSync("e2e-out/news-summary.json", JSON.stringify(out, null, 1));
+          ' || true
+          cp picks.log notify.json e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/news || true
+          git push -q origin HEAD:claude/news
