@@ -10,4 +10,4 @@ NBA: 30 teams, 425 players
 NHL season 2027: 202 completed games
 NHL: 32 teams, 800 players
 NASCAR: 106 races, next=Xfinity 500
-{'nfl': {'ok': True, 'built': '2026-10-29T10:01:40.282126Z'}, 'nba': {'ok': True, 'built': '2026-10-29T10:01:50.496998Z'}, 'nhl': {'ok': True, 'built': '2026-10-29T10:02:27.411455Z'}, 'nascar': {'ok': True, 'built': '2026-10-29T10:02:27.927252Z'}}
+{'nfl': {'ok': True, 'built': '2026-10-29T10:07:24.212868Z'}, 'nba': {'ok': True, 'built': '2026-10-29T10:07:30.546480Z'}, 'nhl': {'ok': True, 'built': '2026-10-29T10:08:20.886305Z'}, 'nascar': {'ok': True, 'built': '2026-10-29T10:08:21.526396Z'}}
