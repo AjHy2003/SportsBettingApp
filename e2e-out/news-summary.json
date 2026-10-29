@@ -1,31 +1,28 @@
 {
- "legs": 884,
+ "legs": 991,
  "picks": 15,
- "legsWithNews": 298,
+ "legsWithNews": 180,
  "picksWithNews": [
   "Kyren Williams Over 59.5 Rushing Yards -> With Davante Adams out, Rams leaning on the run game",
   "Kyler Murray Under 219.5 Passing Yards -> What Jordan Rodgers wants to see from Kyler Murray",
-  "Jonah Coleman Over 53.5 Rush + Rec Yards -> Fantasy football buzz: Vikings defensive dilemma? Check in on the Jaguars",
-  "T.J. Hockenson Under 4.5 Receptions -> Fantasy football matchup rankings: Upgrade Irving, downgrade Williams",
-  "Malik Willis Under 28.5 Pass Attempts -> Why Malik Willis is Daniel Dopp's QB15 for Week 8",
-  "Caleb Douglas Over 37.5 Receiving Yards -> Fantasy football buzz: Vikings defensive dilemma? Check in on the Jaguars"
+  "Malik Willis Under 28.5 Pass Attempts -> Why Malik Willis is Daniel Dopp's QB15 for Week 8"
  ],
  "newsSamples": [
-  "nba POR -7.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba MEM +7.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba Over 234.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba Under 234.5 -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba POR ML -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba MEM ML -> Steve Kerr, Chris Finch want NBA to alter how it calls flopping techs (2026-10-29T01:43:43Z)",
-  "nba Zion Williamson Over 20.5 Points -> Denver Nuggets vs. New Orleans Pelicans: Game Highlights (2026-10-29T02:35:15Z)",
-  "nba Zion Williamson Under 5.5 Rebounds -> Denver Nuggets vs. New Orleans Pelicans: Game Highlights (2026-10-29T02:35:15Z)",
   "nba Evan Mobley Over 17.5 Points -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
   "nba Evan Mobley Under 3.5 Assists -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
   "nba Evan Mobley Under 8.5 Rebounds -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
   "nba Evan Mobley Over 1.5 3-Pointers Made -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
   "nba Evan Mobley Over 1.5 Blocks -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
   "nba Evan Mobley Over 21.5 Pts + Ast -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
-  "nba Evan Mobley Over 26.5 Pts + Reb -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)"
+  "nba Evan Mobley Over 26.5 Pts + Reb -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nba Evan Mobley Over 30.5 Pts + Reb + Ast -> Washington Wizards vs. Cleveland Cavaliers: Game Highlights (2026-10-29T01:53:28Z)",
+  "nfl GB -3.5 -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl CAR +3.5 -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl Over 47.5 -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl Under 47.5 -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl GB ML -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl CAR ML -> Panthers' consistency starts in the trenches, rests with DC Ejiro Evero (2026-10-29T10:00:12Z)",
+  "nfl Jordan Love Over 259.5 Passing Yards -> Jeff Saturday comes after Stephen A. for his Jordan Love take (2026-10-28T15:37:01Z)"
  ],
  "topStories": [
   {
