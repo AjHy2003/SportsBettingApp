@@ -1,0 +1,55 @@
+name: test-live
+# Temporary: live check of the bet tracker, alt-line ladder and football weather on
+# the claude/live branch. Writes nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/live"]
+    paths-ignore: ["e2e-out/**", "probe-live/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Daily picks
+        run: node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const fb = t.games.filter((g) => g.league === "nfl" || g.league === "ncaaf");
+            const out = { footballGames: fb.length, withWeather: fb.filter((g) => g.weather).length, indoor: fb.filter((g) => g.weather?.indoor).length,
+              weatherSamples: fb.filter((g) => g.weather && !g.weather.indoor).slice(0, 20).map((g) => `${g.matchup}: ${g.weather.wind} mph (g${g.weather.gust}) ${g.weather.temp}F ${g.weather.desc} ${g.weather.precip}in`),
+              windy: fb.filter((g) => g.weather?.wind >= 13).map((g) => `${g.matchup} ${g.weather.wind}mph`),
+              legsWithWeather: t.legs.filter((l) => /weather/.test(l.why || "")).slice(0, 12).map((l) => `${l.label}: ${l.why}`),
+              legs: t.legs.length, picks: t.picks.length };
+            fs.writeFileSync("e2e-out/live-summary.json", JSON.stringify(out, null, 1));
+            console.log(JSON.stringify(out, null, 1).slice(0, 3000));
+          ' || true
+          cp picks.log notify.json e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/live || true
+          git push -q origin HEAD:claude/live

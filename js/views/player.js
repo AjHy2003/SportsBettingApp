@@ -164,6 +164,7 @@ export async function renderPlayer(ctx, L, id, q) {
 
   function seedLine() {
     const m = market();
+    state.altOnly = false;
     const p = myProps[m.key];
     if (p) {
       state.line = p.line;
@@ -214,6 +215,7 @@ export async function renderPlayer(ctx, L, id, q) {
       state.oddsOver = r.dk ?? null;
       state.oddsUnder = null;
       state.lineSource = "user";
+      state.altOnly = true;
       syncInputs();
       render();
       $("#verdict").scrollIntoView({ behavior: "smooth", block: "center" });
@@ -257,6 +259,8 @@ export async function renderPlayer(ctx, L, id, q) {
     const { res, withVal } = runProp(fam, m, games, { line, oddsOver: state.oddsOver, oddsUnder: state.oddsUnder, opp: opp0, role: state.role, minutes: state.minutes, posted: myProps[m.key], context: gctx });
     if (gctx?.status?.maybe && res.verdict && ["A", "B"].includes(res.verdict.grade)) { res.verdict.grade = "C"; res.verdict.questionable = true; }
     if (gctx?.status?.out && res.verdict) { res.verdict.grade = "PASS"; res.verdict.side = null; }
+    // Alt lines from the ladder are over-only ("X+") at DraftKings.
+    if (state.altOnly && res.verdict?.lean === "UNDER") { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.altOnly = true; }
     const rc = res.verdict && roleChange(gctx, a.position?.abbreviation, res.verdict.lean, line, res.projection);
     if (rc) { res.verdict.grade = "PASS"; res.verdict.side = null; res.verdict.roleChange = rc; }
 
@@ -278,6 +282,7 @@ export async function renderPlayer(ctx, L, id, q) {
           ${v.placeholder ? `<div class="small muted">No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade.</div>` : ""}
           ${v.capped && !v.placeholder ? `<div class="small faint">Capped at B: no market price to compare against.</div>` : ""}
           ${gctx?.status ? `<div class="notice warn" style="margin-top:6px">Injury report: <b>${esc(gctx.status.status)}</b>${gctx.status.out ? " — no grade; props are usually voided if the player doesn't play." : v.questionable ? " — grade capped at C until the status clears." : ""}</div>` : ""}
+          ${v.altOnly ? `<div class="notice" style="margin-top:6px">DraftKings only sells the over (${line + 0.5}+) on alt lines, and the model leans under here, so there's no bet at this line.</div>` : ""}
           ${v.roleChange ? `<div class="notice warn" style="margin-top:6px">${esc(v.roleChange.join(", "))} ${v.roleChange.length > 1 ? "are" : "is"} out tonight, and this player has rarely played without ${v.roleChange.length > 1 ? "them" : "that teammate"}. A line this far above the projection is likely the book pricing a bigger role. No grade on the under.</div>` : ""}
           ${v.mismatch && !v.placeholder ? `<div class="notice warn" style="margin-top:6px">The line (${line}) is far from recent production (projection ${fx(res.projection)}). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. ${v.grade === "PASS" ? "No grade until you've checked the news." : "Grade capped at C."}</div>` : ""}
           <div class="small muted">${v.lean ? `Model ${pct(v.prob, 1)} vs ${pct(M.impliedProb(v.lean === "OVER" ? res.oddsOver : res.oddsUnder), 1)} needed to break even · edge ${signed(v.edge * 100, 1)} pts · EV ${signed(v.ev * 100, 1)}%` : ""}</div>
@@ -400,7 +405,8 @@ export async function renderPlayer(ctx, L, id, q) {
   $("#loc").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { state.loc = b.dataset.l; render(); } });
   $("#vsopp")?.addEventListener("click", () => { state.vsOpp = !state.vsOpp; render(); });
   const bind = (sel, key, parse = (v) => v) => $(sel).addEventListener("input", (e) => { state[key] = parse(e.target.value); render(); });
-  $("#f-line").addEventListener("input", () => { state.lineSource = "user"; });
+  $("#f-line").addEventListener("input", () => { state.lineSource = "user"; state.altOnly = false; });
+  ["#f-oo", "#f-uo"].forEach((sel) => $(sel).addEventListener("input", () => { state.altOnly = false; }));
   bind("#f-line", "line", (v) => (v === "" ? null : Number(v)));
   bind("#f-oo", "oddsOver", (v) => (v === "" ? null : Number(v)));
   bind("#f-uo", "oddsUnder", (v) => (v === "" ? null : Number(v)));
