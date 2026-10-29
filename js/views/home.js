@@ -14,6 +14,8 @@ export function renderHome({ app, alive }) {
         <a class="btn" href="#/today">🔥 Today's picks</a>
         <a class="btn ghost" href="#/l/nba">Today's NBA</a>
         <a class="btn ghost" href="#/l/nfl">This week's NFL</a>
+        <a class="btn ghost" href="#/trends">📈 Trends</a>
+        <a class="btn ghost" href="#/live">📡 Live games</a>
         <a class="btn ghost" href="#/news">📰 News & highlights</a>
         <a class="btn ghost" href="#/custom">Custom calculator</a>
       </div>

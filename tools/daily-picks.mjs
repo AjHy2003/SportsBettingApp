@@ -35,7 +35,7 @@ globalThis.fetch = async (url, opts) => {
 };
 
 const { leagueById, MARKETS } = await import("../js/sports.js");
-const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool } = await import("../js/espn.js");
+const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool, scheduleResults } = await import("../js/espn.js");
 const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
 const { loadDeep } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
@@ -45,6 +45,60 @@ const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
+const { propMove, gameMove } = await import("../js/movement.js");
+
+// ---------- team betting records (against the spread, over/under) ----------
+// ESPN's closing DraftKings line for a finished game, cached on disk forever.
+const CLOSE_DIR = "cache/closing-odds";
+async function closingLine(L, ev) {
+  const f = path.join(CLOSE_DIR, `${L.id}-${ev}.json`);
+  try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { /* not cached */ }
+  const [sport, league] = L.espn.split("/");
+  try {
+    const r = await fetch(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league}/events/${ev}/competitions/${ev}/odds`);
+    if (!r.ok) return null;
+    const items = (await r.json()).items || [];
+    const it = items.find((x) => String(x.provider?.id) === "100") || items.find((x) => String(x.provider?.id) !== "200");
+    const out = { spread: it?.spread ?? null, total: it?.overUnder ?? null };
+    fs.mkdirSync(CLOSE_DIR, { recursive: true });
+    fs.writeFileSync(f, JSON.stringify(out));
+    return out;
+  } catch { return null; }
+}
+
+// This season's record against the closing spread and total.
+async function teamRecord(L, team, sched) {
+  if (!sched) return null;
+  const games = scheduleResults(sched, team.id).filter((g) => String(g.seasonType) !== "1").slice(0, 25);
+  if (!games.length) return null;
+  const rows = [];
+  await pool(games, 6, async (g) => {
+    const c = await closingLine(L, g.eventId);
+    if (!c || (c.spread == null && c.total == null)) return;
+    const line = c.spread == null ? null : g.home ? c.spread : -c.spread; // this team's number
+    const cover = line == null ? null : g.pf - g.pa + line;
+    const tot = c.total == null ? null : g.pf + g.pa - c.total;
+    rows.push({ date: g.date, ats: cover == null ? null : cover > 0 ? "W" : cover < 0 ? "L" : "P", ou: tot == null ? null : tot > 0 ? "O" : tot < 0 ? "U" : "P", home: g.home });
+  });
+  rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const count = (k, v, f = () => true) => rows.filter((r) => r[k] === v && f(r)).length;
+  return {
+    n: rows.length,
+    ats: { w: count("ats", "W"), l: count("ats", "L"), p: count("ats", "P") },
+    atsHome: { w: count("ats", "W", (r) => r.home), l: count("ats", "L", (r) => r.home) },
+    atsAway: { w: count("ats", "W", (r) => !r.home), l: count("ats", "L", (r) => !r.home) },
+    ou: { o: count("ou", "O"), u: count("ou", "U"), p: count("ou", "P") },
+    atsLast5: rows.filter((r) => r.ats).slice(0, 5).map((r) => r.ats).join(""),
+    ouLast5: rows.filter((r) => r.ou).slice(0, 5).map((r) => r.ou).join(""),
+  };
+}
+
+// A big move against an A/B pick usually means news or sharp money the stats don't see.
+function applyMove(leg, mv) {
+  if (!mv) return;
+  leg.move = mv;
+  if (leg.lean && mv.against && mv.strong && ["A", "B"].includes(leg.grade)) { leg.grade = "C"; leg.moveCap = true; }
+}
 const { loadBooks, matchEvent, shop } = await import("./books.mjs");
 const { leagueNews, isStory } = await import("../js/news.js");
 
@@ -121,6 +175,7 @@ function lineLegs(L, gc, game, bookEv) {
         const links = Object.fromEntries(sh.prices.filter((p) => p.link).map((p) => [p.book, p.link]));
         if (Object.keys(links).length) leg.bookLinks = links;
       }
+      applyMove(leg, gameMove(kind, leg.side, gc.odds, gc.odds.open));
       // DraftKings bet-slip link from ESPN's odds (adds this exact selection), else the game page.
       const dk = gc.odds.dk?.[kind]?.[s.side];
       leg.dk = dk || gc.odds.dk?.game || undefined;
@@ -146,7 +201,7 @@ function propLeg(L, game, r) {
     r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) / (r.context.weather?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
     r.context?.weather ? `weather: ${r.context.weather.why} ×${r.context.weather.factor.toFixed(2)}` : "",
   ].filter(Boolean).join(" · ");
-  return {
+  const leg = {
     id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:${side}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
     kind: "prop", player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation, pos: r.who.pos,
     marketKey: r.key, market: r.m.label, line: r.p.line, side, label: `${r.who.name} ${side === "OVER" ? "Over" : "Under"} ${r.p.line} ${r.m.label}`,
@@ -157,8 +212,11 @@ function propLeg(L, game, r) {
     questionable: r.context?.status?.maybe ? r.context.status.status : undefined,
     roleChange: res.verdict.roleChange,
     dk: game.dk || undefined,
+    l10: r.l10?.n ? r.l10 : undefined,
     context: r.context?.notes?.length ? r.context.notes : undefined,
   };
+  applyMove(leg, propMove(side, { line: r.p.line, over: r.p.over, under: r.p.under }, { line: r.p.open, over: r.p.openOver, under: r.p.openUnder }));
+  return leg;
 }
 
 // Alt-line legs from DraftKings milestones ("30+ points" at a price): plus-money rungs
@@ -209,6 +267,7 @@ async function scanLeague(cfg) {
         gameWeather(L, sum, { indoor: e.competitions?.[0]?.venue?.indoor ?? null }).catch(() => null),
       ]);
       const gc = gameContext(L, sum, standings, schedH, schedA, weather);
+      const [recH, recA] = await Promise.all([teamRecord(L, h.team, schedH).catch(() => null), teamRecord(L, a.team, schedA).catch(() => null)]);
       const game = {
         key: `${L.id}:${e.id}`, league: L.id, eventId: e.id, start: comp.date, matchup: `${a.team.abbreviation} @ ${h.team.abbreviation}`,
         home: { id: h.team.id, abbr: h.team.abbreviation, name: h.team.displayName, logo: h.team.logos?.[0]?.href },
@@ -216,6 +275,8 @@ async function scanLeague(cfg) {
         lines: { details: gc.odds.details, spreadHome: gc.odds.spreadHome, total: gc.odds.total, mlHome: gc.odds.mlHome, mlAway: gc.odds.mlAway },
         weather: weather || undefined,
         dk: gc.odds.dk?.game || undefined,
+        open: gc.odds.open || undefined,
+        records: recH || recA ? { home: recH, away: recA } : undefined,
       };
       const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
       if (cfg.props) {

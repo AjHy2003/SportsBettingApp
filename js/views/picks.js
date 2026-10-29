@@ -4,7 +4,9 @@ import * as M from "../model.js";
 import { esc, setTitle, pct, signed, fmtDate, fmtTime, toast } from "../ui.js";
 import { loadPicks, updatePick, removePick, loadTickets, updateTicket, removeTicket } from "../store.js";
 import { marketValue } from "../props.js";
-import { legOf, trackLegs, ticketStatus } from "../live.js";
+import { legOf, trackLegs, ticketStatus, liveChance } from "../live.js";
+import { BOOKS } from "../sportsbooks.js";
+import { bankroll, spend, ledger, breakdown, balanceChart, openBankrollSettings, downloadBackup, restoreBackup, bankrollMoney, ticketProfit } from "../bankroll.js";
 
 const profit = (p) => (p.result === "W" ? M.payout(p.odds ?? -110) : p.result === "L" ? -1 : 0);
 const money = (x) => (x == null || !isFinite(x) ? "—" : `$${Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(2).replace(/\.00$/, "")}`);
@@ -40,7 +42,7 @@ export function renderPicks(ctx, q = {}) {
   }
 
   // ---------- live ----------
-  function legRow(l, st) {
+  function legRow(l, st, chance) {
     const g = st.game;
     const score = g && g.state !== "pre" ? `${esc(g.away.abbr)} ${g.away.score ?? ""} – ${esc(g.home.abbr)} ${g.home.score ?? ""} · ${esc(g.detail)}` : l.start ? `${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}` : "";
     const icon = st.status === "live" ? (st.onTrack === false ? "🟠" : "🟢") : ICON[st.status] || "·";
@@ -51,7 +53,7 @@ export function renderPicks(ctx, q = {}) {
       <div style="min-width:0;flex:1">
         <div class="ltitle">${esc(l.label)}</div>
         <div class="small muted">${score}${l.sub && !g ? ` · ${esc(l.sub)}` : ""}</div>
-        ${st.text ? `<div class="small ${st.status === "won" ? "pos" : st.status === "lost" ? "neg" : ""}">${esc(st.text)}</div>` : ""}
+        ${st.text ? `<div class="small ${st.status === "won" ? "pos" : st.status === "lost" ? "neg" : ""}">${esc(st.text)}${st.status === "live" && chance != null ? ` · <b>${pct(chance)}</b> to hit now` : ""}</div>` : ""}
         ${bar}
       </div>
     </div>`;
@@ -115,18 +117,33 @@ export function renderPicks(ctx, q = {}) {
         <span>${anyLive ? `● Live · updates every ${REFRESH / 1000}s` : "No games in progress"} · last checked ${fmtTime(lastUpdate.toISOString())}</span>
         <button class="btn ghost sm" id="b-refresh">↻ Refresh</button>
       </div>
-      ${cards.map(({ t, st, ts }) => `<div class="card lticket ${ts}" style="margin-bottom:12px">
+      ${cards.map(({ t, st, ts }) => {
+        // Chance the whole ticket hits: the model's number when saved, and now.
+        const legChance = t.legs.map((p, j) => liveChance(legOf(p), st[j], p.prob));
+        const now = legChance.reduce((a, b) => a * b, 1);
+        const atSave = t.prob ?? t.legs.reduce((a, p) => a * (p.prob || 0.5), 1);
+        const settled = ts === "won" || ts === "lost" || ts === "push";
+        return `<div class="card lticket ${ts}" style="margin-bottom:12px" data-tid="${esc(t.id)}">
         <div class="row" style="justify-content:space-between">
-          <div><b>${label(t)}</b> <span class="muted small">· ${money(t.stake)} to win ${money(t.toWin)} · ${M.fmtOdds(t.american)}</span></div>
+          <div><b>${t.kind === "moonshot" ? "🚀 " : ""}${label(t)}</b> <span class="muted small">· ${money(t.stake)} to win ${money((Number(t.stake) || 0) * M.payout(t.american))} · ${M.fmtOdds(t.american)}</span></div>
           <div class="row">${pill(ts, t)}<button class="icon-btn" data-delt="${esc(t.id)}" title="Remove">✕</button></div>
         </div>
-        ${t.legs.length > 1 ? `<div class="small muted" style="margin-top:4px">${tally(st)}</div>` : ""}
-        <div style="margin-top:6px">${t.legs.map((p, j) => legRow(legOf(p), st[j])).join("")}</div>
-      </div>`).join("")}
+        <div class="small muted" style="margin-top:4px">${t.legs.length > 1 ? `${tally(st)} · ` : ""}${settled ? "" : `chance to hit: <b>${pct(atSave, atSave < 0.1 ? 1 : 0)}</b> when saved${ts === "live" ? ` → <b class="${now >= atSave ? "pos" : "neg"}">${pct(now, now < 0.1 ? 1 : 0)} now</b>` : ""}`}</div>
+        <div style="margin-top:6px">${t.legs.map((p, j) => legRow(legOf(p), st[j], legChance[j])).join("")}</div>
+        <div class="row small tk-edit"><label>Stake $<input type="number" min="0" step="0.5" inputmode="decimal" value="${Number(t.stake) || 0}" data-stake/></label>
+          <label>Book <select data-book><option value="">—</option>${BOOKS.map((b) => `<option ${t.book === b.name ? "selected" : ""}>${esc(b.name)}</option>`).join("")}<option ${t.book === "Other" ? "selected" : ""}>Other</option></select></label></div>
+      </div>`;
+      }).join("")}
       ${picks.length ? `<div class="card"><h3>Saved picks</h3>${picks.map((p, i) => legRow(pLegs[i], pStats[i])).join("")}</div>` : ""}
       <p class="small faint">Live stats from ESPN; a few seconds to a minute behind the broadcast. Your book settles the bets, not this page.</p>`;
     body.querySelector("#b-refresh").addEventListener("click", () => live(true));
     body.querySelectorAll("[data-delt]").forEach((b) => b.addEventListener("click", () => { removeTicket(b.dataset.delt); live(); }));
+    // Edit what you actually bet (stake, book): feeds the bankroll and P/L by book.
+    body.querySelectorAll(".lticket[data-tid]").forEach((card) => {
+      const id = card.dataset.tid;
+      card.querySelector("[data-stake]")?.addEventListener("change", (e) => { const v = Math.max(0, Number(e.target.value) || 0); updateTicket(id, { stake: v, toWin: v * M.payout(loadTickets().find((t) => t.id === id)?.american) }); toast("Stake updated"); });
+      card.querySelector("[data-book]")?.addEventListener("change", (e) => { updateTicket(id, { book: e.target.value || null }); toast("Book saved"); });
+    });
     schedule(anyLive);
   }
 
@@ -154,8 +171,24 @@ export function renderPicks(ctx, q = {}) {
     }).filter((x) => x.n);
     const tickets = loadTickets().filter((t) => t.result);
     const tw = tickets.filter((t) => t.result === "W").length, tl = tickets.filter((t) => t.result === "L").length;
-    const tProfit = tickets.reduce((s, t) => s + (t.result === "W" ? t.toWin || 0 : t.result === "L" ? -(t.stake || 0) : 0), 0);
+    const tProfit = tickets.reduce((s, t) => s + ticketProfit(t), 0);
+    const bk = bankroll(), led = ledger(), sp = spend(), br = breakdown();
+    const table = (title, rows) => (rows.length ? `<div><div class="small muted" style="margin:8px 0 4px">${title}</div><table><thead><tr><th></th><th class="r">W-L</th><th class="r">Staked</th><th class="r">Profit</th><th class="r">ROI</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr><td>${esc(r.k)}</td><td class="r">${r.w}-${r.l}</td><td class="r">${bankrollMoney(r.staked)}</td><td class="r ${r.profit >= 0 ? "pos" : "neg"}">${r.profit >= 0 ? "+" : "−"}${bankrollMoney(Math.abs(r.profit))}</td><td class="r">${r.roi != null ? pct(r.roi, 1) : "—"}</td></tr>`).join("")}</tbody></table></div>` : "");
     body.innerHTML = `
+      <div class="card bank">
+        <div class="row" style="justify-content:space-between"><h3 style="margin:0">🏦 Bankroll</h3><div class="row"><button class="btn ghost sm" id="bk-set">${bk.bankroll ? "Edit" : "Set bankroll"}</button><button class="btn ghost sm" id="bk-backup">⬇ Back up</button><label class="btn ghost sm" style="cursor:pointer">⬆ Restore<input type="file" accept="application/json,.json" id="bk-restore" hidden/></label></div></div>
+        ${bk.bankroll ? `<div class="kpis" style="margin-top:10px">
+          <div class="kpi"><div class="k">Balance</div><div class="v ${led.balance >= led.start ? "pos" : "neg"}">${bankrollMoney(led.balance)}</div></div>
+          <div class="kpi"><div class="k">Profit</div><div class="v ${led.balance >= led.start ? "pos" : "neg"}">${led.balance >= led.start ? "+" : "−"}${bankrollMoney(Math.abs(led.balance - led.start))}</div></div>
+          <div class="kpi"><div class="k">Today</div><div class="v">${bankrollMoney(sp.day)}${bk.dailyLimit ? `<small> / ${bankrollMoney(bk.dailyLimit)}</small>` : ""}</div></div>
+          <div class="kpi"><div class="k">This week</div><div class="v">${bankrollMoney(sp.week)}${bk.weeklyLimit ? `<small> / ${bankrollMoney(bk.weeklyLimit)}</small>` : ""}</div></div>
+        </div>
+        ${balanceChart(led.points)}
+        <p class="small faint" style="margin:6px 0 0">Started at ${bankrollMoney(led.start)}${bk.since ? ` on ${fmtDate(bk.since)}` : ""}; counts settled tickets saved since then. Edit a ticket's stake and book on the 📡 Live tab.</p>`
+        : `<p class="small muted" style="margin:8px 0 0">Set the money you've put aside for betting to get a daily budget, spending limits and a running balance. Back up your bets to a file so you don't lose them when you switch phones or clear your browser.</p>`}
+        ${br.sport.length ? `<div class="grid three" style="margin-top:6px">${table("By sport", br.sport)}${table("By bet type", br.type)}${table("By book", br.book)}</div>` : ""}
+      </div>
       <p class="sub">Stored in this browser only. Units assume 1 unit per pick at the saved odds.</p>
       <div class="kpis">
         <div class="kpi"><div class="k">Record</div><div class="v">${w}-${graded.length - w}${picks.some((p) => p.result === "P") ? `-${picks.filter((p) => p.result === "P").length}` : ""}</div></div>
@@ -184,6 +217,9 @@ export function renderPicks(ctx, q = {}) {
       }));
       tr.querySelector("[data-del]").addEventListener("click", () => { removePick(tr.dataset.id); historyTab(); });
     });
+    body.querySelector("#bk-set").addEventListener("click", () => openBankrollSettings(() => { if (ctx.alive() && tab === "history") historyTab(); }));
+    body.querySelector("#bk-backup").addEventListener("click", downloadBackup);
+    body.querySelector("#bk-restore").addEventListener("change", (e) => { const f = e.target.files?.[0]; if (f) restoreBackup(f, () => { if (ctx.alive()) historyTab(); }); });
     body.querySelector("#grade").addEventListener("click", async (e) => {
       e.target.disabled = true;
       e.target.textContent = "Grading…";

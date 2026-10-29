@@ -3,11 +3,12 @@ import * as M from "../model.js";
 import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, cmpRow, toast } from "../ui.js";
 import { addPick } from "../store.js";
 import { loadDeep, deepGamePanel } from "../deep.js";
-import { gameContext, defaultLines, evaluateLines, sideOdds } from "../gamemodel.js";
+import { gameContext, defaultLines, evaluateLines, sideOdds, fmtSpread } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { summaryClips, articleOf } from "../news.js";
 import { gameWeather, weatherLine } from "../weather.js";
+import { liveOdds, liveEdge } from "../liveboard.js";
 import { clipCard, storyRow, openPlayer } from "../video.js";
 
 export async function renderGame(ctx, L, ev, q) {
@@ -58,10 +59,12 @@ export async function renderGame(ctx, L, ev, q) {
       </div>
       ${status.state === "pre" ? `<div class="row" style="margin-top:10px"><a class="btn sm" href="#/today?sgp=${L.id}:${ev}">Build a same-game parlay ›</a></div>` : ""}
     </div>
+    <div id="g-live"></div>
     <div id="g-media"></div>
     <div class="grid two" style="margin-top:14px">
       <div class="card">
         <h3>Lines ${odds.provider ? `<span class="faint" style="text-transform:none;letter-spacing:0">· ${esc(odds.provider)}</span>` : ""}</h3>
+        ${odds.open ? `<div class="small muted" style="margin:-4px 0 8px">Opened: ${[odds.open.spreadHome != null ? `${esc(H.abbreviation)} ${fmtSpread(odds.open.spreadHome)}${odds.spreadHome != null && odds.spreadHome !== odds.open.spreadHome ? ` → ${fmtSpread(odds.spreadHome)}` : ""}` : "", odds.open.total != null ? `O/U ${odds.open.total}${odds.total != null && odds.total !== odds.open.total ? ` → ${odds.total}` : ""}` : "", odds.open.mlHome != null ? `${esc(H.abbreviation)} ML ${M.fmtOdds(odds.open.mlHome)}${odds.mlHome != null && odds.mlHome !== odds.open.mlHome ? ` → ${M.fmtOdds(odds.mlHome)}` : ""}` : ""].filter(Boolean).join(" · ")}</div>` : ""}
         <div class="form-row">
           ${isSoccer ? "" : `<div class="field"><label>${esc(H.abbreviation)} spread</label><input id="g-sp" type="number" step="0.5"/></div>
           <div class="field"><label>${esc(H.abbreviation)} odds</label><input id="g-spo-h" type="number"/></div>
@@ -101,6 +104,21 @@ export async function renderGame(ctx, L, ev, q) {
   for (const [sel, key] of Object.entries(binds)) $(sel)?.addEventListener("input", (e) => { st[key] = e.target.value === "" ? null : Number(e.target.value); renderModel(); });
 
   $("#g-deep").innerHTML = deep ? deepGamePanel(L, deep, H, A) || "" : "";
+
+  // Live: ESPN win probability vs DraftKings' live moneyline.
+  if (status.state === "in") {
+    const wp = sum.winprobability?.at(-1)?.homeWinPercentage;
+    liveOdds(L, ev).then((o) => {
+      if (!ctx.alive() || (!o && wp == null)) return;
+      const g = { winHome: wp ?? null, home: { abbr: H.abbreviation }, away: { abbr: A.abbreviation } };
+      const e = liveEdge(g, o);
+      $("#g-live").innerHTML = `<div class="card" style="margin-top:14px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">📡 Live</h3><a class="small" href="#/live">All live games ›</a></div>
+        ${wp != null ? `<div class="wpbar"><span style="width:${Math.round((1 - wp) * 100)}%"></span></div><div class="row small" style="justify-content:space-between"><span>ESPN win prob: ${esc(A.abbreviation)} ${pct(1 - wp)}</span><span>${esc(H.abbreviation)} ${pct(wp)}</span></div>` : ""}
+        ${o ? `<div class="small muted" style="margin-top:6px">DraftKings live: ${esc(A.abbreviation)} ${M.fmtOdds(o.mlAway)} / ${esc(H.abbreviation)} ${M.fmtOdds(o.mlHome)}${o.spreadHome != null ? ` · spread ${esc(H.abbreviation)} ${o.spreadHome > 0 ? "+" : ""}${o.spreadHome}` : ""}${o.total != null ? ` · total ${o.total}` : ""}</div>` : ""}
+        ${e ? `<div class="small ${e.big ? "pos" : "muted"}" style="margin-top:4px">${e.big ? "⚡ " : ""}ESPN gives ${esc(e.team)} ${pct(e.side === "home" ? e.espnHome : 1 - e.espnHome)} vs the market's ${pct(e.side === "home" ? e.marketHome : 1 - e.marketHome)} at ${M.fmtOdds(e.ml)}. ESPN's number is a model too; treat the gap as a prompt to look.</div>` : ""}
+      </div>`;
+    }).catch(() => {});
+  }
 
   // Highlights (the full-game package first) and this game's recap/preview plus team news.
   const mine = (a) => a.teams.includes(String(H.id)) || a.teams.includes(String(A.id));

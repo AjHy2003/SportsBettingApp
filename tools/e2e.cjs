@@ -171,6 +171,18 @@ const pages = [
       return { moon: moon.slice(0, 900), books, dkExactLegs: dkExact, pickDk };
     });
   }
+  // Trends and the live games board.
+  for (const sp of ["all", "nfl", "nba"]) {
+    await visit(`trends-${sp}`, `#/trends?sport=${sp}`, async (pg) => ({
+      streaks: await pg.$$eval("tbody tr", (x) => x.length).catch(() => 0),
+      teamRows: await pg.$$eval("tr.hot, tr.cold", (x) => x.length).catch(() => 0),
+      moves: await pg.$$eval(".mvrow", (x) => x.length).catch(() => 0),
+    }));
+  }
+  await visit("live-games", "#/live", async (pg) => {
+    await pg.waitForTimeout(3000);
+    return { cards: await pg.$$eval(".lgame", (x) => x.length), text: (await pg.innerText("#lg-body").catch(() => "")).replace(/\s+/g, " ").slice(0, 600) };
+  });
   await visit("home-with-picks", "#/");
   fs.writeFileSync(path.join(outDir, "report.json"), JSON.stringify(report, null, 1));
   await browser.close();

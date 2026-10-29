@@ -334,6 +334,10 @@ body.no-scroll { overflow: hidden; }
   .pm-nav .btn { flex: 1 1 auto; text-align: center; }
   .topbar .icon-btn .lbl { display: none; }
 }
+@media (max-width: 430px) {
+  .topbar { gap: 8px; }
+  .topbar .icon-btn .lbl2 { display: none; }
+}
 .btn:hover, .icon-btn:hover { text-decoration: none; }
 
 /* ---------- live bet tracker ---------- */
@@ -374,3 +378,32 @@ table.ladder tr.cur td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
 .pick-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 .grade.ALT { background: color-mix(in srgb, #8b5cf6 20%, transparent); color: #a78bfa; font-size: 11px !important; }
 .card.moon { border-color: color-mix(in srgb, #8b5cf6 45%, var(--line)); background: linear-gradient(180deg, color-mix(in srgb, #8b5cf6 7%, var(--card)), var(--card)); }
+
+/* ---------- trends & live games ---------- */
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 3px; background: var(--line); }
+.dot.g { background: var(--over); }
+.dot.b { background: var(--under); }
+.dot.p { background: var(--muted); }
+tr.hot td { background: var(--over-bg); }
+tr.cold td { background: var(--under-bg); }
+.mvrow { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.mvrow:last-child { border-bottom: 0; }
+.lg-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.lgame { display: block; color: var(--text); }
+.lgame:hover { text-decoration: none; border-color: var(--accent); }
+.lgame.big { border-color: color-mix(in srgb, var(--over) 55%, var(--line)); }
+.lg-score { display: flex; justify-content: space-between; align-items: baseline; font-size: 20px; margin: 8px 0; }
+.wpbar { height: 8px; border-radius: 5px; background: color-mix(in srgb, var(--accent) 55%, var(--card-2)); overflow: hidden; margin: 6px 0 4px; }
+.wpbar span { display: block; height: 100%; background: var(--gold); }
+.lg-next { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--text); }
+.lg-next:last-child { border-bottom: 0; }
+
+/* ---------- bankroll ---------- */
+.tk-edit { gap: 14px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--muted); }
+.tk-edit input { width: 70px; margin-left: 4px; padding: 3px 6px; }
+.tk-edit select { margin-left: 4px; padding: 3px 6px; }
+.bal-chart { width: 100%; height: 140px; margin-top: 8px; }
+.bal-chart path { fill: none; stroke-width: 2.5; }
+.bal-chart path.up { stroke: var(--over); }
+.bal-chart path.down { stroke: var(--under); }
+.bal-chart .bal-base { stroke: var(--line); stroke-dasharray: 4 4; }
