@@ -1,0 +1,61 @@
+name: test-books
+# Temporary: live check of place-bet links, moonshots and NHL picks on the
+# claude/books branch. Writes nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/books"]
+    paths-ignore: ["e2e-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Daily picks
+        run: node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Check a DraftKings slip link responds
+        continue-on-error: true
+        run: |
+          url=$(node -e 'const t=require("./_site/data/picks/today.json");const l=t.legs.find(l=>l.dkExact);console.log(l?l.dk:"")')
+          echo "$url"; [ -n "$url" ] && curl -s -o /dev/null -w "DK status %{http_code} -> %{redirect_url}\n" -A "Mozilla/5.0" "$url" | tee dk-check.txt || true
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Summarize
+        if: always()
+        run: |
+          mkdir -p e2e-out
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const byL = (k) => t.legs.filter((l) => l.league === k).length;
+            const legById = new Map([...t.legs, ...(t.alts || [])].map((l) => [l.id, l]));
+            const out = { legs: t.legs.length, nhlLegs: byL("nhl"), nhlGames: t.games.filter((g) => g.league === "nhl").length,
+              withDk: t.legs.filter((l) => l.dk).length, dkExact: t.legs.filter((l) => l.dkExact).length, bookLinks: t.legs.filter((l) => l.bookLinks).length,
+              alts: (t.alts || []).length, altSamples: (t.alts || []).slice(0, 10).map((l) => `${l.label} ${l.odds} p=${l.prob} edge=${l.edge}`),
+              moonshots: Object.fromEntries(Object.entries(t.moonshots || {}).map(([k, m]) => [k, { american: m.american, payout: m.payout, oneIn: Math.round(1 / m.prob), legs: m.legs.map((id) => { const l = legById.get(id); return l ? `${l.label} ${l.odds}` : id; }) }])),
+              picks: t.picks.length };
+            fs.writeFileSync("e2e-out/books-summary.json", JSON.stringify(out, null, 1));
+            console.log(JSON.stringify(out, null, 1).slice(0, 4000));
+          ' || true
+          cp picks.log notify.json dk-check.txt e2e-out/ 2>/dev/null || true
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/books || true
+          git push -q origin HEAD:claude/books
