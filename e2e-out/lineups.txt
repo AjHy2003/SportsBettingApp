@@ -1,4 +1,4 @@
 nba lineups: 33 teams
 nfl lineups: 32 teams
-_site/data/nba/lineups/ATL.json 92 games
+_site/data/nba/lineups/ATL.json 93 games
 _site/data/nfl/lineups/ARI.json 24 games
