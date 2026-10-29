@@ -13,7 +13,8 @@ A free, installable web app for daily picks, parlays and research on player prop
 - **Injury-aware picks**: players listed out are dropped; questionable players are capped at grade C and kept off auto-built tickets. An hourly check sends a phone alert if a posted pick's player is ruled out.
 - **Track record**: every posted pick is logged and graded automatically after the game (W-L, units, by grade), plus **closing line value** (did the line move toward the pick before the game?) and a **calibration** table (do 60% picks win about 60% of the time?).
 - **Line shopping (optional)**: with a free The Odds API key, game lines are checked against every major US sportsbook. The model blends with the all-book consensus and each pick shows a better price when one exists.
-- **Phone notifications** every day around 11:45am ET (see setup below).
+- **📰 News & highlights**: game highlight packages for every finished game from last night and today (this week and last week for football), playable right in the app with a ▶ Play all reel; top stories, video analysis and recaps for NBA, NFL, college football and basketball, NHL, MLB and soccer. Game pages show that game's highlights and recap/preview, player pages show the player's latest news, and each pick on the Today page links the latest story about that player or team.
+- **Phone notifications** every day around 11:45am ET (see setup below), with the day's top NBA and NFL headlines.
 - **Research pages** for player props (game logs, hit rates, splits, matchup, projection), game lines, NFL advanced stats (targets, separation, catches by depth, designed runs vs scrambles, defense vs pass/run), NBA advanced stats (usage, rebound %, missed-shot rebound outlook, pace, defense vs position), NHL (shots, hits, blocks), racing simulations (F1, NASCAR, IndyCar), golf, tennis, UFC and a custom calculator for any other sport.
 
 The probabilities are estimates from past data blended with the sportsbook's price. No model guarantees a result; parlays compound both the edge and the error.
@@ -52,4 +53,4 @@ node tools/daily-picks.mjs --site . --history /tmp/history.json   # optional: pi
 
 ## Data sources
 
-ESPN public APIs (scores, game logs, injuries, DraftKings lines), [The Odds API](https://the-odds-api.com) (optional), [nflverse](https://github.com/nflverse/nflverse-data), [Jolpica-F1](https://github.com/jolpica/jolpica-f1), NASCAR's public results feed.
+ESPN public APIs (scores, game logs, injuries, news, highlight video, DraftKings lines), [The Odds API](https://the-odds-api.com) (optional), [nflverse](https://github.com/nflverse/nflverse-data), [Jolpica-F1](https://github.com/jolpica/jolpica-f1), NASCAR's public results feed.

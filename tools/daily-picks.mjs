@@ -321,12 +321,22 @@ const legs = results.flatMap((r) => r.legs);
 const news = new Map(await Promise.all(LEAGUES.map(async (c) => [c.id, await leagueNews(leagueById(c.id), { limit: 50 }).catch(() => [])])));
 const gameTeams = new Map(games.map((g) => [g.key, [String(g.home.id), String(g.away.id)]]));
 const within = (a, h) => a.published && now - new Date(a.published) < h * 3600e3;
+// Only stories actually about the player (few players tagged, or named in the
+// headline/summary), stories before videos; for game lines, only stories about these teams.
+const lastName = (n) => String(n || "").replace(/\s+(jr\.?|sr\.?|ii|iii|iv)$/i, "").split(" ").pop().toLowerCase();
 for (const l of legs) {
-  const list = (news.get(l.league) || []).filter((a) => isStory(a) || a.kind === "video");
-  const hit = l.kind === "prop"
-    ? list.find((a) => within(a, 72) && a.athletes.includes(String(l.playerId)))
-    : list.find((a) => within(a, 36) && isStory(a) && a.teams.some((t) => gameTeams.get(l.gameKey)?.includes(t)));
-  if (hit?.url) l.news = { headline: hit.headline, url: hit.url, published: hit.published, video: hit.kind === "video" || undefined };
+  const list = (news.get(l.league) || []).filter((a) => a.url && (isStory(a) || a.kind === "video"));
+  let hit = null;
+  if (l.kind === "prop") {
+    const ln = lastName(l.player);
+    const about = list.filter((a) => within(a, 72) && a.athletes.includes(String(l.playerId)) &&
+      (a.athletes.length <= 3 || `${a.headline} ${a.description}`.toLowerCase().includes(ln)));
+    hit = about.find(isStory) || about[0];
+  } else {
+    const teams = gameTeams.get(l.gameKey) || [];
+    hit = list.find((a) => within(a, 36) && isStory(a) && a.teams.length && a.teams.every((t) => teams.includes(t)));
+  }
+  if (hit) l.news = { headline: hit.headline, url: hit.url, published: hit.published, video: hit.kind === "video" || undefined };
 }
 const topStories = ["nba", "nfl", "ncaaf", "ncaab"].flatMap((id) => (news.get(id) || []).filter((a) => isStory(a) && within(a, 24)).slice(0, 3).map((a) => ({ league: id, headline: a.headline, url: a.url, published: a.published })));
 console.log(`news: ${[...news.values()].reduce((s, x) => s + x.length, 0)} articles, ${legs.filter((l) => l.news).length} legs with a related story`);
