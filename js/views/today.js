@@ -16,6 +16,7 @@ import { placeBet } from "../sportsbooks.js";
 import { buildMoonshot, oneIn } from "../moonshot.js";
 import { moveText } from "../movement.js";
 import { bankroll, bankrollOk, suggestedBudget, spend, openBankrollSettings, bankrollMoney } from "../bankroll.js";
+import { toPick } from "../slip.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
@@ -61,6 +62,12 @@ export async function renderToday(ctx, q) {
   const legById = new Map([...(today?.legs || []), ...(today?.alts || [])].map((l) => [l.id, l]));
   const allAlts = (today?.alts || []).filter((l) => new Date(l.start) > now);
   let moonExclude = [];
+  // Legs handed over from a shared slip ("Edit in parlay builder").
+  try {
+    const handed = JSON.parse(sessionStorage.getItem("picklab.mine") || "[]");
+    sessionStorage.removeItem("picklab.mine");
+    state.mine = handed.filter((id) => legById.has(id));
+  } catch { /* ignore */ }
 
   const stale = today && today.date !== new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()).replaceAll("-", "");
   const rec = today?.record?.last30;
@@ -248,14 +255,6 @@ export async function renderToday(ctx, q) {
     };
   }
 
-  // A leg in the saved-pick shape (store.js), which the live tracker also reads.
-  function toPick(l) {
-    if (l.kind === "prop") return { league: l.league, athleteId: l.playerId, athlete: l.player, market: l.marketKey, marketLabel: l.market, line: l.line, side: l.side, odds: l.odds, prob: l.prob, grade: l.grade, eventId: l.eventId, eventDate: l.start, opp: l.matchup };
-    const g = games.find((x) => x.key === l.gameKey);
-    const [awayAbbr, homeAbbr] = String(l.matchup || "").split(" @ ");
-    return { league: l.league, eventId: l.eventId, eventDate: l.start, athlete: l.matchup, marketLabel: l.market, market: l.kind, game: true, homeAbbr: g?.home.abbr || homeAbbr, awayAbbr: g?.away.abbr || awayAbbr,
-      side: l.kind === "total" ? (l.side === "OVER" ? `Over ${l.line}` : `Under ${l.line}`) : l.label, line: l.kind === "spread" ? (l.side === "HOME" ? l.line : -l.line) : l.line, odds: l.odds, prob: l.prob, grade: l.grade };
-  }
   const saveLeg = (l, extra = {}) => addPick({ ...toPick(l), ...extra });
 
   // Save a bet as a ticket (tracked live under ★ My bets) and its legs as picks.

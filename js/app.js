@@ -14,6 +14,8 @@ import { renderToday } from "./views/today.js";
 import { renderNews } from "./views/news.js";
 import { renderTrends } from "./views/trends.js";
 import { renderLiveGames } from "./views/livegames.js";
+import { initAccount } from "./account.js";
+import { renderSlip } from "./views/slip.js";
 
 const app = $("#app");
 let navToken = 0;
@@ -53,6 +55,7 @@ async function route() {
     if (parts[0] === "news") return renderNews(ctx, q);
     if (parts[0] === "trends") return renderTrends(ctx, q);
     if (parts[0] === "live") return renderLiveGames(ctx, q);
+    if (parts[0] === "slip") return renderSlip(ctx, q);
     if (parts[0] === "l") {
       const L = leagueById(parts[1]);
       if (!L) throw new Error("Unknown league");
@@ -84,6 +87,13 @@ function liveDot() {
 window.addEventListener("hashchange", liveDot);
 setInterval(liveDot, 60e3);
 liveDot();
+
+// Accounts: picks and bets synced from another device refresh My bets.
+initAccount();
+window.addEventListener("picklab:synced", () => {
+  liveDot();
+  if (parseHash().parts[0] === "picks") route();
+});
 
 // ---------- global player search ----------
 const input = $("#search-input");

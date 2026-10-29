@@ -7,6 +7,8 @@ import { marketValue } from "../props.js";
 import { legOf, trackLegs, ticketStatus, liveChance } from "../live.js";
 import { BOOKS } from "../sportsbooks.js";
 import { bankroll, spend, ledger, breakdown, balanceChart, openBankrollSettings, downloadBackup, restoreBackup, bankrollMoney, ticketProfit } from "../bankroll.js";
+import { accountBanner } from "../account.js";
+import { slipUrl, toPick } from "../slip.js";
 
 const profit = (p) => (p.result === "W" ? M.payout(p.odds ?? -110) : p.result === "L" ? -1 : 0);
 const money = (x) => (x == null || !isFinite(x) ? "—" : `$${Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(2).replace(/\.00$/, "")}`);
@@ -32,6 +34,7 @@ export function renderPicks(ctx, q = {}) {
     app.innerHTML = `
       <div class="crumbs"><a href="#/">Home</a> › My bets</div>
       <div class="row"><h1>★ My bets</h1><span class="spacer"></span></div>
+      <div data-acct-status style="margin-bottom:12px">${accountBanner()}</div>
       <div class="tabs" id="b-tabs"><button data-t="live">📡 Live & today</button><button data-t="history">History</button></div>
       <div id="b-body"></div>`;
     app.querySelectorAll("#b-tabs button").forEach((b) => {
@@ -126,7 +129,7 @@ export function renderPicks(ctx, q = {}) {
         return `<div class="card lticket ${ts}" style="margin-bottom:12px" data-tid="${esc(t.id)}">
         <div class="row" style="justify-content:space-between">
           <div><b>${t.kind === "moonshot" ? "🚀 " : ""}${label(t)}</b> <span class="muted small">· ${money(t.stake)} to win ${money((Number(t.stake) || 0) * M.payout(t.american))} · ${M.fmtOdds(t.american)}</span></div>
-          <div class="row">${pill(ts, t)}<button class="icon-btn" data-delt="${esc(t.id)}" title="Remove">✕</button></div>
+          <div class="row">${pill(ts, t)}<button class="icon-btn" data-sharet="${esc(t.id)}" title="Share this bet: a link that adds it to anyone's slip">🔗</button><button class="icon-btn" data-delt="${esc(t.id)}" title="Remove">✕</button></div>
         </div>
         <div class="small muted" style="margin-top:4px">${t.legs.length > 1 ? `${tally(st)} · ` : ""}${settled ? "" : `chance to hit: <b>${pct(atSave, atSave < 0.1 ? 1 : 0)}</b> when saved${ts === "live" ? ` → <b class="${now >= atSave ? "pos" : "neg"}">${pct(now, now < 0.1 ? 1 : 0)} now</b>` : ""}`}</div>
         <div style="margin-top:6px">${t.legs.map((p, j) => legRow(legOf(p), st[j], legChance[j])).join("")}</div>
@@ -138,6 +141,13 @@ export function renderPicks(ctx, q = {}) {
       <p class="small faint">Live stats from ESPN; a few seconds to a minute behind the broadcast. Your book settles the bets, not this page.</p>`;
     body.querySelector("#b-refresh").addEventListener("click", () => live(true));
     body.querySelectorAll("[data-delt]").forEach((b) => b.addEventListener("click", () => { removeTicket(b.dataset.delt); live(); }));
+    body.querySelectorAll("[data-sharet]").forEach((b) => b.addEventListener("click", async () => {
+      const t = loadTickets().find((x) => x.id === b.dataset.sharet);
+      if (!t) return;
+      const url = await slipUrl(t.legs.map(toPick), { stake: t.stake, american: t.american, kind: t.kind, title: t.kind === "moonshot" ? `${t.legs.length}-leg moonshot` : undefined });
+      if (navigator.share) { try { await navigator.share({ title: "PickLab bet slip", url }); } catch { /* cancelled */ } return; }
+      navigator.clipboard?.writeText(url).then(() => toast("Link copied: anyone who opens it can add this bet to their slip"), () => toast("Copy failed"));
+    }));
     // Edit what you actually bet (stake, book): feeds the bankroll and P/L by book.
     body.querySelectorAll(".lticket[data-tid]").forEach((card) => {
       const id = card.dataset.tid;
