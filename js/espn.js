@@ -43,7 +43,7 @@ const split = (L) => L.espn.split("/");
 
 export const api = {
   scoreboard: (L, params = "") => getJSON(`${SITE}/${L.espn}/scoreboard${params ? "?" + params : ""}`, 60e3),
-  summary: (L, ev) => getJSON(`${SITE}/${L.espn}/summary?event=${ev}`, 2 * 60e3),
+  summary: (L, ev, ttl = 2 * 60e3) => getJSON(`${SITE}/${L.espn}/summary?event=${ev}`, ttl),
   schedule: (L, team, season) => getJSON(`${SITE}/${L.espn}/teams/${team}/schedule${season ? `?season=${season}` : ""}`),
   roster: (L, team) => getJSON(`${SITE}/${L.espn}/teams/${team}/roster`, 60 * 60e3),
   standings: (L) => getJSON(`${STAND}/${L.espn}/standings`, 30 * 60e3),
@@ -129,6 +129,51 @@ function derive(fam, s) {
     if (s.rec != null && s.tgt == null) s.tgt = null;
   }
   return s;
+}
+
+// Box-score groups whose column names mean something else than in the game log.
+const BOX_OVERRIDE = {
+  basketball: { rebounds: "reb" },
+  football: { "interceptions.interceptions": "def_int", "passing.sacks": "sacked", "defensive.sacks": "def_sacks" },
+};
+
+// Live or final box score from a game summary -> Map athleteId -> { stat: value },
+// using the same stat keys as the game logs (so MARKETS work unchanged).
+export function boxStats(sum, family) {
+  const out = new Map();
+  for (const team of sum?.boxscore?.players || []) {
+    for (const grp of team.statistics || []) {
+      const names = grp.keys || grp.names || [];
+      let fam = family;
+      if (family === "baseball" && grp.type === "pitching") fam = "baseballPitching";
+      const map = { ...(NAME_MAP[fam] || {}), ...(BOX_OVERRIDE[fam] || {}) };
+      const one = (n) => map[`${grp.name}.${n}`] ?? map[n] ?? null;
+      const cols = names.map((n) => {
+        const k = one(n);
+        if (k) return { k };
+        const sep = n.includes("/") ? "/" : n.includes("-") ? "-" : null;
+        return sep ? { split: sep, ks: n.split(sep).map(one) } : null;
+      });
+      for (const a of grp.athletes || []) {
+        const id = String(a.athlete?.id ?? "");
+        if (!id || !a.stats?.length) continue;
+        const s = out.get(id) || {};
+        a.stats.forEach((v, i) => {
+          const c = cols[i];
+          if (!c) return;
+          if (c.k) {
+            if (Array.isArray(c.k)) { const [x, y] = String(v).split("-").map(num); s[c.k[0]] = x; s[c.k[1]] = y; }
+            else s[c.k] = num(v);
+          } else {
+            String(v).split(c.split).map(num).forEach((x, j) => { if (c.ks[j]) s[c.ks[j]] = x; });
+          }
+        });
+        if (fam === "hockey" && s.pts == null && s.g != null && s.a != null) s.pts = s.g + s.a;
+        out.set(id, derive(fam, s));
+      }
+    }
+  }
+  return out;
 }
 
 // Returns { family, seasons:[{value,label}], games:[...] } with games newest first.
