@@ -1,0 +1,68 @@
+{
+ "featured": {
+  "basketball": {
+   "day": "20261029",
+   "legs": [
+    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
+    "Thu SAC @ NO Jeremiah Fears Under 5.5 Assists",
+    "Thu MEM @ POR Cam Spencer Over 9.5 Pts + Ast"
+   ]
+  },
+  "football": {
+   "day": "20261031",
+   "legs": [
+    "Sat MICH @ RUTG RUTG ML",
+    "Sat ND @ NAVY NAVY +30.5",
+    "Sat KSU @ COLO KSU ML"
+   ]
+  },
+  "hockey": {
+   "day": "20261029",
+   "legs": [
+    "Thu BOS @ STL Morgan Geekie Under 1.5 Shots on Goal",
+    "Thu MTL @ DAL Oliver Kapanen Under 0.5 Points",
+    "Thu BUF @ ANA Jackson LaCombe Under 1.5 Shots on Goal"
+   ]
+  },
+  "any": {
+   "day": "20261029",
+   "legs": [
+    "Thu CLE @ ATL CJ McCollum Under 5.5 Assists",
+    "Thu SAC @ NO Jeremiah Fears Under 5.5 Assists",
+    "Thu MEM @ POR Cam Spencer Over 9.5 Pts + Ast"
+   ]
+  }
+ },
+ "sgpDays": [
+  "undefined nba MEM @ POR",
+  "undefined nfl CAR @ GB",
+  "undefined nfl LAC @ LAR",
+  "undefined nfl MIN @ DET",
+  "undefined nhl CBJ @ CAR",
+  "undefined nba SAC @ NO",
+  "undefined nhl BOS @ STL",
+  "undefined nfl NE @ MIA",
+  "undefined nfl PHI @ WSH",
+  "undefined nfl KC @ DEN",
+  "undefined nfl CHI @ SEA"
+ ],
+ "moonshots": {
+  "all": {
+   "legs": 6,
+   "payout": 10088
+  },
+  "basketball": {
+   "legs": 3,
+   "payout": 10146
+  },
+  "football": {
+   "legs": 7,
+   "later": true,
+   "payout": 10157
+  },
+  "hockey": {
+   "legs": 10,
+   "payout": 10084
+  }
+ }
+}
