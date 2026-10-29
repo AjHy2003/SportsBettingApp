@@ -21,6 +21,11 @@ export async function getJSON(url, ttl = 10 * 60e3) {
   return p;
 }
 
+// Drop cached responses whose URL contains `part` (all of them without an argument).
+export function clearCache(part = "") {
+  for (const k of [...cache.keys()]) if (k.includes(part)) cache.delete(k);
+}
+
 // Run async fn over items with limited concurrency.
 export async function pool(items, n, fn) {
   const out = new Array(items.length);

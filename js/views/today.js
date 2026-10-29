@@ -10,6 +10,7 @@ import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { planTicket, combine, compatible, choosePicks, bestSameGame } from "../parlay.js";
+import { timeAgo } from "../news.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf"] },
@@ -73,6 +74,10 @@ export async function renderToday(ctx, q) {
       </div>
     </div>
     <div class="card" style="margin-top:14px" id="t-record"></div>
+    ${today?.topStories?.length ? `<div class="card" style="margin-top:14px">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">🗞️ Today's top stories</h3><a class="small" href="#/news">News & highlights ›</a></div>
+      <div style="margin-top:6px">${today.topStories.map((st) => `<a class="news-line" href="${esc(st.url)}" target="_blank" rel="noopener"><b>${esc(leagueName(st.league))}</b> · ${esc(st.headline)} <span class="faint">· ${timeAgo(st.published)}</span></a>`).join("")}</div>
+    </div>` : ""}
     <div class="card" style="margin-top:14px">
       <h3>Get these on your phone</h3>
       <ol class="small muted" style="padding-left:18px;margin:0">
@@ -113,6 +118,7 @@ export async function renderToday(ctx, q) {
         ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
         ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
         ${l.bestBook ? `<div class="small pos">Better price: ${M.fmtOdds(l.bestBook.odds)} at ${esc(l.bestBook.title)} (DraftKings ${M.fmtOdds(l.odds)})</div>` : ""}
+        ${l.news?.url ? `<a class="news-line" href="${esc(l.news.url)}" target="_blank" rel="noopener">${l.news.video ? "🎬" : "📰"} ${esc(l.news.headline)} <span class="faint">· ${timeAgo(l.news.published)}</span></a>` : ""}
       </div>
       ${addable ? `<button class="btn ${inMine ? "" : "ghost"} sm" data-add="${esc(l.id)}" title="Add to my parlay">${inMine ? "✓" : "+"}</button>` : ""}
     </div>`;

@@ -1,6 +1,7 @@
 import { LEAGUES } from "../sports.js";
 import { esc, setTitle } from "../ui.js";
 import { todayTeaser } from "./today.js";
+import { newsTeaser } from "./news.js";
 
 export function renderHome({ app, alive }) {
   setTitle("");
@@ -13,10 +14,12 @@ export function renderHome({ app, alive }) {
         <a class="btn" href="#/today">🔥 Today's picks</a>
         <a class="btn ghost" href="#/l/nba">Today's NBA</a>
         <a class="btn ghost" href="#/l/nfl">This week's NFL</a>
+        <a class="btn ghost" href="#/news">📰 News & highlights</a>
         <a class="btn ghost" href="#/custom">Custom calculator</a>
       </div>
     </section>
     <div id="home-today"></div>
+    <div id="home-news"></div>
     ${groups.map((g) => `
       <div class="league-group">${esc(g)}</div>
       <div class="league-grid">
@@ -45,5 +48,6 @@ export function renderHome({ app, alive }) {
         </ul>
       </div>
     </div>`;
+  newsTeaser(app.querySelector("#home-news"), alive).catch(() => {});
   todayTeaser().then((html) => { if (alive()) { const el = app.querySelector("#home-today"); if (el) el.innerHTML = html; } }).catch(() => {});
 }
