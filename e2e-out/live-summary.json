@@ -1,0 +1,49 @@
+{
+ "footballGames": 65,
+ "withWeather": 65,
+ "indoor": 7,
+ "weatherSamples": [
+  "TROY @ JMU: 6 mph (g12) 59F Clear 0in",
+  "FAU @ UNT: 6 mph (g14) 76F Cloudy 0in",
+  "CAR @ GB: 9 mph (g22) 48F Clear 0in",
+  "TULN @ CLT: 5 mph (g9) 66F Cloudy 0in",
+  "BAY @ UCF: 7 mph (g21) 74F Cloudy 0in",
+  "KENT @ SAC: 5 mph (g14) 57F Cloudy 0in",
+  "ND @ NAVY: 7 mph (g12) 52F Clear 0in",
+  "ARIZ @ TTU: 10 mph (g14) 62F Cloudy 0in",
+  "WIS @ IOWA: 5 mph (g13) 56F Drizzle 0.02in",
+  "CAL @ NCSU: 8 mph (g13) 67F Cloudy 0in",
+  "UAB @ USF: 16 mph (g22) 84F Cloudy 0in",
+  "BC @ DUKE: 7 mph (g12) 67F Cloudy 0in",
+  "ILL @ MD: 5 mph (g9) 60F Cloudy 0in",
+  "BGSU @ WMU: 7 mph (g17) 52F Drizzle 0in",
+  "MICH @ RUTG: 4 mph (g8) 57F Cloudy 0in",
+  "AUB @ MISS: 3 mph (g8) 71F Drizzle 0.02in",
+  "MRSH @ ODU: 10 mph (g12) 61F Cloudy 0in",
+  "KSU @ COLO: 5 mph (g6) 60F Cloudy 0in",
+  "CCU @ GAST: 12 mph (g20) 73F Cloudy 0in",
+  "CONN @ AFA: 6 mph (g10) 57F Cloudy 0in"
+ ],
+ "windy": [
+  "UAB @ USF 16mph",
+  "APP @ GASO 13mph",
+  "IND @ JAX 14mph",
+  "NE @ MIA 16mph"
+ ],
+ "legsWithWeather": [
+  "Over 46.5: Over: model 39% (weather: 14 mph wind, scoring ×0.97) → blended 46%",
+  "Under 46.5: Over: model 39% (weather: 14 mph wind, scoring ×0.97) → blended 46%",
+  "Daniel Jones Over 187.5 Passing Yards: Projection 193.5 vs line 187.5 · over in 5/10 of last 10 · team total 18.3 · weather: 14 mph wind ×0.97",
+  "Daniel Jones Over 18.5 Completions: Projection 19.6 vs line 18.5 · over in 7/10 of last 10 · weather: 14 mph wind ×0.99",
+  "Daniel Jones Over 0.5 Passing TDs: Projection 0.8 vs line 0.5 · over in 6/10 of last 10 · team total 18.3 · weather: 14 mph wind ×0.98",
+  "Daniel Jones Over 8.5 Rushing Yards: Projection 9.4 vs line 8.5 · over in 4/10 of last 10 · team total 18.3 · weather: 14 mph wind ×1.03",
+  "Daniel Jones Over 31.5 Pass Attempts: Projection 32.0 vs line 31.5 · over in 4/10 of last 10 · weather: 14 mph wind ×0.98",
+  "Trevor Lawrence Over 240.5 Passing Yards: Projection 241.4 vs line 240.5 · over in 6/10 of last 10 · weather: 14 mph wind ×0.97",
+  "Trevor Lawrence Under 19.5 Completions: Projection 19.3 vs line 19.5 · under in 5/10 of last 10 · team total 28.3 · weather: 14 mph wind ×0.99",
+  "Trevor Lawrence Over 1.5 Passing TDs: Projection 2.4 vs line 1.5 · over in 7/10 of last 10 · team total 28.3 · weather: 14 mph wind ×0.98",
+  "Trevor Lawrence Over 11.5 Rushing Yards: Projection 21.6 vs line 11.5 · over in 5/10 of last 10 · team total 28.3 · weather: 14 mph wind ×1.03",
+  "Trevor Lawrence Under 30.5 Pass Attempts: Projection 30.1 vs line 30.5 · under in 6/10 of last 10 · team total 28.3 · weather: 14 mph wind ×0.98"
+ ],
+ "legs": 1044,
+ "picks": 15
+}
