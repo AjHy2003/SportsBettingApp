@@ -202,6 +202,22 @@ export function analyzeProp(games, opts) {
     }
   }
 
+  // Potential: what his chances (potential assists, rebound chances, shot attempts, NFL
+  // expected stats) say he should have produced. Luck evens out, so lean the base toward it.
+  let potential = null;
+  const withX = games.filter((g) => g.value != null && isFinite(g.value) && g.expected != null && isFinite(g.expected));
+  if (withX.length >= 3 && opts.potentialWeight) {
+    const w = withX.map((g, i) => Math.pow(0.5, i / halfLife) * (g.w ?? 1));
+    const act = sum(withX.map((g, i) => w[i] * g.value)) / sum(w);
+    const exp = sum(withX.map((g, i) => w[i] * g.expected)) / sum(w);
+    // Pseudo-count keeps small numbers (TDs, goals, threes) from swinging the ratio.
+    const ratio = Math.min(1.33, Math.max(0.75, (exp + 0.5) / (act + 0.5)));
+    const factor = 1 + opts.potentialWeight * (withX.length / (withX.length + 4)) * (ratio - 1);
+    base *= factor;
+    potential = { n: withX.length, actual: act, expected: exp, factor };
+    if (Math.abs(factor - 1) >= 0.01) notes.push(`Potential: his chances say ${exp.toFixed(1)} per game vs ${act.toFixed(1)} actual (last ${withX.length}) → ×${factor.toFixed(3)}.`);
+  }
+
   const opp = opts.oppFactor && isFinite(opts.oppFactor) ? opts.oppFactor : 1;
   const pace = opts.paceFactor && isFinite(opts.paceFactor) ? opts.paceFactor : 1;
   const role = 1 + (Number(opts.roleAdj) || 0) / 100;
@@ -309,7 +325,7 @@ export function analyzeProp(games, opts) {
   };
 
   return {
-    probOver,
+    probOver, potential,
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,
     min: Math.min(...vals), max: Math.max(...vals),
     recent, projection, expMinutes, dist,

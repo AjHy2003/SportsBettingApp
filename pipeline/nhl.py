@@ -67,6 +67,28 @@ def parse_summary(js):
     return {"date": comp["date"], "season_type": js["header"].get("season", {}).get("type"), "teams": teams, "players": players}
 
 
+def add_potential(rows, meta):
+    """Expected shots on goal (shot attempts x his on-target rate) and expected goals
+    (shots on goal x his shooting %), both shrunk toward the league."""
+    skaters = [r for pid, rs in rows.items() if meta[pid]["pos"] != "G" for r in rs]
+    sog = sum(r.get("sog") or 0 for r in skaters)
+    att = sog + sum(r.get("miss") or 0 for r in skaters)
+    goals = sum(r.get("g") or 0 for r in skaters)
+    lg_on = sog / att if att else 0.6
+    lg_sh = goals / sog if sog else 0.1
+    for pid, rs in rows.items():
+        if meta[pid]["pos"] == "G":
+            continue
+        s_sog = sum(r.get("sog") or 0 for r in rs)
+        s_att = s_sog + sum(r.get("miss") or 0 for r in rs)
+        on = (s_sog + 40 * lg_on) / (s_att + 40)
+        sh = (sum(r.get("g") or 0 for r in rs) + 60 * lg_sh) / (s_sog + 60)
+        for r in rs:
+            a = (r.get("sog") or 0) + (r.get("miss") or 0)
+            r["xsog"] = clean(a * on, 2)
+            r["xg"] = clean((r.get("sog") or 0) * sh, 3)
+
+
 def build(out, cache):
     season, events = season_events("hockey/nhl", cache, "nhl")
     print(f"NHL season {season}: {len(events)} completed games", flush=True)
@@ -125,6 +147,7 @@ def build(out, cache):
             if lst:
                 league["allowed"][pos] = {k: clean(sum(x[k] for x in lst) / len(lst), 3) for k in ("sog", "pts", "hits", "blk")}
 
+    add_potential(rows, meta)
     pdir = os.path.join(out, "nhl", "players")
     os.makedirs(pdir, exist_ok=True)
     for pid, r in rows.items():

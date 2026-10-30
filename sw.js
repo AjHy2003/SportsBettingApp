@@ -1,9 +1,9 @@
 // Offline shell: cache the app files, always go to network for data.
-const VERSION = "picklab-v10";
+const VERSION = "picklab-v11";
 const SHELL = [
   "./", "index.html", "css/app.css", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png",
   "js/app.js", "js/model.js", "js/sports.js", "js/espn.js", "js/ui.js", "js/store.js", "js/props.js", "js/deep.js",
-  "js/gamemodel.js", "js/scan.js", "js/parlay.js", "js/context.js", "js/news.js", "js/video.js", "js/live.js", "js/sportsbooks.js", "js/moonshot.js", "js/weather.js", "js/movement.js", "js/liveboard.js", "js/bankroll.js", "js/account.js", "js/firebase-config.js", "js/slip.js", "js/views/slip.js", "js/views/today.js", "js/views/news.js", "js/views/trends.js", "js/views/livegames.js",
+  "js/gamemodel.js", "js/scan.js", "js/parlay.js", "js/context.js", "js/news.js", "js/video.js", "js/live.js", "js/sportsbooks.js", "js/moonshot.js", "js/weather.js", "js/movement.js", "js/liveboard.js", "js/bankroll.js", "js/account.js", "js/firebase-config.js", "js/slip.js", "js/views/slip.js", "js/potential.js", "js/views/today.js", "js/views/news.js", "js/views/trends.js", "js/views/livegames.js",
   "js/views/home.js", "js/views/slate.js", "js/views/game.js", "js/views/player.js", "js/views/racing.js",
   "js/views/golf.js", "js/views/events.js", "js/views/custom.js", "js/views/picks.js",
 ];

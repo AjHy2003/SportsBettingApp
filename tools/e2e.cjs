@@ -171,6 +171,13 @@ const pages = [
       return { moon: moon.slice(0, 900), books, dkExactLegs: dkExact, pickDk };
     });
   }
+  // Potential stats (chances vs results) on player pages, one market per sport.
+  for (const [name, hash] of [["pot-lebron-ast", "#/l/nba/p/1966?m=ast"], ["pot-embiid-reb", "#/l/nba/p/3059318?m=reb"], ["pot-chase-recyds", "#/l/nfl/p/4362628?m=rec_yds"], ["pot-lamar-passyds", "#/l/nfl/p/3916387?m=pass_yds"], ["pot-mcdavid-sog", "#/l/nhl/p/3895074?m=sog"]]) {
+    await visit(name, hash, async (pg) => {
+      await pg.waitForTimeout(1500);
+      return { potential: (await pg.innerText("#potential").catch(() => "")).replace(/\s+/g, " ").slice(0, 900), note: (await pg.innerText("#notes").catch(() => "")).split("\n").filter((x) => /Potential/.test(x)).join(" ") };
+    });
+  }
   // Day picker: the default day per sport, then each other day, then a single game.
   for (const sport of ["nfl", "football", "all"]) {
     await visit(`today-days-${sport}`, `#/today?sport=${sport}`, async (pg) => {

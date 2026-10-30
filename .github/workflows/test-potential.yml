@@ -1,0 +1,92 @@
+name: test-potential
+# Temporary: build data with potential/expected stats, run daily picks and E2E on the
+# claude/potential branch. Writes nothing to picks-data and sends no notifications.
+on:
+  push:
+    branches: ["claude/potential"]
+    paths-ignore: ["e2e-out/**", "probe-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Build data
+        run: python pipeline/build.py --out _site/data --cache cache 2>&1 | tee build.log
+      - name: Potential summary
+        run: |
+          mkdir -p e2e-out
+          python3 - <<'PY' | tee e2e-out/potential.txt
+          import glob, json, statistics as st
+          def load(lg):
+              out = []
+              for f in glob.glob(f"_site/data/{lg}/players/*.json"):
+                  d = json.load(open(f)); out.append(d)
+              return out
+          def check(lg, rows_key, pairs):
+              ps = load(lg)
+              print(f"== {lg}: {len(ps)} players")
+              for act, x in pairs:
+                  a = [r.get(act) for p in ps for r in p.get(rows_key, []) if r.get(x) is not None and r.get(act) is not None]
+                  e = [r.get(x) for p in ps for r in p.get(rows_key, []) if r.get(x) is not None and r.get(act) is not None]
+                  print(f"  {x:8s} games {len(e):6d}  league mean expected {st.mean(e) if e else 0:.3f} vs actual {st.mean(a) if a else 0:.3f}")
+              return ps
+          nba = check("nba", "games", [("ast", "xast"), ("reb", "xreb"), ("pts", "xpts")])
+          for p in nba:
+              if p["name"] in ("LeBron James", "Joel Embiid", "Nikola Jokic", "Tyrese Haliburton"):
+                  g = p["games"][-3:]
+                  print("  ", p["name"], [{k: r.get(k) for k in ("date", "ast", "pot_ast", "xast", "reb", "rch", "xreb", "pts", "xpts")} for r in g])
+          nfl = check("nfl", "weeks", [("rec", "xrec"), ("ryd", "xryd"), ("rushyd", "xrushyd"), ("pyd", "xpyd")])
+          for p in nfl:
+              if p["name"] in ("Ja'Marr Chase", "Lamar Jackson", "Saquon Barkley"):
+                  print("  ", p["name"], [{k: r.get(k) for k in ("w", "rec", "xrec", "ryd", "xryd", "rushyd", "xrushyd", "pyd", "xpyd")} for r in p["weeks"][-2:]])
+          nhl = check("nhl", "games", [("sog", "xsog"), ("g", "xg")])
+          PY
+      - name: Daily picks
+        run: |
+          mkdir -p /tmp/hist
+          git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/hist/history.json || true
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const props = t.legs.filter((l) => l.kind === "prop");
+            const withPot = props.filter((l) => l.pot);
+            const moved = withPot.filter((l) => Math.abs(l.pot.f - 1) >= 0.02);
+            console.log(`prop legs ${props.length}, with potential ${withPot.length}, nudged 2%+ ${moved.length}`);
+            for (const l of t.picks.map((id) => t.legs.find((x) => x.id === id)).filter((l) => l.pot).slice(0, 12)) console.log(`${l.grade} ${l.label} | ${l.why}`);
+          ' | tee -a e2e-out/potential.txt
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Commit results
+        if: always()
+        run: |
+          mkdir -p e2e-out && cp build.log picks.log e2e-out/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/potential || true
+          git push -q origin HEAD:claude/potential
