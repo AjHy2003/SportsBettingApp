@@ -1,0 +1,14 @@
+/home/runner/work/SportsBettingApp/SportsBettingApp/pipeline/build.py:33: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  started = dt.datetime.utcnow()
+NFL season 2026
+NFL expected stats: 7700 of 8843 player-games
+NFL: 715 players, 32 teams
+/home/runner/work/SportsBettingApp/SportsBettingApp/pipeline/build.py:33: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  started = dt.datetime.utcnow()
+NBA season 2027: 71 completed games
+NBA last season: 1316 games for lineups
+NBA: 30 teams, 430 players
+NHL season 2027: 213 completed games
+NHL: 32 teams, 803 players
+NASCAR: 106 races, next=Xfinity 500
+{'nfl': {'ok': True, 'built': '2026-10-30T23:09:32.145224Z'}, 'nba': {'ok': True, 'built': '2026-10-30T23:09:45.371045Z'}, 'nhl': {'ok': True, 'built': '2026-10-30T23:09:47.592341Z'}, 'nascar': {'ok': True, 'built': '2026-10-30T23:09:48.665418Z'}}

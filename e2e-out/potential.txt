@@ -1,0 +1,29 @@
+== nba: 430 players
+  xast     games   1592  league mean expected 2.336 vs actual 2.336
+  xreb     games   1592  league mean expected 4.391 vs actual 3.983
+  xpts     games   1592  league mean expected 10.214 vs actual 10.204
+   Nikola Jokic [{'date': '2026-10-25', 'ast': 10, 'pot_ast': 21.1, 'xast': 9.7, 'reb': 15, 'rch': 88.5, 'xreb': 12.48, 'pts': 35, 'xpts': 30.3}, {'date': '2026-10-27', 'ast': 11, 'pot_ast': 21.4, 'xast': 9.81, 'reb': 7, 'rch': 59.6, 'xreb': 8.4, 'pts': 19, 'xpts': 21.4}, {'date': '2026-10-29', 'ast': 10, 'pot_ast': 23.1, 'xast': 10.61, 'reb': 13, 'rch': 66.4, 'xreb': 9.36, 'pts': 21, 'xpts': 18.2}]
+   LeBron James [{'date': '2026-10-22', 'ast': 5, 'pot_ast': 10.5, 'xast': 4.75, 'reb': 10, 'rch': 71.6, 'xreb': 6.67, 'pts': 17, 'xpts': 19.8}, {'date': '2026-10-25', 'ast': 5, 'pot_ast': 13.4, 'xast': 6.04, 'reb': 2, 'rch': 76.3, 'xreb': 7.1, 'pts': 18, 'xpts': 20.2}, {'date': '2026-10-28', 'ast': 10, 'pot_ast': 21.4, 'xast': 9.66, 'reb': 5, 'rch': 70.4, 'xreb': 6.55, 'pts': 13, 'xpts': 14.1}]
+   Joel Embiid [{'date': '2026-10-22', 'ast': 1, 'pot_ast': 2.2, 'xast': 1.01, 'reb': 7, 'rch': 73.8, 'xreb': 9.34, 'pts': 24, 'xpts': 23.9}, {'date': '2026-10-24', 'ast': 10, 'pot_ast': 24.4, 'xast': 11.01, 'reb': 11, 'rch': 83.4, 'xreb': 10.56, 'pts': 28, 'xpts': 32.3}, {'date': '2026-10-28', 'ast': 2, 'pot_ast': 4.5, 'xast': 2.04, 'reb': 11, 'rch': 83.2, 'xreb': 10.53, 'pts': 21, 'xpts': 20.4}]
+   Tyrese Haliburton [{'date': '2026-10-23', 'ast': 7, 'pot_ast': 16.0, 'xast': 7.46, 'reb': 6, 'rch': 65.8, 'xreb': 4.87, 'pts': 18, 'xpts': 20.2}, {'date': '2026-10-25', 'ast': 10, 'pot_ast': 17.6, 'xast': 8.17, 'reb': 4, 'rch': 60.5, 'xreb': 4.48, 'pts': 24, 'xpts': 17.9}, {'date': '2026-10-27', 'ast': 9, 'pot_ast': 22.9, 'xast': 10.68, 'reb': 6, 'rch': 85.1, 'xreb': 6.3, 'pts': 22, 'xpts': 20.6}]
+== nfl: 715 players
+  xrec     games   5583  league mean expected 2.812 vs actual 2.926
+  xryd     games   5527  league mean expected 30.926 vs actual 32.362
+  xrushyd  games   3112  league mean expected 28.894 vs actual 29.095
+  xpyd     games    882  league mean expected 209.587 vs actual 203.362
+   Lamar Jackson [{'w': 3, 'rec': None, 'xrec': None, 'ryd': None, 'xryd': None, 'rushyd': 50, 'xrushyd': 32.75, 'pyd': 186, 'xpyd': 149.66}, {'w': 4, 'rec': None, 'xrec': None, 'ryd': None, 'xryd': None, 'rushyd': 20, 'xrushyd': 13.69, 'pyd': 222, 'xpyd': 165.34}]
+   Ja'Marr Chase [{'w': 5, 'rec': 6, 'xrec': 6.29, 'ryd': 77, 'xryd': 76.59, 'rushyd': None, 'xrushyd': None, 'pyd': None, 'xpyd': None}, {'w': 7, 'rec': 5, 'xrec': 4.18, 'ryd': 62, 'xryd': 47.13, 'rushyd': None, 'xrushyd': None, 'pyd': None, 'xpyd': None}]
+   Saquon Barkley [{'w': 4, 'rec': 1, 'xrec': 0.77, 'ryd': 2, 'xryd': 5.98, 'rushyd': 8, 'xrushyd': 8.33, 'pyd': None, 'xpyd': None}, {'w': 7, 'rec': 2, 'xrec': 1.64, 'ryd': 9, 'xryd': 12.86, 'rushyd': 62, 'xrushyd': 27.6, 'pyd': None, 'xpyd': None}]
+== nhl: 803 players
+  xsog     games   7667  league mean expected 1.519 vs actual 1.518
+  xg       games   7667  league mean expected 0.177 vs actual 0.174
+prop legs 1415, with potential 1217, nudged 2%+ 605
+A Tre Jones Over 12.5 Pts + Ast | Projection 17.2 vs line 12.5 · over in 8/10 of last 10 · team total 111.0
+A Lamar Jackson Under 19.5 Completions | Projection 17.0 vs line 19.5 · under in 9/10 of last 10 · matchup ×1.06 · team total 25.8
+A Darius Garland Under 33.5 Pts + Reb + Ast | Projection 28.5 vs line 33.5 · under in 8/10 of last 10 · Jordan Miller out: 28.2 pts + reb + ast in 6 games without vs 28.3 with → ×0.996 · team total 108.0
+A Jaden McDaniels Under 1.5 3-Pointers Made | Projection 0.9 vs line 1.5 · under in 5/10 of last 10 · matchup ×0.89 · Donte DiVincenzo and Anthony Edwards out: 0.5 3-pointers made in 2 games without vs 1.4 with → ×0.828
+A Kyren Williams Over 57.5 Rushing Yards | Projection 78.2 vs line 57.5 · over in 5/10 of last 10 · matchup ×1.04 · chances say 60.2/g vs 70.7 actual (×0.94) · team total 26.0
+A Rachaad White Under 60.5 Rush + Rec Yards | Projection 49.0 vs line 60.5 · under in 9/10 of last 10 · matchup ×1.03 · team total 23.3
+A Justin Jefferson Under 79.5 Receiving Yards | Projection 60.0 vs line 79.5 · under in 7/10 of last 10 · matchup ×1.07 · Josh Oliver out: 52.3 receiving yards in 7 games without vs 65.6 with → ×0.946
+A Joe Burrow Under 25.5 Completions | Projection 21.3 vs line 25.5 · under in 7/10 of last 10 · Andrei Iosivas and Tanner Hudson out: 18.0 completions in 2 games without vs 24.5 with → ×0.919 · team total 29.5
+B Kenneth Walker III Under 3.5 Receptions | Projection 2.5 vs line 3.5 · under in 6/10 of last 10 · chances say 3.2/g vs 2.8 actual (×1.04) · Brashard Smith out: 2.5 receptions in 4 games without vs 4.0 with → ×0.934 · team total 21.0
