@@ -1,0 +1,49 @@
+{
+ "nba_pt_passing": {
+  "error": "HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=45)",
+  "secs": 45.3
+ },
+ "nba_pt_rebounding": {
+  "error": "HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=45)",
+  "secs": 45.1
+ },
+ "nba_track_box_v3": {
+  "error": "HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=45)",
+  "secs": 45.2
+ },
+ "nba_cdn_box": {
+  "status": 403,
+  "secs": 0.2,
+  "bytes": 443
+ },
+ "pbpstats": {
+  "status": 200,
+  "secs": 2.3,
+  "bytes": 3046916,
+  "sample": "{\"single_row_table_data\": {}, \"multi_row_table_data\": [{\"EntityId\": \"1641708\", \"TeamId\": \"1610612745\", \"Name\": \"Amen Thompson\", \"ShortName\": \"Amen Thompson\", \"RowId\": \"1641708\", \"TeamAbbreviation\": \"HOU\", \"SecondsPlayed\": 177189.0, \"GamesPlayed\": 79, \"Minutes\": 2953, \"PlusMinus\": 368, \"OffPoss\": 5899, \"DefPoss\": 5933, \"PenaltyOffPoss\": 1448, \"PenaltyDefPoss\": 1211, \"SecondChanceOffPoss\": 885, \"TotalPoss\": 11832, \"AtRimFGM\": 362, \"AtRimFGA\": 505, \"SecondChanceAtRimFGM\": 53, \"SecondChanceAtRimFGA\": 86, \"PenaltyAtRimFGM\": 82, \"PenaltyAtRimFGA\": 122, \"ShortMidRangeFGM\": 144, \"ShortMidRangeFGA\": 334, \"LongMidRangeFGM\": 26, \"LongMidRangeFGA\": 89, \"Corner3FGM\": 17, \"Corner3FGA\": 71, \"SecondChanceCorner3FGM\": 2, \"SecondChanceCorner3FGA\": 3, \"PenaltyCorner3FGM\": 1, \"PenaltyCorner3FGA\": 12, \"Arc3FGM\": 8, \"Arc3FGA\": 45, \"SecondChanceArc3FGM\": 1, \"SecondChanceArc3FGA\": 8, \"PenaltyArc3FGM\": 1, \"PenaltyArc3FGA\": 12, \"FG2M\": 532, \"FG2A\": 928, \"FG3M\": 25, \"FG3A\": 116, \"FtPoints\": 304, \"Points\": 1443, \"OpponentPoints\": 6700, \"SecondChanceFG2M\": 64, \"SecondChanceFG2A\": 124, \"SecondChanceFG3M\": 3, \"SecondChanceFG3A\": 11, \"SecondChanceFtPoints\": 30, \"SecondChancePoints\": 167, \"PenaltyFG2M\": 120, \"PenaltyFG2A\": 219, \"PenaltyFG3M\": 2, \"PenaltyFG3A\": 24, \"PenaltyFtPoints\": 88, \"PenaltyPoints\": 334, \"PtsAssisted2s\": 564, \"PtsUnassisted2s\": 500, \"PtsAssisted3s\": 72, \"PtsUnassisted3s\": 3, \"PtsPutbacks\": 70, \"NonHeaveArc3FGA\": 45, \"NonHeaveArc3FGM\": 8, \"Fg2aBlocked\": 68, \"TwoPtAssists\": 220, \"ThreePtAs"
+ },
+ "ffopp_weekly_2026": {
+  "status": 200,
+  "secs": 0.3,
+  "bytes": 2049666,
+  "sample": "season,posteam,week,game_id,player_id,full_name,position,pass_attempt,rec_attempt,rush_attempt,pass_air_yards,rec_air_yards,pass_completions,receptions,pass_completions_exp,receptions_exp,pass_yards_gained,rec_yards_gained,rush_yards_gained,pass_yards_gained_exp,rec_yards_gained_exp,rush_yards_gained_exp,pass_touchdown,rec_touchdown,rush_touchdown,pass_touchdown_exp,rec_touchdown_exp,rush_touchdown_exp,pass_two_point_conv,rec_two_point_conv,rush_two_point_conv,pass_two_point_conv_exp,rec_two_point_conv_exp,rush_two_point_conv_exp,pass_first_down,rec_first_down,rush_first_down,pass_first_down_exp,rec_first_down_exp,rush_first_down_exp,pass_interception,rec_interception,pass_interception_exp,rec_interception_exp,rec_fumble_lost,rush_fumble_lost,pass_fantasy_points_exp,rec_fantasy_points_exp,"
+ },
+ "ffopp_weekly_2025": {
+  "status": 200,
+  "secs": 0.4,
+  "bytes": 5426028,
+  "sample": "season,posteam,week,game_id,player_id,full_name,position,pass_attempt,rec_attempt,rush_attempt,pass_air_yards,rec_air_yards,pass_completions,receptions,pass_completions_exp,receptions_exp,pass_yards_gained,rec_yards_gained,rush_yards_gained,pass_yards_gained_exp,rec_yards_gained_exp,rush_yards_gained_exp,pass_touchdown,rec_touchdown,rush_touchdown,pass_touchdown_exp,rec_touchdown_exp,rush_touchdown_exp,pass_two_point_conv,rec_two_point_conv,rush_two_point_conv,pass_two_point_conv_exp,rec_two_point_conv_exp,rush_two_point_conv_exp,pass_first_down,rec_first_down,rush_first_down,pass_first_down_exp,rec_first_down_exp,rush_first_down_exp,pass_interception,rec_interception,pass_interception_exp,rec_interception_exp,rec_fumble_lost,rush_fumble_lost,pass_fantasy_points_exp,rec_fantasy_points_exp,"
+ },
+ "nhl_schedule": {
+  "status": 200,
+  "secs": 0.1,
+  "bytes": 95541,
+  "sample": "{\"nextStartDate\": \"2026-11-06\", \"previousStartDate\": \"2026-10-23\", \"gameWeek\": [{\"date\": \"2026-10-30\", \"dayAbbrev\": \"FRI\", \"numberOfGames\": 3, \"datePromo\": [], \"games\": [{\"id\": 2026020214, \"season\": 20262027, \"gameType\": 2, \"venue\": {\"default\": \"T-Mobile Arena\"}, \"neutralSite\": false, \"startTimeUTC\": \"2026-10-30T22:00:00Z\", \"easternUTCOffset\": \"-04:00\", \"venueUTCOffset\": \"-07:00\", \"venueTimezone\": \"US/Pacific\", \"gameState\": \"LIVE\", \"gameScheduleState\": \"OK\", \"tvBroadcasts\": [{\"id\": 549, \"market\": \"N\", \"countryCode\": \"CA\", \"network\": \"SN+\", \"sequenceNumber\": 117}, {\"id\": 409, \"market\": \"A\", \"countryCode\": \"US\", \"network\": \"MSGSN\", \"sequenceNumber\": 411}, {\"id\": 521, \"market\": \"H\", \"countryCode\": \"US\", \"network\": \"SCRIPPS\", \"sequenceNumber\": 657}], \"awayTeam\": {\"id\": 1, \"commonName\": {\"default\": \"Devils\"}, \"placeName\": {\"default\": \"New Jersey\"}, \"placeNameWithPreposition\": {\"default\": \"New Jersey\", \"fr\": \"du New Jersey\"}, \"abbrev\": \"NJD\", \"logo\": \"https://assets.nhle.com/logos/nhl/svg/NJD_light.svg\", \"darkLogo\": \"https://assets.nhle.com/logos/nhl/svg/NJD_dark.svg\", \"awaySplitSquad\": false, \"radioLink\": \"https://d2igy0yla8zi0u.cloudfront.net/NJD/20262027/NJD-radio.m3u8\", \"score\": 2}, \"homeTeam\": {\"id\": 54, \"commonName\": {\"default\": \"Golden Knights\"}, \"placeName\": {\"default\": \"Vegas\"}, \"placeNameWithPreposition\": {\"default\": \"Vegas\", \"fr\": \"de Vegas\"}, \"abbrev\": \"VGK\", \"logo\": \"https://assets.nhle.com/logos/nhl/svg/VGK_light.svg\", \"darkLogo\": \"https://assets.nhle.com/logos/nhl/sv"
+ },
+ "nhl_pbp": {
+  "status": 200,
+  "secs": 0.3,
+  "bytes": 134616,
+  "sample": "{\"id\": 2025020150, \"season\": 20252026, \"gameType\": 2, \"limitedScoring\": false, \"gameDate\": \"2025-10-28\", \"venue\": {\"default\": \"Xfinity Mobile Arena\"}, \"venueLocation\": {\"default\": \"Philadelphia\", \"fr\": \"Philadelphie\"}, \"startTimeUTC\": \"2025-10-28T22:00:00Z\", \"easternUTCOffset\": \"-04:00\", \"venueUTCOffset\": \"-04:00\", \"tvBroadcasts\": [{\"id\": 309, \"market\": \"N\", \"countryCode\": \"US\", \"network\": \"ESPN\", \"sequenceNumber\": 10}, {\"id\": 284, \"market\": \"N\", \"countryCode\": \"CA\", \"network\": \"SN1\", \"sequenceNumber\": 113}, {\"id\": 291, \"market\": \"N\", \"countryCode\": \"CA\", \"network\": \"TVAS2\", \"sequenceNumber\": 121}], \"gameState\": \"OFF\", \"gameScheduleState\": \"OK\", \"periodDescriptor\": {\"number\": 5, \"periodType\": \"SO\", \"maxRegulationPeriods\": 3}, \"awayTeam\": {\"id\": 5, \"commonName\": {\"default\": \"Penguins\"}, \"abbrev\": \"PIT\", \"score\": 2, \"sog\": 26, \"logo\": \"https://assets.nhle.com/logos/nhl/svg/PIT_light.svg\", \"darkLogo\": \"https://assets.nhle.com/logos/nhl/svg/PIT_dark.svg\", \"placeName\": {\"default\": \"Pittsburgh\"}, \"placeNameWithPreposition\": {\"default\": \"Pittsburgh\", \"fr\": \"de Pittsburgh\"}}, \"homeTeam\": {\"id\": 4, \"commonName\": {\"default\": \"Flyers\"}, \"abbrev\": \"PHI\", \"score\": 3, \"sog\": 34, \"logo\": \"https://assets.nhle.com/logos/nhl/svg/PHI_light.svg\", \"darkLogo\": \"https://assets.nhle.com/logos/nhl/svg/PHI_dark.svg\", \"placeName\": {\"default\": \"Philadelphia\", \"fr\": \"Philadelphie\"}, \"placeNameWithPreposition\": {\"default\": \"Philadelphia\", \"fr\": \"de Philadelphie\"}}, \"shootoutInUse\": true, \"otInUse\": true, "
+ }
+}
