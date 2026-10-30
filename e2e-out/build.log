@@ -7,8 +7,11 @@ NFL: 715 players, 32 teams
   started = dt.datetime.utcnow()
 NBA season 2027: 71 completed games
 NBA last season: 1316 games for lineups
+  NBA xast: league calibration x1.000
+  NBA xreb: league calibration x1.001
+  NBA xpts: league calibration x0.999
 NBA: 30 teams, 430 players
 NHL season 2027: 213 completed games
 NHL: 32 teams, 803 players
 NASCAR: 106 races, next=Xfinity 500
-{'nfl': {'ok': True, 'built': '2026-10-30T23:09:32.145224Z'}, 'nba': {'ok': True, 'built': '2026-10-30T23:09:45.371045Z'}, 'nhl': {'ok': True, 'built': '2026-10-30T23:09:47.592341Z'}, 'nascar': {'ok': True, 'built': '2026-10-30T23:09:48.665418Z'}}
+{'nfl': {'ok': True, 'built': '2026-10-30T23:18:07.116411Z'}, 'nba': {'ok': True, 'built': '2026-10-30T23:18:16.544377Z'}, 'nhl': {'ok': True, 'built': '2026-10-30T23:18:17.406472Z'}, 'nascar': {'ok': True, 'built': '2026-10-30T23:18:17.749814Z'}}
