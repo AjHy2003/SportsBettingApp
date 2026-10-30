@@ -197,6 +197,7 @@ function propLeg(L, game, r) {
     `Projection ${res.projection.toFixed(1)} vs line ${r.p.line}`,
     r.l10?.n ? `${side.toLowerCase()} in ${hits}/${r.l10.n} of last ${r.l10.n}` : "",
     r.opp?.factor && Math.abs(r.opp.factor - 1) > 0.02 ? `matchup ×${r.opp.factor.toFixed(2)}` : "",
+    res.potential && Math.abs(res.potential.factor - 1) >= 0.02 ? `chances say ${res.potential.expected.toFixed(1)}/g vs ${res.potential.actual.toFixed(1)} actual (×${res.potential.factor.toFixed(2)})` : "",
     r.context?.withWithout?.notes[0] || "",
     r.context?.implied != null && Math.abs((r.context.factor || 1) / (r.context.withWithout?.factor || 1) / (r.context.weather?.factor || 1) - 1) > 0.02 ? `team total ${r.context.implied.toFixed(1)}` : "",
     r.context?.weather ? `weather: ${r.context.weather.why} ×${r.context.weather.factor.toFixed(2)}` : "",
@@ -214,6 +215,7 @@ function propLeg(L, game, r) {
     dk: game.dk || undefined,
     l10: r.l10?.n ? r.l10 : undefined,
     context: r.context?.notes?.length ? r.context.notes : undefined,
+    pot: res.potential ? { exp: Number(res.potential.expected.toFixed(2)), act: Number(res.potential.actual.toFixed(2)), f: Number(res.potential.factor.toFixed(3)) } : undefined,
   };
   applyMove(leg, propMove(side, { line: r.p.line, over: r.p.over, under: r.p.under }, { line: r.p.open, over: r.p.openOver, under: r.p.openUnder }));
   return leg;

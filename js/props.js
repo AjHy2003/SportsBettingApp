@@ -1,5 +1,6 @@
 // Shared prop-analysis plumbing used by the player page and the game prop scanner.
 import { MARKETS } from "./sports.js";
+import { potentialSpec, expectedFor } from "./potential.js";
 import * as M from "./model.js";
 import { fx } from "./ui.js";
 import { deepOppFactor } from "./deep.js";
@@ -80,13 +81,14 @@ export function combineOpponent(opp, context) {
 }
 
 export function runProp(fam, m, games, { line, oddsOver, oddsUnder, opp, role = 0, minutes = null, posted = null, context = null }) {
-  const withVal = games.map((g) => ({ ...g, value: marketValue(m, g) })).filter((g) => g.value != null);
+  const withVal = games.map((g) => ({ ...g, value: marketValue(m, g), expected: expectedFor(fam, m, g.x) })).filter((g) => g.value != null);
   // A sportsbook's posted main line without prices still says "about 50/50 here".
   const marketProb = posted && Number(line) === posted.line && (posted.over == null || posted.under == null) ? 0.5 : null;
   const res = M.analyzeProp(withVal.slice(0, MODEL_SAMPLE), {
     line, oddsOver, oddsUnder, dist: m.dist, marketProb,
     oppFactor: combineOpponent(opp, context)?.factor ?? 1, roleAdj: role, perMinute: m.perMinute, minutesOverride: Number(minutes) || null,
     contextFactor: context?.factor ?? 1, minutesFactor: context?.minutesFactor ?? 1, contextNotes: context?.notes,
+    potentialWeight: potentialSpec(fam, m)?.w ?? 0,
     halfLife: fam === "football" ? 6 : 10,
   });
   return { res, withVal };

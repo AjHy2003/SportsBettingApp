@@ -4,6 +4,7 @@ import { esc, loading, errorBox, setTitle, pct, fx, signed, fmtDate, fmtTime, hi
 import { addPick } from "../store.js";
 import { loadDeep, loadDeepPlayer, deepPlayerPanel } from "../deep.js";
 import { mergeDeepStats } from "../scan.js";
+import { potentialCard } from "../potential.js";
 import { MODEL_SAMPLE, marketsFor, defaultMarket, opponentFactor, runProp, playedGames, combineOpponent, PREV_SEASON_W, OLD_TEAM_W } from "../props.js";
 import { injuryReport, playerContext, roleChange } from "../context.js";
 import { articleOf } from "../news.js";
@@ -127,6 +128,7 @@ export async function renderPlayer(ctx, L, id, q) {
       <div class="hits" id="hits" style="margin-top:10px"></div>
     </div>
     <div class="card" style="margin-top:14px" id="ladder"></div>
+    <div id="potential"></div>
     <div class="card" style="margin-top:14px">
       <div class="row" style="margin-bottom:10px">
         <div class="seg" id="win">${["L5", "L10", "L20", "Season", "Last season", "All"].map((w) => `<button data-w="${w}">${w}</button>`).join("")}</div>
@@ -337,6 +339,7 @@ export async function renderPlayer(ctx, L, id, q) {
     }
     $("#hits").innerHTML = tiles.map(([l, h]) => hitTile(l, h, side)).join("");
     renderLadder(m, opp0, gctx, withVal, line);
+    $("#potential").innerHTML = potentialCard(fam, m, withVal, res);
 
     // Chart
     const wg = windowGames(withVal);

@@ -3,6 +3,7 @@
 import { api, loadGamelogs, pool } from "./espn.js";
 import { MARKETS } from "./sports.js";
 import { loadDeepPlayer, deepGameStats } from "./deep.js";
+import { potentialByEvent } from "./potential.js";
 import { marketsFor, opponentFactor, runProp, playedGames, combineOpponent } from "./props.js";
 import { playerContext, roleChange } from "./context.js";
 
@@ -18,8 +19,11 @@ export async function loadPeople(L, teams) {
   return people;
 }
 
-// Fill stats ESPN's game log lacks (NHL hits/blocks) from pipeline rows, matched by event id.
+// Fill stats ESPN's game log lacks (NHL hits/blocks) from pipeline rows, matched by event
+// id, and attach each game's potential/expected stats (g.x).
 export function mergeDeepStats(L, games, deepPlayer) {
+  const pot = potentialByEvent(deepPlayer);
+  if (pot) for (const g of games) g.x = pot.get(String(g.eventId)) || null;
   const extra = deepGameStats(L, deepPlayer);
   if (!extra) return;
   for (const g of games) {

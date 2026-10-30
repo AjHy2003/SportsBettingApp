@@ -5,6 +5,13 @@ runners, so this derives the closest box-score equivalents for every game:
 usage %, rebound %, assist %, rebound chances, team/opponent misses, pace,
 ratings and defense-vs-position.
 
+"Potential" fields per game (what the chances say he should have had):
+  pot_ast  potential assists (est.): assists / teammates' FG% that game
+  xast     expected assists: potential assists x teammates' normal FG%
+  xreb     expected rebounds: rebound chances x his season rebound conversion
+  xfg3m    expected threes: 3PA x his 3P% shrunk toward the league's
+  xpts     expected points: shot attempts and free throws at his normal percentages
+
 Outputs (under <out>/nba/):
   teams.json              per-team pace/ratings/misses/DvP + league averages + ranks
   players/<espn_id>.json  per-game advanced rows for the current season
@@ -123,6 +130,55 @@ def write_lineups(out, league, boxes):
         write_json(os.path.join(ldir, f"{abbr}.json"), {"team": abbr, "games": games})
 
 
+def add_potential(player_rows, boxes):
+    """Per-game potential and expected stats; raw shooting fields are dropped after."""
+    tot = {"fgm": 0, "fga": 0, "fg3m": 0, "fg3a": 0, "ftm": 0, "fta": 0}
+    for _, box in boxes:
+        for t in box["teams"].values():
+            for k in tot:
+                tot[k] += t.get(k) or 0
+    lg_fg = tot["fgm"] / tot["fga"] if tot["fga"] else 0.47
+    lg_3 = tot["fg3m"] / tot["fg3a"] if tot["fg3a"] else 0.36
+    lg_2 = (tot["fgm"] - tot["fg3m"]) / (tot["fga"] - tot["fg3a"]) if tot["fga"] > tot["fg3a"] else 0.54
+    lg_ft = tot["ftm"] / tot["fta"] if tot["fta"] else 0.78
+    all_rows = [r for rows in player_rows.values() for r in rows]
+    tot_rch = sum(r["rch"] or 0 for r in all_rows if r.get("rch"))
+    lg_conv = sum(r["reb"] or 0 for r in all_rows if r.get("rch")) / tot_rch if tot_rch else 0.12
+    for rows in player_rows.values():
+        s = lambda k: sum(r.get(k) or 0 for r in rows)  # noqa: E731
+        # Normal rates, shrunk toward the league by sample size.
+        tm_fg = (s("tm_fgm") + 600 * lg_fg) / (s("tm_fga") + 600)
+        p3 = (s("fg3m") + 150 * lg_3) / (s("fg3a") + 150)
+        p2 = (s("fgm") - s("fg3m") + 200 * lg_2) / (s("fga") - s("fg3a") + 200)
+        pft = (s("ftm") + 60 * lg_ft) / (s("fta") + 60)
+        rch = sum(r["rch"] or 0 for r in rows if r.get("rch"))
+        conv = (sum(r["reb"] or 0 for r in rows if r.get("rch")) + 50 * lg_conv) / (rch + 50) if rch else None
+        for r in rows:
+            fga, fg3a, fta = r.get("fga") or 0, r.get("fg3a") or 0, r.get("fta") or 0
+            if r.get("tm_fga", 0) >= 20 and r.get("ast") is not None:
+                g_fg = max(0.25, min(0.75, r["tm_fgm"] / r["tm_fga"]))
+                r["pot_ast"] = clean(r["ast"] / g_fg, 1)
+                r["xast"] = clean(r["ast"] * tm_fg / g_fg, 2)
+            if conv and r.get("rch"):
+                r["xreb"] = clean(r["rch"] * conv, 2)
+            r["xfg3m"] = clean(fg3a * p3, 2)
+            r["xpts"] = clean(2 * (fga - fg3a) * p2 + 3 * fg3a * p3 + fta * pft, 1)
+            r["rconv"] = clean(conv, 3)
+            for k in ("fgm", "fga", "fg3m", "fg3a", "ftm", "fta", "tm_fgm", "tm_fga"):
+                r.pop(k, None)
+            r["fga"], r["fg3a"], r["fta"] = clean(fga), clean(fg3a), clean(fta)
+    # Calibrate: across the league, expected totals equal actual totals.
+    # (Threes are attempts x a shrunk 3P%, unbiased by construction.)
+    for x, act in (("xast", "ast"), ("xreb", "reb"), ("xpts", "pts")):
+        both = [r for r in all_rows if r.get(x) is not None and r.get(act) is not None]
+        sx, sa = sum(r[x] for r in both), sum(r[act] for r in both)
+        if sx > 0 and both:
+            f = sa / sx
+            for r in both:
+                r[x] = clean(r[x] * f, 2)
+            print(f"  NBA {x}: league calibration x{f:.3f}", flush=True)
+
+
 def build(out, cache):
     season, events = season_events("basketball/nba", cache, "nba")
     print(f"NBA season {season}: {len(events)} completed games", flush=True)
@@ -188,6 +244,8 @@ def build(out, cache):
                     "min": clean(m, 1), "usg": clean(usg, 1), "rebp": clean(rebp, 1), "orebp": clean(orebp, 1), "drebp": clean(drebp, 1),
                     "astp": clean(astp, 1), "rch": clean(rch, 1), "reb": clean(p["reb"]), "oreb": clean(p["oreb"]), "ast": clean(p["ast"]),
                     "pts": clean(p["pts"]), "tm_miss": clean(t["fga"] - t["fgm"]), "opp_miss": clean(o["fga"] - o["fgm"]),
+                    "fgm": p["fgm"], "fga": p["fga"], "fg3m": p["fg3m"], "fg3a": p["fg3a"], "ftm": p["ftm"], "fta": p["fta"],
+                    "tm_fgm": (t["fgm"] or 0) - (p["fgm"] or 0), "tm_fga": (t["fga"] or 0) - (p["fga"] or 0),
                 })
                 player_meta[p["id"]] = {"name": p["name"], "pos": p["pos"], "team": t["abbr"]}
 
@@ -223,6 +281,7 @@ def build(out, cache):
             if rows:
                 league["dvp"][pos] = {k: clean(sum(r[k] for r in rows) / len(rows), 2) for k in DVP_STATS}
 
+    add_potential(player_rows, boxes)
     pdir = os.path.join(out, "nba", "players")
     os.makedirs(pdir, exist_ok=True)
     for pid, rows in player_rows.items():

@@ -189,6 +189,50 @@ def team_tables(pbp, weekly, games, season):
     return teams, league
 
 
+FFOPP = "https://github.com/ffverse/ffopportunity/releases/download/latest-data"
+# expected column -> (actual column in the weekly stats, prior in stat units for his efficiency)
+EXP_ACTUAL = {
+    "receptions_exp": ("receptions", 12), "rec_yards_gained_exp": ("receiving_yards", 120), "rec_touchdown_exp": ("receiving_tds", 1.5),
+    "rush_yards_gained_exp": ("rushing_yards", 150), "rush_touchdown_exp": ("rushing_tds", 1.5), "pass_completions_exp": ("completions", 60),
+    "pass_yards_gained_exp": ("passing_yards", 600), "pass_touchdown_exp": ("passing_tds", 4), "pass_interception_exp": ("passing_interceptions", 2),
+}
+EXP_COLS = list(EXP_ACTUAL)
+
+
+def add_expected(cache, weekly, season):
+    """Expected stats per player-game from ffopportunity (built on nflverse play-by-play):
+    what an average player would have produced from the same targets, air yards,
+    carries, field position and pass attempts. Missing files just leave the columns out."""
+    frames = []
+    for s in (season - 1, season):
+        try:
+            path = download(f"{FFOPP}/ep_weekly_{s}.csv", os.path.join(cache, "ffopportunity", f"ep_weekly_{s}.csv"))
+            frames.append(pd.read_csv(path, low_memory=False, usecols=["season", "week", "player_id", *EXP_COLS]))
+        except Exception as e:  # noqa: BLE001 - optional data
+            print(f"  ffopportunity {s}: {e}", flush=True)
+    if not frames:
+        return weekly
+    ep = pd.concat(frames, ignore_index=True).drop_duplicates(["season", "week", "player_id"])
+    out = weekly.merge(ep, how="left", on=["season", "week", "player_id"])
+    # ffopportunity expects an average player. Calibrate each stat to the league's actual
+    # totals per season, then to the player's own usual efficiency (shrunk toward average),
+    # so only the swing beyond his normal counts as luck.
+    for x, (act, k) in EXP_ACTUAL.items():
+        if x not in out or act not in out:
+            continue
+        ok = out[x].notna() & out[act].notna()
+        for s in out["season"].unique():
+            m = ok & (out["season"] == s)
+            sx = out.loc[m, x].sum()
+            if sx > 0:
+                out.loc[m, x] = out.loc[m, x] * (out.loc[m, act].sum() / sx)
+        sums = out[ok].groupby("player_id")[[x, act]].sum()
+        eff = (sums[act] + k) / (sums[x] + k)
+        out[x] = out[x] * out["player_id"].map(eff).fillna(1.0)
+    print(f"NFL expected stats: {out['receptions_exp'].notna().sum()} of {len(out)} player-games", flush=True)
+    return out
+
+
 def build(out, cache):
     games = pd.read_csv(fetch(cache, "schedules/games.csv"), low_memory=False)
     season = current_season(games)
@@ -225,6 +269,7 @@ def build(out, cache):
         rows.append(wk)
     weekly = pd.concat(rows, ignore_index=True)
     weekly = weekly[weekly["position"].map(POS).notna()]
+    weekly = add_expected(cache, weekly, season)
 
     fields = {
         "tgt": "targets", "rec": "receptions", "ryd": "receiving_yards", "rtd": "receiving_tds", "air": "receiving_air_yards",
@@ -235,6 +280,8 @@ def build(out, cache):
         "ryoe": "ryoe", "eff": "eff", "box8": "box8",
         "att": "attempts", "cmp": "completions", "pyd": "passing_yards", "ptd": "passing_tds", "int": "passing_interceptions",
         "sk": "sacks_suffered", "cpoe": "passing_cpoe", "padot": "padot", "deep": "deep", "ttt": "ttt", "aggr": "aggr", "epa_pass": "passing_epa",
+        "xrec": "receptions_exp", "xryd": "rec_yards_gained_exp", "xrtd": "rec_touchdown_exp", "xrushyd": "rush_yards_gained_exp", "xrushtd": "rush_touchdown_exp",
+        "xcmp": "pass_completions_exp", "xpyd": "pass_yards_gained_exp", "xptd": "pass_touchdown_exp", "xint": "pass_interception_exp",
     }
     index = {}
     pdir = os.path.join(out, "nfl", "players")
