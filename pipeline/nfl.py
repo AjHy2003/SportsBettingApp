@@ -190,8 +190,13 @@ def team_tables(pbp, weekly, games, season):
 
 
 FFOPP = "https://github.com/ffverse/ffopportunity/releases/download/latest-data"
-EXP_COLS = ["receptions_exp", "rec_yards_gained_exp", "rec_touchdown_exp", "rush_yards_gained_exp", "rush_touchdown_exp",
-            "pass_completions_exp", "pass_yards_gained_exp", "pass_touchdown_exp", "pass_interception_exp"]
+# expected column -> (actual column in the weekly stats, prior in stat units for his efficiency)
+EXP_ACTUAL = {
+    "receptions_exp": ("receptions", 12), "rec_yards_gained_exp": ("receiving_yards", 120), "rec_touchdown_exp": ("receiving_tds", 1.5),
+    "rush_yards_gained_exp": ("rushing_yards", 150), "rush_touchdown_exp": ("rushing_tds", 1.5), "pass_completions_exp": ("completions", 60),
+    "pass_yards_gained_exp": ("passing_yards", 600), "pass_touchdown_exp": ("passing_tds", 4), "pass_interception_exp": ("passing_interceptions", 2),
+}
+EXP_COLS = list(EXP_ACTUAL)
 
 
 def add_expected(cache, weekly, season):
@@ -209,6 +214,21 @@ def add_expected(cache, weekly, season):
         return weekly
     ep = pd.concat(frames, ignore_index=True).drop_duplicates(["season", "week", "player_id"])
     out = weekly.merge(ep, how="left", on=["season", "week", "player_id"])
+    # ffopportunity expects an average player. Calibrate each stat to the league's actual
+    # totals per season, then to the player's own usual efficiency (shrunk toward average),
+    # so only the swing beyond his normal counts as luck.
+    for x, (act, k) in EXP_ACTUAL.items():
+        if x not in out or act not in out:
+            continue
+        ok = out[x].notna() & out[act].notna()
+        for s in out["season"].unique():
+            m = ok & (out["season"] == s)
+            sx = out.loc[m, x].sum()
+            if sx > 0:
+                out.loc[m, x] = out.loc[m, x] * (out.loc[m, act].sum() / sx)
+        sums = out[ok].groupby("player_id")[[x, act]].sum()
+        eff = (sums[act] + k) / (sums[x] + k)
+        out[x] = out[x] * out["player_id"].map(eff).fillna(1.0)
     print(f"NFL expected stats: {out['receptions_exp'].notna().sum()} of {len(out)} player-games", flush=True)
     return out
 

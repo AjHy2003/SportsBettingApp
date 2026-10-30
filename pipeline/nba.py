@@ -141,6 +141,9 @@ def add_potential(player_rows, boxes):
     lg_3 = tot["fg3m"] / tot["fg3a"] if tot["fg3a"] else 0.36
     lg_2 = (tot["fgm"] - tot["fg3m"]) / (tot["fga"] - tot["fg3a"]) if tot["fga"] > tot["fg3a"] else 0.54
     lg_ft = tot["ftm"] / tot["fta"] if tot["fta"] else 0.78
+    all_rows = [r for rows in player_rows.values() for r in rows]
+    tot_rch = sum(r["rch"] or 0 for r in all_rows if r.get("rch"))
+    lg_conv = sum(r["reb"] or 0 for r in all_rows if r.get("rch")) / tot_rch if tot_rch else 0.12
     for rows in player_rows.values():
         s = lambda k: sum(r.get(k) or 0 for r in rows)  # noqa: E731
         # Normal rates, shrunk toward the league by sample size.
@@ -149,7 +152,7 @@ def add_potential(player_rows, boxes):
         p2 = (s("fgm") - s("fg3m") + 200 * lg_2) / (s("fga") - s("fg3a") + 200)
         pft = (s("ftm") + 60 * lg_ft) / (s("fta") + 60)
         rch = sum(r["rch"] or 0 for r in rows if r.get("rch"))
-        conv = (sum(r["reb"] or 0 for r in rows if r.get("rch")) + 6) / (rch + 6 / 0.14) if rch else None
+        conv = (sum(r["reb"] or 0 for r in rows if r.get("rch")) + 50 * lg_conv) / (rch + 50) if rch else None
         for r in rows:
             fga, fg3a, fta = r.get("fga") or 0, r.get("fg3a") or 0, r.get("fta") or 0
             if r.get("tm_fga", 0) >= 20 and r.get("ast") is not None:
@@ -164,6 +167,16 @@ def add_potential(player_rows, boxes):
             for k in ("fgm", "fga", "fg3m", "fg3a", "ftm", "fta", "tm_fgm", "tm_fga"):
                 r.pop(k, None)
             r["fga"], r["fg3a"], r["fta"] = clean(fga), clean(fg3a), clean(fta)
+    # Calibrate: across the league, expected totals equal actual totals.
+    # (Threes are attempts x a shrunk 3P%, unbiased by construction.)
+    for x, act in (("xast", "ast"), ("xreb", "reb"), ("xpts", "pts")):
+        both = [r for r in all_rows if r.get(x) is not None and r.get(act) is not None]
+        sx, sa = sum(r[x] for r in both), sum(r[act] for r in both)
+        if sx > 0 and both:
+            f = sa / sx
+            for r in both:
+                r[x] = clean(r[x] * f, 2)
+            print(f"  NBA {x}: league calibration x{f:.3f}", flush=True)
 
 
 def build(out, cache):
