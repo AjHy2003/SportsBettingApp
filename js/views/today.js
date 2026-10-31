@@ -17,6 +17,7 @@ import { buildMoonshot, oneIn } from "../moonshot.js";
 import { moveText } from "../movement.js";
 import { bankroll, bankrollOk, suggestedBudget, spend, openBankrollSettings, bankrollMoney } from "../bankroll.js";
 import { toPick } from "../slip.js";
+import { repriceProp, repriceGame, currentGameLines, currentProps } from "../reprice.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
@@ -78,6 +79,7 @@ export async function renderToday(ctx, q) {
       <h1>🔥 Today's picks</h1>
       <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
+    ${today ? `<div class="live-bar" id="t-live"></div>` : ""}
     ${today ? "" : `<div class="notice warn" style="margin-bottom:14px">Daily picks are generated on GitHub each morning (around 5am, 11:45am and 5pm ET). They'll show here after the first run. You can still build a same-game parlay for any game below.</div>`}
     <div class="card">
       <h3>Sport</h3>
@@ -150,7 +152,7 @@ export async function renderToday(ctx, q) {
     return `${state.sport === "all" ? "All sports" : sportLabel()} · ${state.days === "all" ? "all days" : days.length ? dayName(days[0]) : "today"}`;
   };
   const dayGames = () => { const { days } = activeDays(); return sportGames().filter((g) => days.includes(dayKey(g.start))); };
-  const inScope = (l) => sportLeagues().includes(l.league) && activeDays().days.includes(dayKey(l.start)) && !state.offGames.has(l.gameKey);
+  const inScope = (l) => new Date(l.start) > Date.now() && sportLeagues().includes(l.league) && activeDays().days.includes(dayKey(l.start)) && !state.offGames.has(l.gameKey);
   const legsInSport = () => allLegs.filter(inScope);
 
   function persist() {
@@ -193,6 +195,16 @@ export async function renderToday(ctx, q) {
   const legLink = (l) => (l.kind === "prop" ? `#/l/${l.league}/p/${l.playerId}?m=${l.marketKey}&line=${l.line}${l.odds != null && l.priced ? `&${l.side === "OVER" ? "oo" : "uo"}=${l.odds}` : ""}` : `#/l/${l.league}/g/${l.eventId}`);
   const priceTag = (l) => `${M.fmtOdds(l.odds)}${l.priced === false ? `<span class="faint" title="Book posted the line without a price; assumed -110"> est.</span>` : ""}`;
 
+  // What the live re-check changed on a leg since the posted scan.
+  function liveLine(l) {
+    const lv = l.live;
+    if (lv.far) return `<div class="small" style="color:var(--gold)">🔄 DraftKings moved this to ${esc(String(lv.farLine))} (posted ${esc(String(lv.line0))}), past what the live re-check can re-price. It's out of tickets until the next full scan.</div>`;
+    const moved = lv.line0 !== l.line || lv.odds0 !== l.odds;
+    if (!moved && lv.grade0 === l.grade) return "";
+    const ln = (x) => (x == null ? "" : `${x} `);
+    return `<div class="small live-chg">🔄 Now ${ln(l.kind === "spread" || l.kind === "ml" ? null : l.line)}${M.fmtOdds(l.odds)}${moved ? ` (posted ${ln(l.kind === "spread" || l.kind === "ml" ? null : lv.line0)}${M.fmtOdds(lv.odds0)}${l.kind === "spread" && lv.label0 !== l.label ? `, ${esc(lv.label0)}` : ""})` : ""} · ${pct(lv.prob0)} → ${pct(l.prob)}${lv.grade0 !== l.grade ? ` · was ${lv.grade0 === "PASS" ? "a pass" : `grade ${lv.grade0}`}` : ""}</div>`;
+  }
+
   function legRow(l, { addable = true, inMine = false } = {}) {
     return `<div class="pick" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
       <div class="grade ${l.grade}" style="width:40px;height:40px;font-size:17px;border-radius:11px">${l.grade === "PASS" ? "—" : l.grade}</div>
@@ -200,6 +212,7 @@ export async function renderToday(ctx, q) {
         <div style="font-weight:700"><a href="${legLink(l)}" style="color:var(--text)">${esc(l.label)}</a> <span class="muted" style="font-weight:600">${priceTag(l)}</span></div>
         <div class="small muted">${esc(leagueName(l.league))} · ${esc(l.matchup)} · ${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}</div>
         <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why ? ` · ${esc(l.why)}` : ""}</div>
+        ${l.live ? liveLine(l) : ""}
         ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
         ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
         ${l.move ? `<div class="small ${l.move.toward ? "pos" : l.move.strong ? "neg" : "muted"}">${esc(moveText(l.move))}${l.moveCap ? " — graded down to C" : ""}</div>` : ""}
@@ -492,10 +505,79 @@ export async function renderToday(ctx, q) {
   $("#t-custom").addEventListener("input", (e) => { const v = Number(e.target.value); if (v >= 1) { state.budget = v; renderAll(); } });
   $("#t-legs-custom").addEventListener("input", (e) => { const v = Math.round(Number(e.target.value)); if (v >= 2 && v <= 15) { state.legs = v; renderAll(); renderSgp(); } });
 
+  // ---------- live re-check ----------
+  // Every few minutes: pull DraftKings' current lines, re-price every leg at the new
+  // line and price with the same model math as the full scan, re-grade, and rebuild.
+  const LIVE_EVERY = 3 * 60e3;
+  let liveOn = true, liveBusy = false, liveTimer = null, lastLive = null, newer = null;
+  const legsByGame = new Map();
+  for (const l of today?.legs || []) { if (!legsByGame.has(l.gameKey)) legsByGame.set(l.gameKey, []); legsByGame.get(l.gameKey).push(l); }
+
+  function applyLive(l, r) {
+    if (!l || !r) return;
+    if (!l.live) l.live = { line0: l.line, odds0: l.odds, prob0: l.prob, grade0: l.grade, label0: l.label };
+    if (r.far) { l.live.far = true; l.live.farLine = r.line; l.grade = "PASS"; return; }
+    l.live.far = false;
+    Object.assign(l, { line: r.line ?? l.line, odds: r.odds, priced: r.priced, prob: r.prob, edge: r.edge, ev: r.ev, grade: r.grade, label: r.label || l.label });
+    if (r.lean != null) l.lean = r.lean;
+  }
+
+  function paintLive(checking = false) {
+    const el = $("#t-live");
+    if (!el) return;
+    const ls = (today.legs || []).filter((l) => l.live && new Date(l.start) > Date.now());
+    const moved = ls.filter((l) => l.live.far || l.live.line0 !== l.line || l.live.odds0 !== l.odds).length;
+    const regraded = ls.filter((l) => l.live.grade0 !== l.grade).length;
+    el.innerHTML = `<span class="live-pulse ${liveOn ? "" : "off"}"></span><b>Live re-check</b>
+      <span class="muted">${checking ? "checking DraftKings' current lines…" : lastLive ? `checked ${fmtTime(new Date(lastLive).toISOString())} · ${moved} line${moved === 1 ? "" : "s"} or price${moved === 1 ? "" : "s"} moved since the ${fmtTime(today.generated)} scan · ${regraded} grade${regraded === 1 ? "" : "s"} changed` : liveOn ? "starting…" : "paused"}</span>
+      ${newer ? `<button class="linkbtn" data-live-load style="margin:0">↻ Load the ${fmtTime(newer)} full re-scan</button>` : ""}
+      <span class="spacer"></span><button class="linkbtn" data-live-now style="margin:0">Check now</button><button class="linkbtn" data-live-toggle style="margin:0">${liveOn ? "Pause" : "Resume"}</button>`;
+  }
+
+  async function liveCheck() {
+    if (!today || liveBusy || !ctx.alive()) return;
+    liveBusy = true;
+    paintLive(true);
+    try {
+      const upcoming = games.filter((g) => new Date(g.start) > Date.now());
+      // Props for the games in view and in My parlay (one request per game); game lines for all.
+      const want = new Set([...legsInSport().map((l) => l.gameKey), ...state.mine.map((id) => legById.get(id)?.gameKey).filter(Boolean)]);
+      const propGames = upcoming.filter((g) => want.has(g.key) && (legsByGame.get(g.key) || []).some((l) => l.rp));
+      const [lines, props, latest] = await Promise.all([currentGameLines(upcoming), currentProps(propGames), getData("data/picks/today.json")]);
+      if (!ctx.alive()) return;
+      for (const g of upcoming) {
+        const legs = legsByGame.get(g.key) || [];
+        for (const [id, r] of repriceGame(g, legs, lines.get(String(g.eventId)))) applyLive(legs.find((l) => l.id === id), r);
+        const pm = props.get(String(g.eventId));
+        if (pm) for (const l of legs) if (l.kind === "prop") { const f = pm.get(String(l.playerId))?.[l.marketKey]; if (f) applyLive(l, repriceProp(l, f)); }
+      }
+      if (latest?.generated && new Date(latest.generated) > new Date(today.generated)) newer = latest.generated;
+      lastLive = Date.now();
+      renderAll();
+      if (state.sgpLegs) renderSgp();
+    } catch (e) { console.warn("live re-check:", e); } finally { liveBusy = false; if (ctx.alive()) paintLive(); }
+  }
+
+  function scheduleLive() {
+    clearTimeout(liveTimer);
+    if (!liveOn || !today) return;
+    liveTimer = setTimeout(function tick() {
+      if (!ctx.alive()) return;
+      if (document.visibilityState === "visible") liveCheck().finally(scheduleLive); else liveTimer = setTimeout(tick, 30e3);
+    }, LIVE_EVERY);
+  }
+
+  $("#t-root").addEventListener("click", (e) => {
+    if (e.target.closest("[data-live-toggle]")) { liveOn = !liveOn; paintLive(); if (liveOn) liveCheck().finally(scheduleLive); else clearTimeout(liveTimer); }
+    if (e.target.closest("[data-live-now]")) liveCheck().finally(scheduleLive);
+    if (e.target.closest("[data-live-load]")) window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+
   renderAll();
   renderSgp();
   renderRecord();
   if (q.focus === "moon") $("#t-moon").scrollIntoView({ block: "start" });
+  if (today) { paintLive(); setTimeout(() => liveCheck().finally(scheduleLive), 1200); }
 }
 
 // Compact "today" teaser for the home page.

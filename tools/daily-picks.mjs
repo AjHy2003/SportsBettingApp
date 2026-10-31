@@ -46,6 +46,7 @@ const { marketValue } = await import("../js/props.js");
 const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
 const { propMove, gameMove } = await import("../js/movement.js");
+const { propLadder, gameLadder } = await import("../js/reprice.js");
 
 // ---------- team betting records (against the spread, over/under) ----------
 // ESPN's closing DraftKings line for a finished game, cached on disk forever.
@@ -215,6 +216,7 @@ function propLeg(L, game, r) {
     dk: game.dk || undefined,
     l10: r.l10?.n ? r.l10 : undefined,
     context: r.context?.notes?.length ? r.context.notes : undefined,
+    rp: propLadder(res, r.p.line),
     pot: res.potential ? { exp: Number(res.potential.expected.toFixed(2)), act: Number(res.potential.actual.toFixed(2)), f: Number(res.potential.factor.toFixed(3)) } : undefined,
   };
   applyMove(leg, propMove(side, { line: r.p.line, over: r.p.over, under: r.p.under }, { line: r.p.open, over: r.p.openOver, under: r.p.openUnder }));
@@ -281,6 +283,9 @@ async function scanLeague(cfg) {
         records: recH || recA ? { home: recH, away: recA } : undefined,
       };
       const gameLegs = lineLegs(L, gc, game, matchEvent(BOOKS, L.id, game));
+      // Model chances at nearby lines, so the Today page can re-price when DraftKings moves.
+      const st0 = defaultLines(gc.odds);
+      game.rep = gameLadder(gc, st0, (sp, tot) => evaluateLines(gc, { ...st0, spreadHome: sp, total: tot }).rows);
       if (cfg.props) {
         const items = await api.propBets(L, e.id).catch(() => null);
         const props = items ? parseProps(items, L.markets) : null;
