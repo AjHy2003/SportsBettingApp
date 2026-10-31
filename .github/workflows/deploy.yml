@@ -7,6 +7,10 @@ on:
     - cron: "23 9 * * *"   # ~5:20am ET: last night's results, nflverse nightly update, early lines
     - cron: "47 15 * * *"  # ~11:45am ET: most lines and props posted -> phone notification
     - cron: "17 21 * * *"  # ~5:15pm ET: refresh for injury news and evening games
+    # Full re-scan every 30 minutes from morning to after the late games: new lines,
+    # new props, injury news and fresh projections (each run takes about a minute).
+    - cron: "7,37 13-23 * * *"
+    - cron: "7,37 0-4 * * *"
   workflow_dispatch:
     inputs:
       notify:

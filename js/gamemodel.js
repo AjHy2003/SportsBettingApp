@@ -101,9 +101,7 @@ export function evaluateLines(gc, st) {
   const twoWay = (pA, pB, push, oA, oB, labels) => {
     oA = oA ?? -110; oB = oB ?? -110;
     const dec = pA / (pA + pB);
-    const fin = M.anchor(dec, oA, oB, wModel);
-    const a = fin * (1 - push), b = (1 - fin) * (1 - push);
-    const v = guardLine(M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels), dec, M.noVig(oA, oB)?.a, gc.lineCap);
+    const { v, fin } = priceLine(dec, push, oA, oB, { wModel, minGames, lineCap: gc.lineCap }, labels);
     return { v, model: dec, fin, push, sides: [{ label: labels[0], prob: fin, odds: oA, side: "A" }, { label: labels[1], prob: 1 - fin, odds: oB, side: "B" }] };
   };
   if (g.spread && st.spreadHome != null) {
@@ -131,6 +129,15 @@ export function evaluateLines(gc, st) {
     rows.push({ key: "ml", label: "Moneyline", ...r, info: `${H.abbreviation} wins: model ${pct(r.model)} → blended ${pct(r.fin)}` });
   }
   return { g, rows };
+}
+
+// Blend the team model's chance for side A with the book's no-vig price, grade it and
+// apply the sanity cap. Shared with the live re-pricing on the Today page.
+export function priceLine(modelA, push, oA, oB, { wModel, minGames, lineCap }, labels) {
+  const fin = M.anchor(modelA, oA, oB, wModel);
+  const a = fin * (1 - push), b = (1 - fin) * (1 - push);
+  const v = guardLine(M.makeVerdict(a, b, push, oA, oB, M.expectedValue(a, push, oA), M.expectedValue(b, push, oB), minGames, labels), modelA, M.noVig(oA, oB)?.a, lineCap);
+  return { v, fin };
 }
 
 // Game lines are sharp: a team model 25+ points away from the market is far more

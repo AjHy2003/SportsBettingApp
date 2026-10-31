@@ -277,26 +277,9 @@ export function analyzeProp(games, opts) {
   const evOver = expectedValue(pOver, pPush, oddsOver);
   const evUnder = expectedValue(pUnder, pPush, oddsUnder);
   const verdict = makeVerdict(pOver, pUnder, pPush, oddsOver, oddsUnder, evOver, evUnder, n);
-  // Without any market price to anchor to, a stats-only model doesn't earn an A.
-  if (marketWeight === 0 && verdict.grade === "A") { verdict.grade = "B"; verdict.capped = true; }
-  // A line far from recent production usually means the book knows about a role
-  // change (injury, new starter, minutes). Don't call that an edge.
   const sdProj = Math.sqrt(Math.max(scaledVar, 0.25));
-  const mismatch = isFinite(line) ? Math.abs(projection - line) / sdProj : 0;
-  if (mismatch >= 1.5 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
-  else if (mismatch >= 1.0 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
-  // Same idea in probability terms: stats saying 80%+ where the book says 50% is
-  // almost always missing information, not a gift.
-  const gap = marketProb != null && statsOver != null ? Math.abs(statsOver - marketProb) : 0;
-  // And in plain numbers: a line twice (or half) the projection, or outside everything
-  // the player did in the last 5 games, is the book pricing a new role.
-  const lo = Math.min(projection, line), hi = Math.max(projection, line);
-  const ratio = isFinite(line) && line >= 2.5 && lo > 0 ? hi / lo : 1;
   const last5 = vals.slice(0, 5);
-  const outside = isFinite(line) && line >= 2.5 && last5.length === 5 &&
-    ((verdict.lean === "UNDER" && line > Math.max(...last5)) || (verdict.lean === "OVER" && line < Math.min(...last5)));
-  if ((gap >= 0.4 || ratio >= 2) && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
-  else if ((gap >= 0.3 || ratio >= 1.6 || outside) && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  propGuards(verdict, { marketWeight, projection, sdProj, line, statsOver, marketProb: typeof marketProb === "undefined" ? null : marketProb, last5 });
 
   // Alt-line ladder: the same distribution and hit-rate blend at any line, shifted
   // in log-odds so the posted line keeps its market-anchored probability.
@@ -324,8 +307,16 @@ export function analyzeProp(games, opts) {
     return { over: p * (1 - s.push), under: (1 - p) * (1 - s.push), push: s.push };
   };
 
+  // Stats-only chance of the over (pushes excluded) at other lines, matched to this
+  // line's, for re-pricing when the book moves the number.
+  const statsLadder = (xs) => {
+    const at = isFinite(line) && statsOver != null ? statsAt(line) : null;
+    const k = at ? logit(clampP(statsOver)) - logit(clampP(at.st)) : 0;
+    return xs.map((x) => { const r = statsAt(x); return r ? { so: sigmoid(logit(clampP(r.st)) + k), push: r.push } : null; });
+  };
+
   return {
-    probOver, potential,
+    probOver, potential, statsLadder, sdProj, last5,
     n, avg, median: median(vals), sd: n >= 2 ? stdev(vals) : NaN,
     min: Math.min(...vals), max: Math.max(...vals),
     recent, projection, expMinutes, dist,
@@ -335,6 +326,29 @@ export function analyzeProp(games, opts) {
     fairUnder: toAmerican(pUnder != null ? pUnder / (1 - pPush) : null),
     oddsOver, oddsUnder, bookFair: fair, evOver, evUnder, verdict, notes,
   };
+}
+
+// Sanity checks on a prop verdict, shared by the model and the live re-pricing on Today.
+export function propGuards(verdict, { marketWeight, projection, sdProj, line, statsOver, marketProb, last5 }) {
+  // Without any market price to anchor to, a stats-only model doesn't earn an A.
+  if (marketWeight === 0 && verdict.grade === "A") { verdict.grade = "B"; verdict.capped = true; }
+  // A line far from recent production usually means the book knows about a role
+  // change (injury, new starter, minutes). Don't call that an edge.
+  const mismatch = isFinite(line) ? Math.abs(projection - line) / sdProj : 0;
+  if (mismatch >= 1.5 && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
+  else if (mismatch >= 1.0 && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  // Same idea in probability terms: stats saying 80%+ where the book says 50% is
+  // almost always missing information, not a gift.
+  const gap = marketProb != null && statsOver != null ? Math.abs(statsOver - marketProb) : 0;
+  // And in plain numbers: a line twice (or half) the projection, or outside everything
+  // the player did in the last 5 games, is the book pricing a new role.
+  const lo = Math.min(projection, line), hi = Math.max(projection, line);
+  const ratio = isFinite(line) && line >= 2.5 && lo > 0 ? hi / lo : 1;
+  const outside = isFinite(line) && line >= 2.5 && last5?.length === 5 &&
+    ((verdict.lean === "UNDER" && line > Math.max(...last5)) || (verdict.lean === "OVER" && line < Math.min(...last5)));
+  if ((gap >= 0.4 || ratio >= 2) && verdict.grade !== "PASS") { verdict.grade = "PASS"; verdict.side = null; verdict.mismatch = true; }
+  else if ((gap >= 0.3 || ratio >= 1.6 || outside) && (verdict.grade === "A" || verdict.grade === "B")) { verdict.grade = "C"; verdict.mismatch = true; }
+  return verdict;
 }
 
 export function makeVerdict(pA, pB, pPush, oddsA, oddsB, evA, evB, n, labels = ["OVER", "UNDER"]) {

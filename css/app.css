@@ -112,6 +112,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .sr-item small { color: var(--muted); display: block; }
 .icon-btn { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 7px 10px; cursor: pointer; color: var(--text); }
 .kpi-input { width: 100%; max-width: 110px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg-2); font: inherit; color: inherit; }
+.live-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 2px 0 12px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--card) 80%, transparent); font-size: 13px; }
+.live-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--over); box-shadow: 0 0 0 3px color-mix(in srgb, var(--over) 25%, transparent); animation: pulse 1.6s ease-in-out infinite; }
+.live-pulse.off { background: var(--faint); box-shadow: none; animation: none; }
+.live-chg { color: var(--cyan); }
 .acct-btn { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px; border-radius: 12px; color: var(--muted); font-weight: 600; font-size: 14px; white-space: nowrap; }
 .acct-btn:hover { color: var(--text); }
 .acct-btn.in { width: 38px; padding: 0; justify-content: center; }

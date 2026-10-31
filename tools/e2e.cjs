@@ -178,6 +178,11 @@ const pages = [
       return { potential: (await pg.innerText("#potential").catch(() => "")).replace(/\s+/g, " ").slice(0, 900), note: (await pg.innerText("#notes").catch(() => "")).split("\n").filter((x) => /Potential/.test(x)).join(" ") };
     });
   }
+  // Live re-check: current DraftKings lines re-price the posted legs in the page.
+  await visit("today-live", "#/today?sport=all&day=all", async (pg) => {
+    await pg.waitForFunction(() => /checked/.test(document.querySelector("#t-live")?.innerText || ""), null, { timeout: 90000 }).catch(() => {});
+    return { bar: (await pg.innerText("#t-live").catch(() => "")).replace(/\s+/g, " "), changes: await pg.$$eval(".live-chg", (x) => x.slice(0, 12).map((e) => e.closest(".pick")?.innerText.split("\n").slice(0, 1).join("") + " | " + e.innerText)).catch(() => []) };
+  });
   // Day picker: the default day per sport, then each other day, then a single game.
   for (const sport of ["nfl", "football", "all"]) {
     await visit(`today-days-${sport}`, `#/today?sport=${sport}`, async (pg) => {
