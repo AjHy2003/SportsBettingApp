@@ -1,0 +1,25 @@
+name: probe-tre
+on:
+  push:
+    branches: ["claude/probe-tre"]
+    paths: ["tools/probe-tre.mjs", ".github/workflows/probe-tre.yml"]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node tools/probe-tre.mjs
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f probe-out || true
+          git commit -qm "Probe results" || echo "nothing to commit"
+          git push -q origin HEAD:claude/probe-tre
