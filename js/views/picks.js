@@ -16,6 +16,29 @@ const REFRESH = 30e3;
 const ICON = { won: "✅", lost: "❌", push: "↩️", void: "↩️", upcoming: "⏳", unknown: "·" };
 const legStart = (l) => (l.start ? new Date(l.start).getTime() : 0);
 
+// The latest scan's read on a saved leg's market (props: same player and stat; game lines:
+// same game and bet type), so a saved bet shows when the app's pick has changed.
+function scanIndex(today) {
+  if (!today?.legs) return null;
+  const props = new Map(), lines = new Map();
+  for (const l of today.legs) {
+    if (!l.lean) continue;
+    if (l.kind === "prop") props.set(`${l.eventId}:${l.playerId}:${l.marketKey}`, l);
+    else lines.set(`${l.eventId}:${l.kind}`, l);
+  }
+  return { props, lines, games: new Set((today.games || []).map((g) => String(g.eventId))), at: today.generated };
+}
+function appRead(l, idx) {
+  if (!idx || !idx.games.has(String(l.eventId))) return "";
+  const cur = l.kind === "prop" ? idx.props.get(`${l.eventId}:${l.athleteId}:${l.market}`) : idx.lines.get(`${l.eventId}:${l.kind}`);
+  const when = `${fmtTime(idx.at)} scan`;
+  if (!cur || cur.grade === "PASS") return `<div class="small faint">📊 App now (${when}): no edge on this market right now.</div>`;
+  const first = (s) => String(s || "").split(" ")[0];
+  const sameSide = l.kind === "prop" ? cur.side === l.side : first(cur.label) === first(l.label);
+  const sameLine = Number(cur.line) === Number(l.line);
+  return `<div class="small ${sameSide ? "pos" : "neg"}">📊 App now (${when}): <b>${esc(cur.label)}</b> ${M.fmtOdds(cur.odds)} · grade ${esc(cur.grade)}${!sameSide ? " · <b>the other side from your bet</b>" : sameLine ? " · same as your bet" : ` · line moved from your ${esc(String(l.line))}`}</div>`;
+}
+
 // Picks/tickets worth showing on the live board: games from the last ~day through the next two days.
 const inWindow = (legs) => legs.some((l) => { const t = legStart(l); return t && t > Date.now() - 30 * 3600e3 && t < Date.now() + 48 * 3600e3; });
 
@@ -45,6 +68,7 @@ export function renderPicks(ctx, q = {}) {
   }
 
   // ---------- live ----------
+  let scan = null;
   function legRow(l, st, chance) {
     const g = st.game;
     const score = g && g.state !== "pre" ? `${esc(g.away.abbr)} ${g.away.score ?? ""} – ${esc(g.home.abbr)} ${g.home.score ?? ""} · ${esc(g.detail)}` : l.start ? `${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}` : "";
@@ -58,6 +82,7 @@ export function renderPicks(ctx, q = {}) {
         <div class="small muted">${score}${l.sub && !g ? ` · ${esc(l.sub)}` : ""}</div>
         ${st.text ? `<div class="small ${st.status === "won" ? "pos" : st.status === "lost" ? "neg" : ""}">${esc(st.text)}${st.status === "live" && chance != null ? ` · <b>${pct(chance)}</b> to hit now` : ""}</div>` : ""}
         ${bar}
+        ${st.status === "upcoming" ? appRead(l, scan) : ""}
       </div>
     </div>`;
   }
@@ -77,7 +102,9 @@ export function renderPicks(ctx, q = {}) {
     const tLegs = showTickets.map((t) => t.legs.map(legOf));
     const pLegs = picks.map(legOf);
     let statuses;
-    try { statuses = await trackLegs([...tLegs.flat(), ...pLegs]); } catch { statuses = null; }
+    const [st0, today] = await Promise.all([trackLegs([...tLegs.flat(), ...pLegs]).catch(() => null), fetch("data/picks/today.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)]);
+    statuses = st0;
+    scan = scanIndex(today);
     busy = false;
     if (!ctx.alive() || tab !== "live" || !app.querySelector("#b-body")) return;
     if (!statuses) { body.innerHTML = `<div class="notice warn">Couldn't reach ESPN for live scores. Try again in a moment.</div>`; return; }
