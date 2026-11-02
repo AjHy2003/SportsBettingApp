@@ -131,7 +131,7 @@ export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l
 // line moved against them went 2-4.
 export function movedAgainst(l) {
   const lv = l.live;
-  if (l.move?.against && l.move?.strong) return true;
+  if (l.move?.against) return true;
   if (!lv || lv.far) return !!lv?.far;
   if (l.kind === "prop" && lv.line0 != null && l.line !== lv.line0) return l.side === "OVER" ? l.line > lv.line0 : l.line < lv.line0;
   return lv.odds0 != null && l.odds < lv.odds0 - 5;
