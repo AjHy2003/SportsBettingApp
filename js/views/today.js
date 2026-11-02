@@ -380,7 +380,7 @@ export async function renderToday(ctx, q) {
     $("#t-sgp-game").onchange = (e) => { state.sgpGame = e.target.value || null; state.sgpLegs = null; renderSgp(); };
     if (!state.sgpGame) {
       // Featured: the model's best 3-leg same-game parlays from this morning's run.
-      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now && activeDays().days.includes(dayKey(legById.get(x.legs[0]).start))).slice(0, 5);
+      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now && activeDays().days.includes(dayKey(legById.get(x.legs[0]).start)) && (!state.aOnly || x.legs.every((id) => legById.get(id).grade === "A"))).slice(0, 5);
       if (feats.length) {
         $("#t-sgp-body").innerHTML = `<p class="small muted" style="margin:0 0 6px">Featured today:</p>${feats.map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px">
           <div class="row" style="justify-content:space-between"><b>${esc(leagueName(x.league))} · ${esc(x.matchup)}</b><span>${M.fmtOdds(x.american)} · ${pct(x.prob, 1)} to hit</span></div>
@@ -404,13 +404,26 @@ export async function renderToday(ctx, q) {
       if (!ctx.alive()) return;
     }
     const legs = [...state.sgpLegs].sort((a, b) => b.edge - a.edge);
-    const best = bestSameGame(legs, state.sgpGame, Math.min(state.legs, 4));
+    const best = bestSameGame(legs.filter((l) => l.lean && (!state.aOnly || l.grade === "A")), state.sgpGame, Math.min(state.legs, 4));
     body.innerHTML = `${best ? `<div style="border:1px solid var(--line);border-radius:12px;padding:12px">
         <div class="row" style="justify-content:space-between"><b>Model's best ${best.legs.length}-leg SGP</b><span>${M.fmtOdds(best.american)} · ${money(state.budget)} pays <b class="pos">${money(state.budget * best.decimal)}</b></span></div>
         <div class="small" style="margin-top:6px">${best.legs.map((l) => `• ${esc(l.label)} ${M.fmtOdds(l.odds)}`).join("<br/>")}</div>
-        <div class="small muted" style="margin-top:6px">Model: ${pct(best.prob, 1)} to hit (treats legs as independent) · <button class="btn ghost sm" id="t-sgp-use">Use these legs</button></div></div>` : `<div class="muted small">Not enough compatible legs in this game yet.</div>`}
+        <div class="small muted" style="margin-top:6px">Model: ${pct(best.prob, 1)} to hit (treats legs as independent) · <button class="btn ghost sm" id="t-sgp-use">Use these legs</button></div>
+        <div class="small faint" style="margin-top:4px">Books price same-game parlays below the legs' separate odds (they know the legs move together), so the payout is usually smaller than the line above.</div></div>` : `<div class="muted small">Not enough ${state.aOnly ? "grade A " : "graded "}legs in this game for a same-game parlay${state.aOnly ? ". Untick <b>Grade A picks only</b> to use B and C legs" : ""}. Skipping is fine.</div>`}
       <div style="margin-top:8px">${legs.slice(0, 25).map((l) => legRow(l, { inMine: state.mine.includes(l.id) })).join("")}</div>`;
     $("#t-sgp-use")?.addEventListener("click", () => { state.mine = best.legs.map((l) => l.id); renderAll(); });
+  }
+
+  // Every graded leg the app showed (not just the top picks), graded after the games.
+  function trackedBlock() {
+    const t = today?.tracked;
+    const n = t ? ["A", "B", "C"].reduce((s, g) => s + t.byGrade[g].w + t.byGrade[g].l, 0) + t.alt.w + t.alt.l : 0;
+    if (!t || !n) return t ? `<p class="small muted" style="margin:12px 0 0">📋 From now on, every A, B and C leg the app shows (tickets, same-game parlays, top picks) and the moonshots' long shots are graded too, so this record covers everything you can take from the app.</p>` : "";
+    const cell = (x) => (x.w + x.l ? `${x.w}-${x.l} <span class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</span>` : "—");
+    return `<h3 style="margin-top:14px">📋 Every leg the app graded</h3>
+      <p class="small muted" style="margin:0 0 6px">Not just the top picks: every A, B and C leg shown in tickets, same-game parlays and pick lists${t.since ? ` since ${fmtDate(t.since)}` : ""}, graded after the games.</p>
+      <div class="kpis" style="margin-top:0">${["A", "B", "C"].map((g) => `<div class="kpi"><div class="k">Grade ${g}</div><div class="v" style="font-size:16px">${cell(t.byGrade[g])}</div></div>`).join("")}
+        <div class="kpi"><div class="k">Moonshot long shots</div><div class="v" style="font-size:16px">${cell(t.alt)}</div></div></div>`;
   }
 
   // What the model has learned from its graded picks, per league and bet type.
@@ -450,6 +463,7 @@ export async function renderToday(ctx, q) {
         ${cal.map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
       </tbody></table></div><p class="small faint" style="margin:6px 0 0">Small samples swing a lot; read this after a few hundred picks.</p>` : ""}
       ${learnBlock()}
+      ${trackedBlock()}
       ${clvNote}
       <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r" title="Line movement after the pick">CLV</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
         ${graded.slice(0, 25).map((p) => `<tr><td>${fmtDate(p.start)}</td><td>${esc(p.label)} <span class="faint">${esc(leagueName(p.league))}</span></td><td class="r">${M.fmtOdds(p.odds)}</td><td class="r">${esc(p.grade)}</td><td class="r">${clvCell(p)}</td><td class="r">${esc(p.actual ?? "")}</td><td class="${p.result === "W" ? "o" : p.result === "L" ? "u" : "p"}">${p.result}</td></tr>`).join("")}
