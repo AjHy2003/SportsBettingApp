@@ -80,6 +80,7 @@ export async function renderToday(ctx, q) {
       <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
     ${today ? `<div class="live-bar" id="t-live"></div><div id="t-live-changes"></div>` : ""}
+    <a class="check-cta" href="#/check">🔎 <b>Betting at FanDuel or another book?</b> <span class="muted">Check your slip at their exact lines and prices ›</span></a>
     ${today ? "" : `<div class="notice warn" style="margin-bottom:14px">Daily picks are generated on GitHub every 30 minutes through the day. They'll show here after the next run. You can still build a same-game parlay for any game below.</div>`}
     <div class="card">
       <h3>Sport</h3>

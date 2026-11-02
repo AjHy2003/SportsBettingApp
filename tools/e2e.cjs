@@ -186,6 +186,14 @@ const pages = [
       return { best: (await pg.innerText("#t-best").catch(() => "")).replace(/\s+/g, " ").slice(0, 1400), ticket: (await pg.innerText("#t-ticket").catch(() => "")).replace(/\s+/g, " ").slice(0, 500), learn: (await pg.innerText("#t-record").catch(() => "")).replace(/\s+/g, " ").match(/LEARNING FROM RESULTS.{0,500}/i)?.[0] || "" };
     });
   }
+  // Check my slip with real lines from today's file (two props at the posted price, one at a shifted line).
+  if (today?.legs?.length) {
+    const ls = today.legs.filter((l) => l.kind === "prop" && l.rp && l.priced !== false && new Date(l.start) > Date.now()).slice(0, 2);
+    if (ls.length === 2) {
+      const lines = [`${ls[0].label} ${ls[0].odds > 0 ? "+" : ""}${ls[0].odds}`, `${ls[1].player} ${ls[1].side === "OVER" ? "under" : "over"} ${ls[1].line + 1} ${ls[1].market} -120`, "Some Nobody over 5.5 assists"].join("\n");
+      await visit("check-slip", `#/check?t=${encodeURIComponent(lines)}`, async (pg) => ({ out: (await pg.innerText("#c-out").catch(() => "")).replace(/\s+/g, " ").slice(0, 1200) }));
+    }
+  }
   // A saved bet on an upcoming game shows the latest scan's read on that market.
   if (today?.legs?.length) {
     const up = today.legs.filter((l) => l.kind === "prop" && l.lean && new Date(l.start) > Date.now() && l.grade !== "PASS").slice(0, 2);
