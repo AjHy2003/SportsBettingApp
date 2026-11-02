@@ -1,33 +1,6 @@
 {
  "issues": [
   {
-   "area": "props",
-   "msg": "nfl: names map to markets the model doesn't have",
-   "ex": [
-    "ast"
-   ]
-  },
-  {
-   "area": "lines",
-   "msg": "nhl DET @ FLA: details \"FLA -185\" vs spreadHome -1.5",
-   "ex": null
-  },
-  {
-   "area": "lines",
-   "msg": "nhl VGK @ BOS: details \"VGK -118\" vs spreadHome 1.5",
-   "ex": null
-  },
-  {
-   "area": "lines",
-   "msg": "nhl COL @ CHI: details \"COL -230\" vs spreadHome 1.5",
-   "ex": null
-  },
-  {
-   "area": "lines",
-   "msg": "nhl CGY @ SJ: details \"SJ -125\" vs spreadHome -1.5",
-   "ex": null
-  },
-  {
    "area": "propLines",
    "msg": "nhl:a: lines run 1.67x the projections (market may be mislabeled)",
    "ex": null
@@ -37,7 +10,6 @@
   "nba": {
    "events": 5,
    "mapped": [
-    "Team Total 3-Pointers Made -> fg3m",
     "Total 3-Point Field Goals -> fg3m",
     "Total Assists -> ast",
     "Total Assists and Rebounds -> ra",
@@ -87,6 +59,7 @@
     "Steals + Blocks Milestones",
     "Steals Milestones",
     "Team 1st Half Total Points",
+    "Team Total 3-Pointers Made",
     "Team Total Points",
     "Team Total Points - 1st Quarter",
     "Team Total Points - 2nd Half",
@@ -144,7 +117,6 @@
   "nfl": {
    "events": 1,
    "mapped": [
-    "Total Assists (incl. overtime) -> ast",
     "Total Carries (incl. overtime) -> rush_att",
     "Total Pass Completions (incl. overtime) -> pass_cmp",
     "Total Passing Attempts (incl. overtime) -> pass_att",
@@ -216,6 +188,7 @@
     "Team 1st Half Total Points",
     "Team Total Points",
     "Team Total Touchdowns",
+    "Total Assists (incl. overtime)",
     "Total Extra Points Made (incl. overtime)",
     "Total Field Goals Made (incl. overtime)",
     "Total Kicking Points (incl. overtime)",
@@ -234,7 +207,7 @@
   }
  },
  "lines": {
-  "spreadsChecked": 139,
+  "spreadsChecked": 135,
   "totalsWithBothPrices": "278/278"
  },
  "grading": {
