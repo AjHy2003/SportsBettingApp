@@ -1,0 +1,54 @@
+name: test-markets
+# Temporary: prop market names after the order-independent fix, on live data.
+on:
+  push:
+    branches: ["claude/fix-markets"]
+    paths-ignore: ["e2e-out/**"]
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - run: python pipeline/build.py --out _site/data --cache cache > build.log 2>&1
+      - name: Daily picks
+        run: |
+          mkdir -p /tmp/hist e2e-out
+          git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/hist/history.json && git show origin/picks-data:tracked.json > /tmp/hist/tracked.json || true
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tail -6
+      - name: Check
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const h = JSON.parse(fs.readFileSync("/tmp/hist/history.json", "utf8"));
+            const tr = JSON.parse(fs.readFileSync("/tmp/hist/tracked.json", "utf8"));
+            const tre = t.legs.filter((l) => l.player === "Tre Jones").map((l) => `${l.label} ${l.odds} [${l.grade}] book ${JSON.stringify(l.book)}`);
+            const byMk = t.legs.filter((l) => l.kind === "prop" && ["nba", "ncaab"].includes(l.league)).reduce((m, l) => (m[l.marketKey] = (m[l.marketKey] || 0) + 1, m), {});
+            const astLines = t.legs.filter((l) => l.marketKey === "ast" && l.league === "nba").map((l) => l.line);
+            const out = { tre, nbaPropMarkets: byMk, nbaAssistLines: { n: astLines.length, max: Math.max(...astLines), avg: astLines.reduce((a, b) => a + b, 0) / astLines.length },
+              voidedHistory: h.picks.filter((p) => p.voided).length, voidedTracked: tr.picks.filter((p) => p.voided).length, learn: t.learn };
+            console.log(JSON.stringify(out, null, 1)); fs.writeFileSync("e2e-out/markets.json", JSON.stringify(out, null, 1));
+          '
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "Results" || echo "nothing to commit"
+          git push -q origin HEAD:claude/fix-markets

@@ -323,7 +323,7 @@ function loadTracked() {
   try { return JSON.parse(fs.readFileSync(TRACKED, "utf8")); } catch { return { picks: [] }; }
 }
 const trackRow = (l, src, issued) => ({ id: l.id, src, issued, start: l.start, league: l.league, eventId: l.eventId, kind: l.kind, marketKey: l.marketKey, playerId: l.playerId,
-  side: l.side, line: l.line, odds: l.odds, prob: Number(l.prob.toFixed(4)), praw: l.praw != null ? Number(l.praw.toFixed(4)) : undefined, grade: l.grade, label: l.label, result: null });
+  side: l.side, line: l.line, odds: l.odds, prob: Number(l.prob.toFixed(4)), praw: l.praw != null ? Number(l.praw.toFixed(4)) : undefined, grade: l.grade, label: l.label, mkv: 2, result: null });
 function trackedSummary(t) {
   const done = t.picks.filter((p) => p.result === "W" || p.result === "L");
   const agg = (rows) => ({ w: rows.filter((p) => p.result === "W").length, l: rows.filter((p) => p.result === "L").length,
@@ -476,6 +476,12 @@ const history = loadHistory();
 const graded = await gradePending(history);
 for (const p of history.picks) if (p.result && p.close && !p.clv) p.clv = clvOf(p);
 const tracked = loadTracked();
+// Until Nov 2, DraftKings' "Total Assists and Rebounds" was read as Assists, so basketball
+// assists picks may have been on the wrong bet: void them (out of the record and the
+// learning). Picks made after the fix carry mkv: 2.
+for (const p of [...history.picks, ...tracked.picks]) {
+  if (p.marketKey === "ast" && !p.mkv && ["nba", "ncaab", "wnba", "ncaaw"].includes(p.league) && p.result !== "VOID") { p.result = "VOID"; p.voided = "market mix-up: Assists vs Assists + Rebounds"; }
+}
 const trackedGraded = await gradePending(tracked);
 
 // Learn from results: keep only the share of each league's claimed edge that has shown
@@ -504,7 +510,7 @@ for (const p of picks) {
   if (p.playerId && openPlayer.has(`${p.eventId}:${p.playerId}`)) continue;
   if (p.playerId) openPlayer.add(`${p.eventId}:${p.playerId}`);
   history.picks.push({ id: p.id, issued, start: p.start, league: p.league, eventId: p.eventId, matchup: p.matchup, kind: p.kind, marketKey: p.marketKey, market: p.market,
-    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), praw: p.praw != null ? Number(p.praw.toFixed(4)) : undefined, edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, best: isBestBet(p) || undefined, result: null });
+    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), praw: p.praw != null ? Number(p.praw.toFixed(4)) : undefined, edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, best: isBestBet(p) || undefined, mkv: 2, result: null });
 }
 history.picks = history.picks.filter((p) => now - new Date(p.start) < 400 * 864e5);
 history.updated = issued;

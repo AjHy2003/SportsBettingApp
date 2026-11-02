@@ -331,26 +331,31 @@ export function dkLinks(links) {
   };
 }
 
-// ESPN prop type name -> our market key.
+// ESPN prop type name -> our market key. Combos are matched by which stats they name, in
+// any order ("Total Assists and Rebounds" is Reb + Ast, not Assists); single stats only
+// when no other stat is named.
+const has = (...w) => new RegExp(`^${w.map((x) => `(?=.*\\b${x})`).join("")}`, "i");
+const only = (w, ...not) => new RegExp(`^total ${w}s?\\b(?!.*\\b(${not.join("|")}))`, "i");
 const PROP_TYPES = [
   [/3-?point|three/i, "fg3m"],
-  [/points.*rebounds.*assists|pts.*reb.*ast/i, "pra"],
-  [/points.*rebounds/i, "pr"],
-  [/points.*assists/i, "pa"],
-  [/rebounds.*assists/i, "ra"],
-  [/^total points/i, "pts"],
-  [/^total rebounds/i, "reb"],
-  [/^total assists/i, "ast"],
-  [/steals.*blocks/i, "sb"],
-  [/^total steals/i, "stl"],
-  [/^total blocks/i, "blk"],
+  [has("points", "rebounds", "assists"), "pra"],
+  [has("points", "rebounds"), "pr"],
+  [has("points", "assists"), "pa"],
+  [has("rebounds", "assists"), "ra"],
+  [has("steals", "blocks"), "sb"],
+  [only("point", "rebound", "assist"), "pts"],
+  [only("rebound", "point", "assist"), "reb"],
+  [only("assist", "point", "rebound"), "ast"],
+  [only("steal", "block"), "stl"],
+  [only("block", "steal"), "blk"],
   [/turnovers/i, "tov"],
+  [has("passing", "rushing", "yards"), "pass_rush_yds"],
+  [has("rushing", "receiving", "yards"), "rush_rec_yds"],
   [/passing yards/i, "pass_yds"],
   [/pass completions|completions/i, "pass_cmp"],
   [/pass(ing)? attempts/i, "pass_att"],
   [/passing touchdowns/i, "pass_td"],
   [/interceptions/i, "pass_int"],
-  [/rushing \+ receiving|rush.*rec.*yards/i, "rush_rec_yds"],
   [/rushing yards/i, "rush_yds"],
   [/carries|rushing attempts/i, "rush_att"],
   [/receiving yards/i, "rec_yds"],
