@@ -1,0 +1,257 @@
+{
+ "scan": "2026-11-02T20:16:55.612Z",
+ "scanLegs": [
+  "Tre Jones Over 8.5 Points -108 grade C lean true k 0.9918 line 8.5 book {\"line\":8.5,\"over\":-108,\"under\":-118}",
+  "Tre Jones Under 5.5 Assists -118 grade A lean true k 0.9918 line 5.5 book {\"line\":5.5,\"over\":-112,\"under\":-118}",
+  "Tre Jones Over 2.5 Rebounds 136 grade C lean true k 0.9918 line 2.5 book {\"line\":2.5,\"over\":136,\"under\":-180}",
+  "Tre Jones Over 11.5 Pts + Ast -126 grade C lean true k 0.9918 line 11.5 book {\"line\":11.5,\"over\":-126,\"under\":-104}",
+  "Tre Jones Over 10.5 Pts + Reb -118 grade C lean true k 0.9918 line 10.5 book {\"line\":10.5,\"over\":-118,\"under\":-111}",
+  "Tre Jones Over 14.5 Pts + Reb + Ast -105 grade C lean true k 0.9918 line 14.5 book {\"line\":14.5,\"over\":-105,\"under\":-126}"
+ ],
+ "espn_dk_now_401909912": {
+  "pts": {
+   "line": 8.5,
+   "over": -108,
+   "under": -118,
+   "open": 9.5,
+   "openOver": -103,
+   "openUnder": -124,
+   "type": "Total Points",
+   "alts": 1
+  },
+  "ast": {
+   "line": 5.5,
+   "over": -112,
+   "under": -118,
+   "open": 6.5,
+   "openOver": 102,
+   "openUnder": -134,
+   "type": "Total Assists and Rebounds",
+   "alts": 2
+  },
+  "reb": {
+   "line": 2.5,
+   "over": 136,
+   "under": -180,
+   "open": 2.5,
+   "openOver": -102,
+   "openUnder": -128,
+   "type": "Total Rebounds",
+   "alts": 1
+  },
+  "pa": {
+   "line": 11.5,
+   "over": -126,
+   "under": -104,
+   "open": 13.5,
+   "openOver": -125,
+   "openUnder": -106,
+   "type": "Total Points and Assists",
+   "alts": 1
+  },
+  "pr": {
+   "line": 10.5,
+   "over": -118,
+   "under": -111,
+   "open": 12.5,
+   "openOver": -114,
+   "openUnder": -115,
+   "type": "Total Points and Rebounds",
+   "alts": 1
+  },
+  "pra": {
+   "line": 14.5,
+   "over": -105,
+   "under": -126,
+   "open": 16.5,
+   "openOver": -112,
+   "openUnder": -117,
+   "type": "Total Points, Rebounds, and Assists",
+   "alts": 1
+  }
+ },
+ "raw_401909912": [
+  {
+   "type": "Total Assists",
+   "target": 3.5,
+   "total": "3.5",
+   "american": "+105",
+   "open": "-127"
+  },
+  {
+   "type": "Total Assists",
+   "target": 3.5,
+   "total": "3.5",
+   "american": "-138",
+   "open": "-104"
+  },
+  {
+   "type": "Total Points and Assists",
+   "target": 11.5,
+   "total": "11.5",
+   "american": "-126",
+   "open": "-125"
+  },
+  {
+   "type": "Total Points and Assists",
+   "target": 11.5,
+   "total": "11.5",
+   "american": "-104",
+   "open": "-106"
+  },
+  {
+   "type": "Total Assists and Rebounds",
+   "target": 5.5,
+   "total": "5.5",
+   "american": "-112",
+   "open": "+102"
+  },
+  {
+   "type": "Total Assists and Rebounds",
+   "target": 5.5,
+   "total": "5.5",
+   "american": "-118",
+   "open": "-134"
+  },
+  {
+   "type": "Total Points, Rebounds, and Assists",
+   "target": 14.5,
+   "total": "14.5",
+   "american": "-105",
+   "open": "-112"
+  },
+  {
+   "type": "Total Points, Rebounds, and Assists",
+   "target": 14.5,
+   "total": "14.5",
+   "american": "-126",
+   "open": "-117"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 3,
+   "total": "3+",
+   "american": "-214",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 4,
+   "total": "4+",
+   "american": "+105",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 5,
+   "total": "5+",
+   "american": "+216",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 6,
+   "total": "6+",
+   "american": "+421",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 7,
+   "total": "7+",
+   "american": "+790",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 8,
+   "total": "8+",
+   "american": "+1360",
+   "open": "-127"
+  },
+  {
+   "type": "Assists Milestones",
+   "target": 9,
+   "total": "9+",
+   "american": "+2200",
+   "open": "-127"
+  },
+  {
+   "type": "Points + Assists + Rebounds Milestones",
+   "target": 10,
+   "total": "10+",
+   "american": "-416",
+   "open": "-113"
+  },
+  {
+   "type": "Points + Assists + Rebounds Milestones",
+   "target": 15,
+   "total": "15+",
+   "american": "-105",
+   "open": "-113"
+  },
+  {
+   "type": "Points + Assists + Rebounds Milestones",
+   "target": 20,
+   "total": "20+",
+   "american": "+299",
+   "open": "-113"
+  },
+  {
+   "type": "Points + Assists + Rebounds Milestones",
+   "target": 25,
+   "total": "25+",
+   "american": "+830",
+   "open": "-113"
+  },
+  {
+   "type": "Points + Assists + Rebounds Milestones",
+   "target": 30,
+   "total": "30+",
+   "american": "+1900",
+   "open": "-113"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 5,
+   "total": "5+",
+   "american": "-2200",
+   "open": "+103"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 10,
+   "total": "10+",
+   "american": "-228",
+   "open": "+103"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 12,
+   "total": "12+",
+   "american": "-126",
+   "open": "+103"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 15,
+   "total": "15+",
+   "american": "+173",
+   "open": "+103"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 20,
+   "total": "20+",
+   "american": "+571",
+   "open": "+103"
+  },
+  {
+   "type": "Points + Assists Milestones",
+   "target": 25,
+   "total": "25+",
+   "american": "+1520",
+   "open": "+103"
+  }
+ ]
+}
