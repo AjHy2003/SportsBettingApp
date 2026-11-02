@@ -186,10 +186,27 @@ const pages = [
       return { best: (await pg.innerText("#t-best").catch(() => "")).replace(/\s+/g, " ").slice(0, 1400), ticket: (await pg.innerText("#t-ticket").catch(() => "")).replace(/\s+/g, " ").slice(0, 500), learn: (await pg.innerText("#t-record").catch(() => "")).replace(/\s+/g, " ").match(/LEARNING FROM RESULTS.{0,500}/i)?.[0] || "" };
     });
   }
+  // A saved bet on an upcoming game shows the latest scan's read on that market.
+  if (today?.legs?.length) {
+    const up = today.legs.filter((l) => l.kind === "prop" && l.lean && new Date(l.start) > Date.now() && l.grade !== "PASS").slice(0, 2);
+    if (up.length) {
+      const pick = (l, flip) => ({ league: l.league, athleteId: l.playerId, athlete: l.player, market: l.marketKey, marketLabel: l.market, line: l.line, side: flip ? (l.side === "OVER" ? "UNDER" : "OVER") : l.side, odds: l.odds, eventId: l.eventId, eventDate: l.start, opp: l.matchup });
+      const ticket = [{ id: "tsaved", created: new Date().toISOString(), type: "parlay", stake: 5, american: 264, legs: [pick(up[0], false), pick(up[up.length - 1], true)] }];
+      const c2 = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: "America/New_York" });
+      await c2.addInitScript((t) => { if (!sessionStorage.getItem("seeded2")) { localStorage.setItem("picklab.tickets.v1", t); sessionStorage.setItem("seeded2", "1"); } }, JSON.stringify(ticket));
+      const pg = await c2.newPage();
+      const errors = [];
+      pg.on("pageerror", (e) => errors.push("pageerror: " + e.message));
+      await pg.goto("http://localhost:8765/#/picks?tab=live", { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
+      await pg.waitForTimeout(3000);
+      report.push({ name: "saved-bet-app-read", errors, extra: { reads: await pg.$$eval(".lleg", (x) => x.map((e) => e.innerText.replace(/\s+/g, " ").slice(0, 300))) } });
+      await c2.close();
+    }
+  }
   // Live re-check: current DraftKings lines re-price the posted legs in the page.
   await visit("today-live", "#/today?sport=all&day=all", async (pg) => {
     await pg.waitForFunction(() => /checked/.test(document.querySelector("#t-live")?.innerText || ""), null, { timeout: 90000 }).catch(() => {});
-    return { bar: (await pg.innerText("#t-live").catch(() => "")).replace(/\s+/g, " "), changes: await pg.$$eval(".live-chg", (x) => x.slice(0, 12).map((e) => e.closest(".pick")?.innerText.split("\n").slice(0, 1).join("") + " | " + e.innerText)).catch(() => []) };
+    return { bar: (await pg.innerText("#t-live").catch(() => "")).replace(/\s+/g, " "), whatChanged: (await pg.innerText("#t-live-changes").catch(() => "")).replace(/\s+/g, " ").slice(0, 1500), changes: await pg.$$eval(".live-chg", (x) => x.slice(0, 12).map((e) => e.closest(".pick")?.innerText.split("\n").slice(0, 1).join("") + " | " + e.innerText)).catch(() => []) };
   });
   // Day picker: the default day per sport, then each other day, then a single game.
   for (const sport of ["nfl", "football", "all"]) {

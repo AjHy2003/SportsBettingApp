@@ -60,7 +60,9 @@ const capFlags = (leg, grade) => {
 
 // ---------- re-pricing ----------
 // One prop leg against the current DraftKings line/prices: the new numbers, or { far: true }
-// when the line moved past the ladder (likely news; wait for the next full scan).
+// when the line moved past the ladder (likely news; wait for the next full scan). When the
+// line moves through the model's number, the pick switches sides (Under 5.5 -> Over 4.5)
+// if the other side now has a graded edge; otherwise it stays on its side as a pass.
 export function repriceProp(leg, f) {
   const rp = leg.rp;
   if (!rp || !f || f.line == null) return null;
@@ -74,14 +76,20 @@ export function repriceProp(leg, f) {
   const pO = final * (1 - push), pU = (1 - final) * (1 - push);
   const v = M.makeVerdict(pO, pU, push, oO, oU, M.expectedValue(pO, push, oO), M.expectedValue(pU, push, oU), rp.n);
   M.propGuards(v, { marketWeight: rp.mw, projection: rp.pj, sdProj: rp.sd, line: f.line, statsOver: so, marketProb: mkt, last5: rp.l5 });
-  const over = leg.side === "OVER";
-  const odds = over ? oO : oU;
-  // Same learned shrink as the full scan, then the same caps.
-  const s = shrinkLeg(over ? final : 1 - final, odds, v.lean === leg.side ? v.grade : "PASS", leg.k);
-  const prob = s.prob;
-  const grade = capFlags(leg, s.grade);
-  return { line: f.line, odds, priced, prob, edge: prob - M.impliedProb(odds), ev: prob * decimalOdds(odds) - 1, grade, flipped: v.lean !== leg.side,
-    label: leg.label.replace(/(Over|Under) [\d.]+/, `${over ? "Over" : "Under"} ${f.line}`) };
+  // Same learned shrink as the full scan, then the same caps, on the side the model now leans.
+  const sideFor = (side) => {
+    const over = side === "OVER", odds = over ? oO : oU;
+    const s = shrinkLeg(over ? final : 1 - final, odds, v.lean === side ? v.grade : "PASS", leg.k);
+    const grade = capFlags(leg, s.grade);
+    return { side, line: f.line, odds, priced, prob: s.prob, edge: s.prob - M.impliedProb(odds), ev: s.prob * decimalOdds(odds) - 1, grade,
+      label: leg.player && leg.market ? `${leg.player} ${over ? "Over" : "Under"} ${f.line} ${leg.market}` : leg.label.replace(/(Over|Under) [\d.]+/, `${over ? "Over" : "Under"} ${f.line}`) };
+  };
+  const mine = sideFor(leg.side);
+  if (v.lean && v.lean !== leg.side) {
+    const other = sideFor(v.lean);
+    if (other.grade !== "PASS") return { ...other, switched: true };
+  }
+  return mine;
 }
 
 // Both sides of each game market against the current lines: Map legId -> new numbers.

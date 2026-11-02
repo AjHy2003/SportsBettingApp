@@ -116,6 +116,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .live-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--over); box-shadow: 0 0 0 3px color-mix(in srgb, var(--over) 25%, transparent); animation: pulse 1.6s ease-in-out infinite; }
 .live-pulse.off { background: var(--faint); box-shadow: none; animation: none; }
 .live-chg { color: var(--cyan); }
+.live-changes { margin: -4px 0 12px; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--cyan) 35%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--cyan) 6%, var(--card)); }
+.live-changes summary { cursor: pointer; }
+.lc-row { display: flex; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); }
+.lc-row:first-child { border-top: 0; margin-top: 6px; }
 .card.best { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); background: radial-gradient(420px 180px at 100% 0%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 70%), linear-gradient(180deg, var(--card-hi), var(--card)); }
 .grade .star { position: absolute; top: -9px; right: -9px; font-size: 14px; line-height: 1; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)); }
 .acct-btn { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px; border-radius: 12px; color: var(--muted); font-weight: 600; font-size: 14px; white-space: nowrap; }

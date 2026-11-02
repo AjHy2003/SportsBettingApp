@@ -79,7 +79,7 @@ export async function renderToday(ctx, q) {
       <h1>🔥 Today's picks</h1>
       <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
-    ${today ? `<div class="live-bar" id="t-live"></div>` : ""}
+    ${today ? `<div class="live-bar" id="t-live"></div><div id="t-live-changes"></div>` : ""}
     ${today ? "" : `<div class="notice warn" style="margin-bottom:14px">Daily picks are generated on GitHub every 30 minutes through the day. They'll show here after the next run. You can still build a same-game parlay for any game below.</div>`}
     <div class="card">
       <h3>Sport</h3>
@@ -205,6 +205,7 @@ export async function renderToday(ctx, q) {
   function liveLine(l) {
     const lv = l.live;
     if (lv.far) return `<div class="small" style="color:var(--gold)">🔄 DraftKings moved this to ${esc(String(lv.farLine))} (posted ${esc(String(lv.line0))}), past what the live re-check can re-price. It's out of tickets until the next full scan.</div>`;
+    if (lv.side0 && l.side !== lv.side0) return `<div class="small live-chg">🔄 <b>Switched:</b> posted as ${esc(lv.label0)} ${M.fmtOdds(lv.odds0)}; DraftKings moved the line through the model's number, so the pick is now <b>${esc(l.label)} ${M.fmtOdds(l.odds)}</b> · ${pct(l.prob)} to hit${lv.grade0 !== l.grade ? ` · was grade ${lv.grade0}` : ""}</div>`;
     const moved = lv.line0 !== l.line || lv.odds0 !== l.odds;
     if (!moved && lv.grade0 === l.grade) return "";
     const ln = (x) => (x == null ? "" : `${x} `);
@@ -217,7 +218,7 @@ export async function renderToday(ctx, q) {
       <div style="min-width:0">
         <div style="font-weight:700"><a href="${legLink(l)}" style="color:var(--text)">${esc(l.label)}</a> <span class="muted" style="font-weight:600">${priceTag(l)}</span></div>
         <div class="small muted">${esc(leagueName(l.league))} · ${esc(l.matchup)} · ${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}</div>
-        <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why ? ` · ${esc(l.why)}` : ""}</div>
+        <div class="small faint">${pct(l.prob)} to hit vs ${pct(M.impliedProb(l.odds), 1)} break-even · edge ${signed(l.edge * 100, 1)}${l.why && !(l.live?.side0 && l.side !== l.live.side0) ? ` · ${esc(l.why)}` : ""}</div>
         ${l.live ? liveLine(l) : ""}
         ${l.mismatch ? `<div class="small" style="color:var(--gold)">${l.kind === "prop" ? "Line is far from the player's recent numbers — likely a role change. Check the news." : "Our team model is far from the market here; it's probably missing news. Graded down."}</div>` : ""}
         ${l.questionable ? `<div class="small" style="color:var(--gold)">Injury report: ${esc(l.questionable)}. Kept out of tickets until the status clears.</div>` : ""}
@@ -500,6 +501,7 @@ export async function renderToday(ctx, q) {
 
   function renderAll() {
     persist();
+    if (lastLive) paintChanges();
     syncControls();
     renderBest();
     renderTicket();
@@ -588,11 +590,40 @@ export async function renderToday(ctx, q) {
 
   function applyLive(l, r) {
     if (!l || !r) return;
-    if (!l.live) l.live = { line0: l.line, odds0: l.odds, prob0: l.prob, grade0: l.grade, label0: l.label };
+    if (!l.live) l.live = { line0: l.line, odds0: l.odds, prob0: l.prob, grade0: l.grade, label0: l.label, side0: l.side, lean0: l.lean };
     if (r.far) { l.live.far = true; l.live.farLine = r.line; l.grade = "PASS"; return; }
     l.live.far = false;
     Object.assign(l, { line: r.line ?? l.line, odds: r.odds, priced: r.priced, prob: r.prob, edge: r.edge, ev: r.ev, grade: r.grade, label: r.label || l.label });
+    if (r.side) l.side = r.side;
     if (r.lean != null) l.lean = r.lean;
+  }
+
+  // Picks that switched sides, dropped out, newly qualified or changed grade since the scan.
+  function liveChanges() {
+    const graded = (g) => ["A", "B", "C"].includes(g);
+    const rows = [];
+    for (const l of legsInSport()) {
+      const lv = l.live;
+      if (!lv) continue;
+      const was = lv.lean0 && graded(lv.grade0), now = l.lean && graded(l.grade);
+      if (l.kind === "prop" && lv.side0 && l.side !== lv.side0 && now) rows.push({ t: "switched", l, text: `${lv.label0} → <b>${esc(l.label)}</b> ${M.fmtOdds(l.odds)} · grade ${l.grade}` });
+      else if (was && !now) rows.push({ t: "dropped", l, text: `${esc(lv.label0)} (was ${lv.grade0}) is out: ${lv.far ? "the line jumped too far to re-price" : `at ${esc(String(l.line ?? ""))} ${M.fmtOdds(l.odds)} there's no edge left`}` });
+      else if (!was && now) rows.push({ t: "new", l, text: `<b>${esc(l.label)}</b> ${M.fmtOdds(l.odds)} is now a grade ${l.grade} pick` });
+      else if (was && now && lv.grade0 !== l.grade) rows.push({ t: "regraded", l, text: `${esc(l.label)}: grade ${lv.grade0} → <b>${l.grade}</b>` });
+    }
+    return rows;
+  }
+
+  function paintChanges() {
+    const el = $("#t-live-changes");
+    if (!el) return;
+    const rows = liveChanges();
+    if (!rows.length) { el.innerHTML = ""; return; }
+    const n = (t) => rows.filter((r) => r.t === t).length;
+    const ICON = { switched: "🔁", dropped: "⛔", new: "🆕", regraded: "↕️" };
+    const order = ["switched", "new", "dropped", "regraded"];
+    el.innerHTML = `<details class="live-changes" ${n("switched") + n("new") + n("dropped") ? "open" : ""}><summary class="small"><b>What changed</b> since the ${fmtTime(today.generated)} scan: ${order.filter(n).map((t) => `${n(t)} ${t}`).join(" · ")}</summary>
+      <div class="small">${rows.sort((a, b) => order.indexOf(a.t) - order.indexOf(b.t)).slice(0, 30).map((r) => `<div class="lc-row"><span>${ICON[r.t]}</span><span><a href="${legLink(r.l)}" style="color:var(--text)">${r.text}</a> <span class="faint">· ${esc(leagueName(r.l.league))} · ${esc(r.l.matchup)}</span></span></div>`).join("")}</div></details>`;
   }
 
   function paintLive(checking = false) {
@@ -613,8 +644,11 @@ export async function renderToday(ctx, q) {
     paintLive(true);
     try {
       const upcoming = games.filter((g) => new Date(g.start) > Date.now());
-      // Props for the games in view and in My parlay (one request per game); game lines for all.
-      const want = new Set([...legsInSport().map((l) => l.gameKey), ...state.mine.map((id) => legById.get(id)?.gameKey).filter(Boolean)]);
+      // Props (one request per game) for games in view with bettable graded props, busiest
+      // first, plus anything in My parlay; game lines for every game.
+      const propCount = new Map();
+      for (const l of legsInSport()) if (l.kind === "prop" && l.rp && usableLeg(l) && ["A", "B", "C"].includes(l.live?.grade0 ?? l.grade)) propCount.set(l.gameKey, (propCount.get(l.gameKey) || 0) + 1);
+      const want = new Set([...[...propCount].sort((a, b) => b[1] - a[1]).slice(0, 30).map(([k]) => k), ...state.mine.map((id) => legById.get(id)?.gameKey).filter(Boolean), state.sgpGame].filter(Boolean));
       const propGames = upcoming.filter((g) => want.has(g.key) && (legsByGame.get(g.key) || []).some((l) => l.rp));
       const [lines, props, latest] = await Promise.all([currentGameLines(upcoming), currentProps(propGames), getData("data/picks/today.json")]);
       if (!ctx.alive()) return;
@@ -627,6 +661,7 @@ export async function renderToday(ctx, q) {
       if (latest?.generated && new Date(latest.generated) > new Date(today.generated)) newer = latest.generated;
       lastLive = Date.now();
       renderAll();
+      paintChanges();
       if (state.sgpLegs) renderSgp();
     } catch (e) { console.warn("live re-check:", e); } finally { liveBusy = false; if (ctx.alive()) paintLive(); }
   }
