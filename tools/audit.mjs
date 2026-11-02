@@ -48,7 +48,8 @@ let checked = 0;
 for (const g of today.games || []) {
   const d = g.lines?.details;
   const sp = g.lines?.spreadHome;
-  if (!d || sp == null || /^ev(en)?$/i.test(d)) continue;
+  // Hockey's summary line is the moneyline favorite ("FLA -185"), not the puck line.
+  if (!d || sp == null || /^ev(en)?$/i.test(d) || g.league === "nhl") continue;
   const m = d.match(/^([A-Za-z0-9&.'-]+)\s+([+-]?\d+(\.\d+)?)$/);
   if (!m) continue;
   checked++;

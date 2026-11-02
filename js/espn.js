@@ -383,8 +383,10 @@ const FAMILY_ALIAS = {
 };
 
 export function propMarketKey(typeName, family) {
-  // Full-game props only: skip halves, quarters, periods, innings, first-X specials.
-  if (/half|quarter|period|inning|\b(1st|2nd|3rd|4th|first|last)\b|\bq[1-4]\b|milestone|alt(ernate)?\b|\+\s*$/i.test(typeName)) return null;
+  // Full-game player props only: skip team props, halves, quarters, periods, innings,
+  // first-X specials, and defensive "assists" (tackles) in football.
+  if (/half|quarter|period|inning|\b(1st|2nd|3rd|4th|first|last)\b|\bq[1-4]\b|milestone|alt(ernate)?\b|\+\s*$|^team\b/i.test(typeName)) return null;
+  if (family === "football" && /assists|tackles/i.test(typeName)) return null;
   for (const [re, key] of PROP_TYPES) {
     if (!re.test(typeName)) continue;
     const alias = FAMILY_ALIAS[family];
@@ -398,6 +400,7 @@ export function propMarketKey(typeName, family) {
 // Alternate lines are collapsed to the one priced closest to even.
 export function parseProps(items, family) {
   const cands = new Map(); // `${aid}|${market}` -> [{line, over, under, ...}]
+  const types = new Map(), clash = new Set();
   for (const it of items) {
     const aid = it.athlete?.$ref?.match(/athletes\/(\d+)/)?.[1];
     const market = propMarketKey(it.type?.name || "", family);
@@ -407,6 +410,11 @@ export function parseProps(items, family) {
     const price = it.odds?.american?.value != null ? Number(String(it.odds.american.value).replace("+", "")) : null;
     const openPrice = it.odds?.american?.open != null ? Number(String(it.odds.american.open).replace("+", "")) : null;
     const key = `${aid}|${market}`;
+    // Two different DraftKings bets landing in one market means a name was misread
+    // (how "Assists and Rebounds" once became Assists): drop that market, don't guess.
+    const t = it.type?.name || "";
+    if (!types.has(key)) types.set(key, t);
+    else if (types.get(key) !== t) { clash.add(key); continue; }
     const list = cands.get(key) || [];
     const last = list[list.length - 1];
     if (last && last.line === line && last.under == null && !last.closed) {
@@ -420,7 +428,9 @@ export function parseProps(items, family) {
   }
   const imp = (o) => (o == null ? 0.5 : o < 0 ? -o / (-o + 100) : 100 / (o + 100));
   const out = new Map(); // athleteId -> { market -> {line, over, under, open, alts} }
+  if (clash.size && typeof console !== "undefined") console.warn(`props: ${clash.size} player markets matched two different bet names; skipped`);
   for (const [key, list] of cands) {
+    if (clash.has(key)) continue;
     const [aid, market] = key.split("|");
     const priced = list.filter((c) => c.over != null && c.under != null);
     // Unpriced ladders (common for NFL): alternates surround the main line, so take the median.
