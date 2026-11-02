@@ -1,0 +1,65 @@
+{
+ "tre": [
+  "Tre Jones Over 8.5 Points -108 [C] book {\"line\":8.5,\"over\":-108,\"under\":-118}",
+  "Tre Jones Over 3.5 Assists 105 [PASS] book {\"line\":3.5,\"over\":105,\"under\":-138}",
+  "Tre Jones Over 2.5 Rebounds 136 [C] book {\"line\":2.5,\"over\":136,\"under\":-180}",
+  "Tre Jones Over 11.5 Pts + Ast -126 [C] book {\"line\":11.5,\"over\":-126,\"under\":-104}",
+  "Tre Jones Over 10.5 Pts + Reb -118 [C] book {\"line\":10.5,\"over\":-118,\"under\":-111}",
+  "Tre Jones Over 5.5 Reb + Ast -112 [C] book {\"line\":5.5,\"over\":-112,\"under\":-118}",
+  "Tre Jones Over 14.5 Pts + Reb + Ast -105 [C] book {\"line\":14.5,\"over\":-105,\"under\":-126}"
+ ],
+ "nbaPropMarkets": {
+  "pts": 181,
+  "ast": 139,
+  "reb": 172,
+  "fg3m": 144,
+  "pa": 137,
+  "pr": 171,
+  "ra": 137,
+  "pra": 139,
+  "stl": 52,
+  "blk": 31,
+  "sb": 20
+ },
+ "nbaAssistLines": {
+  "n": 139,
+  "max": 9.5,
+  "avg": 3.7517985611510793
+ },
+ "voidedHistory": 7,
+ "voidedTracked": 24,
+ "learn": {
+  "nba:prop": {
+   "n": 38,
+   "w": 24,
+   "hit": 0.6316,
+   "model": 0.6084,
+   "be": 0.5187,
+   "k": 1
+  },
+  "nfl:prop": {
+   "n": 46,
+   "w": 15,
+   "hit": 0.3261,
+   "model": 0.6026,
+   "be": 0.5238,
+   "k": 0.6849
+  },
+  "nhl:prop": {
+   "n": 14,
+   "w": 8,
+   "hit": 0.5714,
+   "model": 0.5838,
+   "be": 0.5077,
+   "k": 0.9801
+  },
+  "ncaab:line": {
+   "n": 1,
+   "w": 1,
+   "hit": 1,
+   "model": 0.5643,
+   "be": 0.5349,
+   "k": 1
+  }
+ }
+}
