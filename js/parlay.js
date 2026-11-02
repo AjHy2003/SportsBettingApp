@@ -120,9 +120,43 @@ const GRADE_WEIGHT = { A: 1, B: 0.85, C: 0.6 };
 // The market moving toward a pick is a small vote of confidence; away, a small knock.
 export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0) * (l.move?.toward ? 1.1 : l.move?.against ? 0.9 : 1);
 
-// Books post TD/INT-style lines (under 2.5) at lopsided prices, so a missing price
-// can't be assumed to be -110 there.
-export const usableLeg = (l) => (l.priced !== false || l.kind !== "prop" || l.line >= 2.5) && !l.questionable;
+// A prop without real DraftKings prices (all NFL and college football props come that
+// way) was judged at an assumed -110 against a 50/50 market. Those went 15-31, so they're
+// research only: never a pick, ticket leg or moonshot leg.
+export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l.questionable;
+
+// ---------- learning from results ----------
+const GRADE_ORDER = ["A", "B", "C", "PASS"];
+export const gradeFromEdge = (e) => (e >= 0.08 ? "A" : e >= 0.05 ? "B" : e >= 0.025 ? "C" : "PASS");
+const worse = (a, b) => GRADE_ORDER[Math.max(GRADE_ORDER.indexOf(a), GRADE_ORDER.indexOf(b))];
+export const learnGroup = (l) => `${l.league}:${l.kind === "prop" ? "prop" : "line"}`;
+
+// How much of the model's claimed edge actually showed up in graded picks, per league and
+// bet type: k = (hit rate - break-even) / (model's chance - break-even), pulled toward 1
+// by a prior worth 100 picks until results pile up, and never above 1.
+export function edgeShrink(picks, prior = 100) {
+  const groups = {};
+  for (const p of picks.filter((x) => x.result === "W" || x.result === "L")) {
+    const g = (groups[learnGroup(p)] ||= { n: 0, w: 0, model: 0, be: 0 });
+    g.n++; if (p.result === "W") g.w++;
+    g.model += p.praw ?? p.prob; g.be += impliedProb(p.odds ?? -110);
+  }
+  for (const g of Object.values(groups)) {
+    const hit = g.w / g.n, model = g.model / g.n, be = g.be / g.n;
+    const raw = model - be > 0.01 ? (hit - be) / (model - be) : 1;
+    g.k = Math.min(1, (g.n * Math.max(0, Math.min(1.2, raw)) + prior) / (g.n + prior));
+    Object.assign(g, { hit, model, be });
+  }
+  return groups;
+}
+
+// A leg's chance after keeping only k of its edge, and its grade (never raised).
+export function shrinkLeg(prob, odds, grade, k) {
+  if (!(k < 0.999)) return { prob, grade };
+  const imp = impliedProb(odds ?? -110);
+  const p = imp + k * (prob - imp);
+  return { prob: p, grade: GRADE_ORDER.includes(grade) && grade !== "PASS" ? worse(grade, gradeFromEdge(p - imp)) : grade };
+}
 
 // Top picks: graded legs with real edge, one per player, at most two per game.
 export function choosePicks(legs, max = 15, minEdge = 0.02) {

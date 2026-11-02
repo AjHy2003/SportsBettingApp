@@ -43,7 +43,7 @@ const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
 const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
-const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg } = await import("../js/parlay.js");
+const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg, edgeShrink, shrinkLeg, learnGroup } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
 const { propMove, gameMove } = await import("../js/movement.js");
 const { propLadder, gameLadder } = await import("../js/reprice.js");
@@ -453,18 +453,30 @@ for (const l of legs) {
 const topStories = ["nba", "nfl", "ncaaf", "ncaab"].flatMap((id) => (news.get(id) || []).filter((a) => isStory(a) && within(a, 24)).slice(0, 3).map((a) => ({ league: id, headline: a.headline, url: a.url, published: a.published })));
 console.log(`news: ${[...news.values()].reduce((s, x) => s + x.length, 0)} articles, ${legs.filter((l) => l.news).length} legs with a related story`);
 
-const picks = choosePicks(legs);
-
 const history = loadHistory();
-const snapshots = snapshotLines(history, legs);
 const graded = await gradePending(history);
 for (const p of history.picks) if (p.result && p.close && !p.clv) p.clv = clvOf(p);
+
+// Learn from results: keep only the share of each league's claimed edge that has shown
+// up in graded picks, and re-grade (never up). The live re-check applies the same k.
+const learn = edgeShrink(history.picks);
+for (const l of [...legs, ...alts]) {
+  const k = learn[learnGroup(l)]?.k;
+  if (!(k < 0.999)) continue;
+  const s = shrinkLeg(l.prob, l.odds, l.grade, k);
+  l.praw = l.prob; l.k = Number(k.toFixed(4));
+  l.prob = s.prob; l.edge = s.prob - impliedProb(l.odds ?? -110); l.ev = s.prob * decimalOdds(l.odds ?? -110) - 1; l.grade = s.grade;
+}
+console.log(`learning: ${Object.entries(learn).map(([g, x]) => `${g} ${x.w}-${x.n - x.w} k=${x.k.toFixed(2)}`).join(", ") || "no graded picks yet"}`);
+
+const picks = choosePicks(legs);
+const snapshots = snapshotLines(history, legs);
 const known = new Set(history.picks.map((p) => p.id));
 const issued = new Date().toISOString();
 for (const p of picks) {
   if (known.has(p.id)) continue;
   history.picks.push({ id: p.id, issued, start: p.start, league: p.league, eventId: p.eventId, matchup: p.matchup, kind: p.kind, marketKey: p.marketKey, market: p.market,
-    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, result: null });
+    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), praw: p.praw != null ? Number(p.praw.toFixed(4)) : undefined, edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, result: null });
 }
 history.picks = history.picks.filter((p) => now - new Date(p.start) < 400 * 864e5);
 history.updated = issued;
@@ -480,7 +492,9 @@ const weekdayOf = (l) => new Intl.DateTimeFormat("en-US", { timeZone: "America/N
 const upcomingDays = [...new Set(legs.filter((l) => new Date(l.start) > now).map(dayOf))].sort();
 function parlayFor(ids, n) {
   for (const d of upcomingDays) {
-    const pool = legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now && dayOf(l) === d);
+    const all = legs.filter((l) => l.lean && ids.includes(l.league) && l.grade !== "PASS" && new Date(l.start) > now && dayOf(l) === d);
+    // Grade A legs first (the grade that has been hitting); all graded legs if A can't fill it.
+    const pool = bestParlay(all.filter((l) => l.grade === "A"), n) ? all.filter((l) => l.grade === "A") : all;
     const keys = [...new Set(pool.map((l) => l.gameKey))];
     const p = bestParlay(pool, n) || keys.map((k) => bestSameGame(pool, k, n)).filter((x) => x && x.ev > 0).sort((a, b) => b.ev - a.ev)[0];
     if (p) return { ...p, day: d, sgp: new Set(p.legs.map((l) => l.gameKey)).size === 1 || undefined };
@@ -521,6 +535,7 @@ const today = {
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
   topStories,
   record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded, clv: clvSummary(history), calibration: calibration(history), snapshots },
+  learn: Object.fromEntries(Object.entries(learn).map(([g, x]) => [g, { n: x.n, w: x.w, hit: Number(x.hit.toFixed(4)), model: Number(x.model.toFixed(4)), be: Number(x.be.toFixed(4)), k: Number(x.k.toFixed(4)) }])),
 };
 const outDir = path.join(SITE, "data", "picks");
 fs.mkdirSync(outDir, { recursive: true });
@@ -532,7 +547,10 @@ fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
 const todayPicks = picks.filter((p) => dayOf(p) === todayET), laterPicks = picks.filter((p) => dayOf(p) !== todayET);
 const short = (l) => `${dayOf(l) === todayET ? "" : `${weekdayOf(l)} · `}${l.grade} · ${l.label}${l.kind === "prop" ? "" : ` (${l.matchup})`} ${fmtOdds(l.odds)}`;
 const counts = ["A", "B"].map((g) => `${todayPicks.filter((p) => p.grade === g).length} ${g}`).join(", ");
-const lines = [...todayPicks.slice(0, 6), ...laterPicks.slice(0, Math.max(0, 4 - todayPicks.length))].map(short);
+// Lead with grade A when there are enough of them.
+const todayA = todayPicks.filter((p) => p.grade === "A");
+const lead = todayA.length >= 3 ? todayA : todayPicks;
+const lines = [...lead.slice(0, 6), ...laterPicks.slice(0, Math.max(0, 4 - lead.length))].map(short);
 const parlayLine = (icon, f) => `${icon} ${f.legs.length}-leg ${f.sgp ? `same-game parlay (${f.legs[0].matchup})` : "parlay"}${f.day === todayET ? "" : ` for ${weekdayOf(f.legs[0])}`} ${fmtOdds(f.american)} (${pctTxt(f.prob)} to hit)`;
 if (featured.basketball) lines.push(parlayLine("🏀", featured.basketball));
 if (featured.football) lines.push(parlayLine("🏈", featured.football));

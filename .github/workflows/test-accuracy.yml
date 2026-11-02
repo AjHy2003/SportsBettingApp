@@ -1,0 +1,83 @@
+name: test-accuracy
+# Temporary: probability ladders in the picks file, re-pricing consistency, and the live
+# re-check in the browser, on the claude/accuracy branch. Sends nothing anywhere.
+on:
+  push:
+    branches: ["claude/accuracy"]
+    paths-ignore: ["e2e-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Build data
+        run: python pipeline/build.py --out _site/data --cache cache > build.log 2>&1
+      - name: Daily picks
+        run: |
+          mkdir -p /tmp/hist e2e-out
+          git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/hist/history.json || true
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log | tail -5
+      - name: Re-pricing at the posted lines must reproduce the posted picks
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const { repriceProp, repriceGame } = await import("./js/reprice.js");
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const size = fs.statSync("_site/data/picks/today.json").size;
+            let n = 0, bad = 0, maxDp = 0, gradeDiff = [];
+            for (const l of t.legs.filter((x) => x.kind === "prop" && x.rp)) {
+              const r = repriceProp(l, { line: l.book.line, over: l.book.over, under: l.book.under });
+              n++; const dp = Math.abs(r.prob - l.prob); maxDp = Math.max(maxDp, dp);
+              if (dp > 0.002 || r.grade !== l.grade) { bad++; if (gradeDiff.length < 8) gradeDiff.push(`${l.label} ${l.grade}->${r.grade} ${l.prob.toFixed(4)}->${r.prob.toFixed(4)}`); }
+            }
+            let gn = 0, gbad = 0, gmax = 0;
+            for (const g of t.games.filter((x) => x.rep)) {
+              const legs = t.legs.filter((l) => l.gameKey === g.key && l.kind !== "prop");
+              const sp = legs.find((l) => l.kind === "spread" && l.side === "HOME"), ov = legs.find((l) => l.kind === "total" && l.side === "OVER");
+              const spA = legs.find((l) => l.kind === "spread" && l.side === "AWAY"), un = legs.find((l) => l.kind === "total" && l.side === "UNDER");
+              const mh = legs.find((l) => l.kind === "ml" && l.side === "HOME"), ma = legs.find((l) => l.kind === "ml" && l.side === "AWAY");
+              const o = { spreadHome: sp?.line, spreadHomeOdds: sp?.odds, spreadAwayOdds: spA?.odds, total: ov?.line, overOdds: ov?.odds, underOdds: un?.odds, mlHome: mh?.odds, mlAway: ma?.odds };
+              for (const [id, r] of repriceGame(g, legs, o)) {
+                const l = legs.find((x) => x.id === id); gn++;
+                const dp = Math.abs(r.prob - l.prob); gmax = Math.max(gmax, dp);
+                if (dp > 0.002 || r.grade !== l.grade || r.lean !== l.lean) { gbad++; if (gradeDiff.length < 16) gradeDiff.push(`${l.label} ${l.grade}->${r.grade} lean ${l.lean}->${r.lean} ${l.prob.toFixed(4)}->${r.prob.toFixed(4)}`); }
+              }
+            }
+            const out = `today.json ${(size / 1e6).toFixed(2)} MB · props re-priced ${n}, mismatches ${bad}, max prob diff ${maxDp.toFixed(5)} · game legs ${gn}, mismatches ${gbad}, max diff ${gmax.toFixed(5)}\n${gradeDiff.join("\n")}`;
+            console.log(out); fs.writeFileSync("e2e-out/reprice-check.txt", out);
+          '
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Commit results
+        if: always()
+        run: |
+          mkdir -p e2e-out && cp picks.log e2e-out/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/accuracy || true
+          git push -q origin HEAD:claude/accuracy
