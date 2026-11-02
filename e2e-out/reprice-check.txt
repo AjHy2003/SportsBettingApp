@@ -1,1 +1,1 @@
-today.json 2.83 MB · props re-priced 1398, mismatches 0, max prob diff 0.00007 · game legs 844, mismatches 0, max diff 0.00006
+today.json 2.84 MB · props re-priced 1398, mismatches 0, max prob diff 0.00007 · game legs 844, mismatches 0, max diff 0.00006
