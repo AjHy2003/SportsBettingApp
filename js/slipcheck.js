@@ -16,7 +16,7 @@ const WORDS = {
     [/\bstocks\b/, ["stl", "blk"]], [/\b(3s|3pm|3pt|threes?|three pointers?|3 pointers?|3-pointers?|made threes?)\b/, ["fg3m"]],
     [/\b(points?|pts)\b/, ["pts"]], [/\b(rebounds?|rebs?|boards?)\b/, ["reb"]], [/\b(assists?|asts?|dimes?)\b/, ["ast"]],
     [/\b(steals?|stl)\b/, ["stl"]], [/\b(blocks?|blks?)\b/, ["blk"]], [/\b(turnovers?|tov)\b/, ["tov"]]],
-  hockey: [[/\b(shots on goal|sog|shots)\b/, ["sog"]], [/\b(goals?)\b/, ["g"]], [/\b(assists?)\b/, ["a"]], [/\b(points?|pts)\b/, ["pts"]], [/\b(saves?)\b/, ["saves"]], [/\b(blocked shots?|blocks?)\b/, ["blk"]], [/\bhits\b/, ["hits"]]],
+  hockey: [[/\b(blocked shots?|blocks?|blk)\b/, ["blk"]], [/\b(shots on goal|sog|shots)\b/, ["sog"]], [/\b(goals?)\b/, ["g"]], [/\b(assists?)\b/, ["a"]], [/\b(points?|pts)\b/, ["pts"]], [/\b(saves?)\b/, ["saves"]], [/\bhits\b/, ["hits"]]],
   football: [[/pass(ing)? ?\+ ?rush(ing)?/, ["pass_rush_yds"]], [/rush(ing)? ?\+ ?rec(eiving)?/, ["rush_rec_yds"]], [/pass(ing)? (yds|yards)/, ["pass_yds"]], [/rush(ing)? (yds|yards)/, ["rush_yds"]],
     [/rec(eiving)? (yds|yards)/, ["rec_yds"]], [/\b(receptions?|catches|recs?)\b/, ["rec"]], [/\b(completions?|cmp)\b/, ["pass_cmp"]], [/pass(ing)? (attempts|att)/, ["pass_att"]],
     [/\b(carries|rush(ing)? (attempts|att))\b/, ["rush_att"]], [/pass(ing)? (tds?|touchdowns?)/, ["pass_td"]], [/\b(interceptions?|ints?)\b/, ["pass_int"]]],
@@ -136,7 +136,9 @@ export function checkLine(raw, idx) {
     const side = n.alt != null ? "OVER" : n.side;
     const line = n.alt != null ? n.alt - 0.5 : n.line;
     if (!side || line == null) return { ...base, status: "unknown", why: `Found ${leg.player} ${leg.market}; add over/under and the line (e.g. "under 4.5").` };
-    const r = priceSide(leg, side, line, n.odds);
+    // At DraftKings' own line, its price for the other side beats an assumed one.
+    const other = leg.book && leg.book.line === line ? (side === "OVER" ? leg.book.under : leg.book.over) : null;
+    const r = priceSide(leg, side, line, n.odds, other);
     if (!r) return { ...base, status: "unknown", why: "No model read for this one." };
     const label = n.alt != null ? `${leg.player} ${n.alt}+ ${leg.market}` : `${leg.player} ${side === "OVER" ? "Over" : "Under"} ${line} ${leg.market}`;
     return { ...base, ...r, kind: "prop", label, leg, assumedOdds: n.odds == null, dk: leg.book, appPick: leg.lean && leg.grade !== "PASS" ? leg : null,
@@ -170,7 +172,7 @@ export function checkLine(raw, idx) {
 export function verdictOf(c) {
   if (c.status === "unknown") return { tag: "unknown", icon: "❓", text: c.why };
   const fair = M.toAmerican(c.prob);
-  if (c.lean && c.lean !== c.side && c.lean !== "same" && c.grade === "PASS") return { tag: "other", icon: "🔁", text: `The model likes the other side here. This side: ${Math.round(c.prob * 100)}% vs ${Math.round(M.impliedProb(c.odds) * 100)}% needed.` };
+  if (c.lean && c.lean !== c.side && c.lean !== "same" && c.grade === "PASS" && (c.kind !== "prop" || ["A", "B", "C"].includes(c.otherGrade))) return { tag: "other", icon: "🔁", text: `The model likes the other side here. This side: ${Math.round(c.prob * 100)}% vs ${Math.round(M.impliedProb(c.odds) * 100)}% needed.` };
   if (c.prob < 0.2) return { tag: "long", icon: "🎰", text: `Long shot: about 1 in ${Math.round(1 / Math.max(c.prob, 0.001))}${c.edge > 0 ? ", priced a little better than that" : `, and the price needs 1 in ${Math.round(1 / M.impliedProb(c.odds))}`}.` };
   if (c.grade === "A" || c.grade === "B") return { tag: "keep", icon: c.grade === "A" && c.edge >= 0.1 ? "⭐" : "✅", text: `Keep: ${Math.round(c.prob * 100)}% to hit vs ${Math.round(M.impliedProb(c.odds) * 100)}% the price needs (grade ${c.grade}).` };
   if (c.grade === "C") return { tag: "thin", icon: "⚠️", text: `Thin edge: ${Math.round(c.prob * 100)}% vs ${Math.round(M.impliedProb(c.odds) * 100)}% needed (grade C). Fine straight, risky in a parlay.` };

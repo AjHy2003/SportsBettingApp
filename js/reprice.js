@@ -81,7 +81,7 @@ export const otherSide = (odds) => M.toAmerican(Math.min(0.97, Math.max(0.03, 1.
 
 // One side of a prop at any line and price (the slip checker). Outside the ladder it falls
 // back to a normal tail around the projection, flagged approx.
-export function priceSide(leg, side, line, odds) {
+export function priceSide(leg, side, line, odds, otherOdds = null) {
   const rp = leg?.rp;
   if (!rp || line == null) return null;
   let so = ladderAt(rp.lo, rp.st, rp.so, line), push = 0, approx = false;
@@ -91,11 +91,13 @@ export function priceSide(leg, side, line, odds) {
     so = n.over / Math.max(1e-9, n.over + n.under);
     approx = true;
   } else if (rp.pu) push = ladderAt(rp.lo, rp.st, rp.pu, line) ?? 0;
-  const mine = odds ?? -110, theirs = otherSide(mine);
+  const mine = odds ?? -110, theirs = otherOdds ?? otherSide(mine);
   const f = side === "OVER" ? { line, over: mine, under: theirs } : { line, over: theirs, under: mine };
   const { final, v } = propCore(rp, f, so, push);
   const s = shrinkLeg(side === "OVER" ? final : 1 - final, mine, v.lean === side ? v.grade : "PASS", leg.k);
-  return { side, line, odds: mine, prob: s.prob, edge: s.prob - M.impliedProb(mine), ev: s.prob * decimalOdds(mine) - 1, grade: capFlags(leg, s.grade), lean: v.lean, approx };
+  // The other side's grade, so "the model likes the other side" only shows when it has an edge.
+  const o = v.lean !== side ? shrinkLeg(side === "OVER" ? 1 - final : final, theirs, v.grade, leg.k) : null;
+  return { side, line, odds: mine, prob: s.prob, edge: s.prob - M.impliedProb(mine), ev: s.prob * decimalOdds(mine) - 1, grade: capFlags(leg, s.grade), lean: v.lean, otherGrade: o ? capFlags(leg, o.grade) : null, approx };
 }
 
 // One side of a game market at any number and price (the slip checker): i = 0 home/over, 1 away/under.
