@@ -1,0 +1,356 @@
+{
+ "issues": [
+  {
+   "area": "props",
+   "msg": "nfl: names map to markets the model doesn't have",
+   "ex": [
+    "ast"
+   ]
+  },
+  {
+   "area": "lines",
+   "msg": "nhl DET @ FLA: details \"FLA -185\" vs spreadHome -1.5",
+   "ex": null
+  },
+  {
+   "area": "lines",
+   "msg": "nhl VGK @ BOS: details \"VGK -118\" vs spreadHome 1.5",
+   "ex": null
+  },
+  {
+   "area": "lines",
+   "msg": "nhl COL @ CHI: details \"COL -230\" vs spreadHome 1.5",
+   "ex": null
+  },
+  {
+   "area": "lines",
+   "msg": "nhl CGY @ SJ: details \"SJ -125\" vs spreadHome -1.5",
+   "ex": null
+  },
+  {
+   "area": "propLines",
+   "msg": "nhl:a: lines run 1.67x the projections (market may be mislabeled)",
+   "ex": null
+  }
+ ],
+ "props": {
+  "nba": {
+   "events": 5,
+   "mapped": [
+    "Team Total 3-Pointers Made -> fg3m",
+    "Total 3-Point Field Goals -> fg3m",
+    "Total Assists -> ast",
+    "Total Assists and Rebounds -> ra",
+    "Total Blocks -> blk",
+    "Total Points -> pts",
+    "Total Points and Assists -> pa",
+    "Total Points and Rebounds -> pr",
+    "Total Points, Rebounds, and Assists -> pra",
+    "Total Rebounds -> reb",
+    "Total Steals -> stl",
+    "Total Steals and Blocks -> sb"
+   ],
+   "skipped": [
+    "1st Half Moneyline",
+    "1st Half Spread",
+    "1st Half Total",
+    "1st Quarter Moneyline",
+    "1st Quarter Spread",
+    "1st Quarter Total",
+    "1st Team FG Scorer",
+    "1st Team FG Scorer Exact",
+    "2nd Half Moneyline",
+    "2nd Half Spread",
+    "2nd Half Total",
+    "2nd Quarter Moneyline",
+    "2nd Quarter Spread",
+    "2nd Quarter Total",
+    "3-Point Field Goals Milestones",
+    "3rd Quarter Moneyline",
+    "3rd Quarter Spread",
+    "3rd Quarter Total",
+    "4th Quarter Moneyline",
+    "4th Quarter Spread",
+    "4th Quarter Total",
+    "Assists Milestones",
+    "Assists Milestones - 1st Quarter",
+    "Blocks Milestones",
+    "First Basket",
+    "First Team to Score",
+    "Points + Assists + Rebounds Milestones",
+    "Points + Assists Milestones",
+    "Points + Rebounds Milestones",
+    "Points Milestones",
+    "Points Milestones - 1st Quarter",
+    "Rebounds + Assists Milestones",
+    "Rebounds Milestones",
+    "Steals + Blocks Milestones",
+    "Steals Milestones",
+    "Team 1st Half Total Points",
+    "Team Total Points",
+    "Team Total Points - 1st Quarter",
+    "Team Total Points - 2nd Half",
+    "Team Total Points - 2nd Quarter",
+    "To Record a Double Double",
+    "To Record a Triple Double",
+    "Will There Be Overtime?"
+   ],
+   "collisions": []
+  },
+  "ncaab": {
+   "events": 5,
+   "mapped": [],
+   "skipped": [],
+   "collisions": []
+  },
+  "nhl": {
+   "events": 4,
+   "mapped": [
+    "Total Assists -> a",
+    "Total Blocked Shots -> blk",
+    "Total Points -> pts",
+    "Total Saves -> saves",
+    "Total Shots on Goal -> sog"
+   ],
+   "skipped": [
+    "1st Period Moneyline",
+    "1st Period Spread",
+    "1st Period Total Goals",
+    "2nd Period Moneyline",
+    "2nd Period Spread",
+    "2nd Period Total Goals",
+    "3rd Period Moneyline",
+    "3rd Period Spread",
+    "3rd Period Total Goals",
+    "Anytime Goalscorer",
+    "Assists Milestones",
+    "Blocked Shots Milestones",
+    "Both Teams To Score",
+    "First Goalscorer",
+    "First Team Goalscorer",
+    "Goalkeeper Saves Milestones",
+    "Goals Milestones",
+    "Last Goalscorer",
+    "Points Milestones",
+    "Powerplay Points Milestones",
+    "Shots on Goal Milestones",
+    "Team Total Goals (Excl OT)",
+    "To Score 2+ Goals",
+    "To Score 3+ Goals",
+    "Will There Be Overtime?"
+   ],
+   "collisions": []
+  },
+  "nfl": {
+   "events": 1,
+   "mapped": [
+    "Total Assists (incl. overtime) -> ast",
+    "Total Carries (incl. overtime) -> rush_att",
+    "Total Pass Completions (incl. overtime) -> pass_cmp",
+    "Total Passing Attempts (incl. overtime) -> pass_att",
+    "Total Passing Interceptions (incl. overtime) -> pass_int",
+    "Total Passing Plus Rushing Yards (incl. overtime) -> pass_rush_yds",
+    "Total Passing Touchdowns (incl. overtime) -> pass_td",
+    "Total Passing Yards (incl. overtime) -> pass_yds",
+    "Total Receiving Yards (incl. overtime) -> rec_yds",
+    "Total Receptions (incl. overtime) -> rec",
+    "Total Rushing Plus Receiving Yards (incl. overtime) -> rush_rec_yds",
+    "Total Rushing Yards (incl. overtime) -> rush_yds"
+   ],
+   "skipped": [
+    "1st Half Moneyline",
+    "1st Half Spread",
+    "1st Half Total",
+    "1st Half Total Passing Yards",
+    "1st Half Total Receiving Yards",
+    "1st Half Total Rushing Yards",
+    "1st Half Touchdown Scorer",
+    "1st Quarter Moneyline",
+    "1st Quarter Spread",
+    "1st Quarter Total",
+    "1st Quarter Total Passing Yards",
+    "1st Quarter Total Receiving Yards",
+    "1st Quarter Total Rushing Yards",
+    "1st Quarter Touchdown Scorer",
+    "2nd Quarter Moneyline",
+    "2nd Quarter Spread",
+    "2nd Quarter Total",
+    "3rd Quarter Moneyline",
+    "3rd Quarter Spread",
+    "3rd Quarter Total",
+    "4th Quarter Moneyline",
+    "4th Quarter Spread",
+    "4th Quarter Total",
+    "Anytime Touchdown Scorer",
+    "Assists Milestones (Football)",
+    "Field Goals Made Milestones",
+    "First Team Touchdown Scorer",
+    "First Touchdown Scorer",
+    "Interceptions Thrown Milestones",
+    "Kicking Points Milestones",
+    "Last Touchdown Scorer",
+    "Longest Passing Completion (incl. overtime)",
+    "Longest Reception (incl. overtime)",
+    "Longest Rush (incl. overtime)",
+    "Passing + Rushing Yards Milestones",
+    "Passing Attempts Milestones",
+    "Passing Completions Milestones",
+    "Passing Touchdown Milestones",
+    "Passing Yards Milestones",
+    "Passing Yards Milestones - 1st Half",
+    "Passing Yards Milestones - 1st Quarter",
+    "Player to score 2 or more touchdowns",
+    "Player to score 3 or more touchdowns",
+    "Receiving Yards Milestones",
+    "Receiving Yards Milestones - 1st Half",
+    "Receiving Yards Milestones - 1st Quarter",
+    "Receptions Milestones",
+    "Rushing + Receiving Yards Milestones",
+    "Rushing Attempts Milestones",
+    "Rushing Yards Milestones",
+    "Rushing Yards Milestones - 1st Half",
+    "Rushing Yards Milestones - 1st Quarter",
+    "Sacks Milestones",
+    "Tackles + Assists Milestones",
+    "Tackles Milestones",
+    "Team 1st Half Total Points",
+    "Team Total Points",
+    "Team Total Touchdowns",
+    "Total Extra Points Made (incl. overtime)",
+    "Total Field Goals Made (incl. overtime)",
+    "Total Kicking Points (incl. overtime)",
+    "Total Sacks (incl. overtime)",
+    "Total Tackles (incl. overtime)",
+    "Total Tackles Plus Assists (incl. overtime)",
+    "Will There Be Overtime?"
+   ],
+   "collisions": []
+  },
+  "ncaaf": {
+   "events": 5,
+   "mapped": [],
+   "skipped": [],
+   "collisions": []
+  }
+ },
+ "lines": {
+  "spreadsChecked": 139,
+  "totalsWithBothPrices": "278/278"
+ },
+ "grading": {
+  "checked": 60,
+  "agree": 60,
+  "disagree": 0,
+  "diffs": []
+ },
+ "propLines": {
+  "nba:pts": {
+   "n": 201,
+   "medianLineOverProjection": 0.98
+  },
+  "nba:ast": {
+   "n": 147,
+   "medianLineOverProjection": 1
+  },
+  "nba:reb": {
+   "n": 187,
+   "medianLineOverProjection": 0.972
+  },
+  "nba:fg3m": {
+   "n": 157,
+   "medianLineOverProjection": 0.926
+  },
+  "nba:stl": {
+   "n": 63,
+   "medianLineOverProjection": 0.98
+  },
+  "nba:pa": {
+   "n": 152,
+   "medianLineOverProjection": 1.011
+  },
+  "nba:pr": {
+   "n": 187,
+   "medianLineOverProjection": 1.004
+  },
+  "nba:ra": {
+   "n": 149,
+   "medianLineOverProjection": 0.998
+  },
+  "nba:pra": {
+   "n": 153,
+   "medianLineOverProjection": 1.016
+  },
+  "nba:blk": {
+   "n": 32,
+   "medianLineOverProjection": 1.071
+  },
+  "nba:sb": {
+   "n": 17,
+   "medianLineOverProjection": 0.947
+  },
+  "nfl:pass_yds": {
+   "n": 2,
+   "medianLineOverProjection": 1.097
+  },
+  "nfl:pass_cmp": {
+   "n": 2,
+   "medianLineOverProjection": 1.08
+  },
+  "nfl:pass_td": {
+   "n": 2,
+   "medianLineOverProjection": 1.163
+  },
+  "nfl:rush_yds": {
+   "n": 8,
+   "medianLineOverProjection": 1.025
+  },
+  "nfl:pass_int": {
+   "n": 2,
+   "medianLineOverProjection": 0.877
+  },
+  "nfl:pass_att": {
+   "n": 2,
+   "medianLineOverProjection": 1.177
+  },
+  "nfl:pass_rush_yds": {
+   "n": 2,
+   "medianLineOverProjection": 1.132
+  },
+  "nfl:rush_att": {
+   "n": 4,
+   "medianLineOverProjection": 0.963
+  },
+  "nfl:rec_yds": {
+   "n": 11,
+   "medianLineOverProjection": 0.997
+  },
+  "nfl:rec": {
+   "n": 11,
+   "medianLineOverProjection": 1.182
+  },
+  "nfl:rush_rec_yds": {
+   "n": 4,
+   "medianLineOverProjection": 1.117
+  },
+  "nhl:pts": {
+   "n": 85,
+   "medianLineOverProjection": 0.909
+  },
+  "nhl:a": {
+   "n": 88,
+   "medianLineOverProjection": 1.667
+  },
+  "nhl:sog": {
+   "n": 65,
+   "medianLineOverProjection": 0.904
+  },
+  "nhl:blk": {
+   "n": 8,
+   "medianLineOverProjection": 1.064
+  },
+  "nhl:saves": {
+   "n": 6,
+   "medianLineOverProjection": 1.032
+  }
+ }
+}
