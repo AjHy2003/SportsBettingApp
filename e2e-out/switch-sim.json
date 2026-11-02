@@ -1,0 +1,39 @@
+{
+ "n": 349,
+ "line moves 1 step(s) against": {
+  "kept": 201,
+  "switched": 17,
+  "dropped": 131,
+  "far": 0,
+  "examples": [
+   "Grayson Allen Over 2.5 3-Pointers Made C -> Grayson Allen Under 3 3-Pointers Made C (55%)",
+   "Norman Powell Under 2.5 Rebounds C -> Norman Powell Over 2 Rebounds B (58%)",
+   "Daniel Gafford Over 1.5 Blocks B -> Daniel Gafford Under 2 Blocks A (62%)",
+   "Trey Murphy III Under 1.5 Steals + Blocks C -> Trey Murphy III Over 1 Steals + Blocks B (60%)"
+  ]
+ },
+ "line moves 2 step(s) against": {
+  "kept": 94,
+  "switched": 41,
+  "dropped": 214,
+  "far": 0,
+  "examples": [
+   "Jaylin Williams Under 1.5 3-Pointers Made C -> Jaylin Williams Over 0.5 3-Pointers Made C (57%)",
+   "Aday Mara Over 1.5 Blocks C -> Aday Mara Under 2.5 Blocks C (56%)",
+   "Jay Huff Under 1.5 3-Pointers Made C -> Jay Huff Over 0.5 3-Pointers Made C (57%)",
+   "Grayson Allen Over 2.5 3-Pointers Made C -> Grayson Allen Under 3.5 3-Pointers Made B (59%)"
+  ]
+ },
+ "line moves 3 step(s) against": {
+  "kept": 35,
+  "switched": 59,
+  "dropped": 255,
+  "far": 0,
+  "examples": [
+   "Donovan Mitchell Under 4.5 Assists C -> Donovan Mitchell Over 3 Assists A (62%)",
+   "Isaiah Hartenstein Under 13.5 Pts + Ast C -> Isaiah Hartenstein Over 10.5 Pts + Ast C (55%)",
+   "Isaiah Hartenstein Under 12.5 Reb + Ast C -> Isaiah Hartenstein Over 9.5 Reb + Ast C (57%)",
+   "Jaylin Williams Under 2.5 Assists C -> Jaylin Williams Over 1 Assists C (62%)"
+  ]
+ }
+}
