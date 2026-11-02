@@ -56,7 +56,7 @@ export function renderPicks(ctx, q = {}) {
   function shell() {
     app.innerHTML = `
       <div class="crumbs"><a href="#/">Home</a> › My bets</div>
-      <div class="row"><h1>★ My bets</h1><span class="spacer"></span></div>
+      <div class="row"><h1>★ My bets</h1><span class="spacer"></span><a class="btn ghost sm" href="#/check">🔎 Check a slip</a></div>
       <div data-acct-status style="margin-bottom:12px">${accountBanner()}</div>
       <div class="tabs" id="b-tabs"><button data-t="live">📡 Live & today</button><button data-t="history">History</button></div>
       <div id="b-body"></div>`;

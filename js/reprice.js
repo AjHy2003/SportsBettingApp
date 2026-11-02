@@ -63,12 +63,9 @@ const capFlags = (leg, grade) => {
 // when the line moved past the ladder (likely news; wait for the next full scan). When the
 // line moves through the model's number, the pick switches sides (Under 5.5 -> Over 4.5)
 // if the other side now has a graded edge; otherwise it stays on its side as a pass.
-export function repriceProp(leg, f) {
-  const rp = leg.rp;
-  if (!rp || !f || f.line == null) return null;
-  const so = ladderAt(rp.lo, rp.st, rp.so, f.line);
-  if (so == null) return { far: true, line: f.line };
-  const push = rp.pu ? ladderAt(rp.lo, rp.st, rp.pu, f.line) ?? 0 : 0;
+// The model's last step for a prop at a line and prices: stats chance blended with the
+// market, graded, with the sanity checks.
+function propCore(rp, f, so, push) {
   const priced = f.over != null && f.under != null;
   const oO = f.over ?? -110, oU = f.under ?? -110;
   const mkt = priced ? M.noVig(oO, oU)?.a ?? 0.5 : 0.5;
@@ -76,6 +73,59 @@ export function repriceProp(leg, f) {
   const pO = final * (1 - push), pU = (1 - final) * (1 - push);
   const v = M.makeVerdict(pO, pU, push, oO, oU, M.expectedValue(pO, push, oO), M.expectedValue(pU, push, oU), rp.n);
   M.propGuards(v, { marketWeight: rp.mw, projection: rp.pj, sdProj: rp.sd, line: f.line, statsOver: so, marketProb: mkt, last5: rp.l5 });
+  return { priced, oO, oU, final, v };
+}
+
+// The other side's price at a normal ~4.5% book hold, for when only one side is known.
+export const otherSide = (odds) => M.toAmerican(Math.min(0.97, Math.max(0.03, 1.045 - M.impliedProb(odds))));
+
+// One side of a prop at any line and price (the slip checker). Outside the ladder it falls
+// back to a normal tail around the projection, flagged approx.
+export function priceSide(leg, side, line, odds) {
+  const rp = leg?.rp;
+  if (!rp || line == null) return null;
+  let so = ladderAt(rp.lo, rp.st, rp.so, line), push = 0, approx = false;
+  if (so == null) {
+    const n = M.normalProbs(line, rp.pj, Math.max(rp.sd, 0.5), true);
+    if (!n) return null;
+    so = n.over / Math.max(1e-9, n.over + n.under);
+    approx = true;
+  } else if (rp.pu) push = ladderAt(rp.lo, rp.st, rp.pu, line) ?? 0;
+  const mine = odds ?? -110, theirs = otherSide(mine);
+  const f = side === "OVER" ? { line, over: mine, under: theirs } : { line, over: theirs, under: mine };
+  const { final, v } = propCore(rp, f, so, push);
+  const s = shrinkLeg(side === "OVER" ? final : 1 - final, mine, v.lean === side ? v.grade : "PASS", leg.k);
+  return { side, line, odds: mine, prob: s.prob, edge: s.prob - M.impliedProb(mine), ev: s.prob * decimalOdds(mine) - 1, grade: capFlags(leg, s.grade), lean: v.lean, approx };
+}
+
+// One side of a game market at any number and price (the slip checker): i = 0 home/over, 1 away/under.
+export function priceGameSide(game, kind, i, line, odds, k) {
+  const rep = game?.rep;
+  if (!rep) return null;
+  let m = null, push = 0;
+  if (kind === "spread" && rep.sp) {
+    const lineA = i ? -line : line;
+    m = ladderAt(rep.sp.lo, rep.sp.st, rep.sp.pa, lineA);
+    if (rep.sp.pu) push = ladderAt(rep.sp.lo, rep.sp.st, rep.sp.pu, lineA) ?? 0;
+  } else if (kind === "total" && rep.tot) {
+    m = ladderAt(rep.tot.lo, rep.tot.st, rep.tot.pa, line);
+    if (rep.tot.pu) push = ladderAt(rep.tot.lo, rep.tot.st, rep.tot.pu, line) ?? 0;
+  } else if (kind === "ml") m = rep.ml ?? null;
+  if (m == null) return { far: true };
+  const mine = odds ?? -110, theirs = otherSide(mine);
+  const [oA, oB] = i ? [theirs, mine] : [mine, theirs];
+  const { v, fin } = priceLine(m, push, oA, oB, { wModel: rep.w, minGames: rep.mg, lineCap: rep.cap }, ["A", "B"]);
+  const s = shrinkLeg(i ? 1 - fin : fin, mine, v.lean === (i ? "B" : "A") ? v.grade : "PASS", k);
+  return { prob: s.prob, odds: mine, edge: s.prob - M.impliedProb(mine), ev: s.prob * decimalOdds(mine) - 1, grade: s.grade, sameSide: v.lean === (i ? "B" : "A") };
+}
+
+export function repriceProp(leg, f) {
+  const rp = leg.rp;
+  if (!rp || !f || f.line == null) return null;
+  const so = ladderAt(rp.lo, rp.st, rp.so, f.line);
+  if (so == null) return { far: true, line: f.line };
+  const push = rp.pu ? ladderAt(rp.lo, rp.st, rp.pu, f.line) ?? 0 : 0;
+  const { priced, oO, oU, final, v } = propCore(rp, f, so, push);
   // Same learned shrink as the full scan, then the same caps, on the side the model now leans.
   const sideFor = (side) => {
     const over = side === "OVER", odds = over ? oO : oU;
