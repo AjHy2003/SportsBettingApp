@@ -47,7 +47,7 @@ export async function renderToday(ctx, q) {
   const { app } = ctx;
   setTitle("Today's picks");
   app.innerHTML = loading("Loading today's picks…");
-  const [today, history] = await Promise.all([getData("data/picks/today.json"), getData("data/picks/history.json")]);
+  const [today, history, audit] = await Promise.all([getData("data/picks/today.json"), getData("data/picks/history.json"), getData("data/audit.json")]);
   if (!ctx.alive()) return;
 
   const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, aOnly: true, style: "prob", ...loadPrefs() };
@@ -428,14 +428,21 @@ export async function renderToday(ctx, q) {
   }
 
   // What the model has learned from its graded picks, per league and bet type.
+  // This morning's data audit: prop names, game lines, and grades vs box scores.
+  function auditLine() {
+    if (!audit?.grading) return "";
+    const n = audit.issues?.filter((i) => i.area !== "lines" || !/nhl/.test(i.msg)).length || 0;
+    return `<p class="small ${n ? "neg" : "muted"}" style="margin:8px 0 0">🔎 Data checks (this morning): ${audit.grading.agree}/${audit.grading.checked} recent grades match the official box scores · every DraftKings prop name mapped to one market · spreads and totals line up${n ? ` · <b>${n} issue${n === 1 ? "" : "s"} flagged</b>: ${esc(audit.issues.map((i) => i.msg).join("; ").slice(0, 300))}` : ""}.</p>`;
+  }
+
   function learnBlock() {
     const rows = Object.entries(today?.learn || {}).filter(([, x]) => x.n >= 5).sort((a, b) => b[1].n - a[1].n);
-    if (!rows.length) return "";
+    if (!rows.length) return auditLine();
     return `<h3 style="margin-top:14px">📏 Learning from results</h3>
       <p class="small muted" style="margin:0 0 6px">Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward "all of it" until there are enough results). Fewer, stronger picks where the model has been too confident.</p>
       <div class="table-wrap"><table><thead><tr><th>Picks</th><th class="r">Record</th><th class="r">Model said</th><th class="r">Hit</th><th class="r">Break-even</th><th class="r">Edges kept</th></tr></thead><tbody>
       ${rows.map(([g, x]) => { const [lg, kind] = g.split(":"); return `<tr><td>${esc(leagueName(lg))} ${kind === "prop" ? "props" : "game lines"}${lg === "nfl" || lg === "ncaaf" ? (kind === "prop" ? ` <span class="faint small">(research only now)</span>` : "") : ""}</td><td class="r">${x.w}-${x.n - x.w}</td><td class="r">${pct(x.model)}</td><td class="r ${x.hit >= x.be ? "pos" : "neg"}">${pct(x.hit)}</td><td class="r">${pct(x.be)}</td><td class="r"><b>${Math.round(x.k * 100)}%</b></td></tr>`; }).join("")}
-      </tbody></table></div>`;
+      </tbody></table></div>${auditLine()}`;
   }
 
   function renderRecord() {

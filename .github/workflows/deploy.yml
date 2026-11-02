@@ -60,6 +60,10 @@ jobs:
       - name: Daily picks
         continue-on-error: true
         run: node tools/daily-picks.mjs --site _site --history picks-data/history.json --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+      - name: Data audit (morning run)
+        continue-on-error: true
+        if: github.event.schedule == '23 9 * * *' || github.event_name == 'workflow_dispatch'
+        run: node tools/audit.mjs _site/data/picks/today.json picks-data/history.json _site/data/audit.json
       - name: Save pick history
         continue-on-error: true
         run: |
