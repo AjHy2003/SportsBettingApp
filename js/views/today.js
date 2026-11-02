@@ -380,7 +380,7 @@ export async function renderToday(ctx, q) {
     $("#t-sgp-game").onchange = (e) => { state.sgpGame = e.target.value || null; state.sgpLegs = null; renderSgp(); };
     if (!state.sgpGame) {
       // Featured: the model's best 3-leg same-game parlays from this morning's run.
-      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now && activeDays().days.includes(dayKey(legById.get(x.legs[0]).start))).slice(0, 5);
+      const feats = (today?.sgps || []).filter((x) => sportLeagues().includes(x.league) && x.legs.every((id) => legById.has(id)) && new Date(legById.get(x.legs[0]).start) > now && activeDays().days.includes(dayKey(legById.get(x.legs[0]).start)) && (!state.aOnly || x.legs.every((id) => legById.get(id).grade === "A"))).slice(0, 5);
       if (feats.length) {
         $("#t-sgp-body").innerHTML = `<p class="small muted" style="margin:0 0 6px">Featured today:</p>${feats.map((x, i) => `<div style="border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:8px">
           <div class="row" style="justify-content:space-between"><b>${esc(leagueName(x.league))} · ${esc(x.matchup)}</b><span>${M.fmtOdds(x.american)} · ${pct(x.prob, 1)} to hit</span></div>
