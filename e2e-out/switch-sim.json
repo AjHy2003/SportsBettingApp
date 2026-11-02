@@ -1,0 +1,39 @@
+{
+ "n": 259,
+ "line moves 1 step(s) against": {
+  "kept": 135,
+  "switched": 16,
+  "dropped": 108,
+  "far": 0,
+  "examples": [
+   "Sion James Over 2.5 Assists C -> Sion James Under 3 Assists C (56%)",
+   "Cooper Flagg Over 1.5 Steals C -> Cooper Flagg Under 2 Steals C (55%)",
+   "Cameron Boozer Over 0.5 Blocks C -> Cameron Boozer Under 1 Blocks A (61%)",
+   "Toumani Camara Over 1.5 Steals C -> Toumani Camara Under 2 Steals A (62%)"
+  ]
+ },
+ "line moves 2 step(s) against": {
+  "kept": 65,
+  "switched": 39,
+  "dropped": 155,
+  "far": 0,
+  "examples": [
+   "CJ McCollum Under 2.5 Rebounds C -> CJ McCollum Over 1.5 Rebounds C (57%)",
+   "Kelly Oubre Jr. Under 1.5 3-Pointers Made C -> Kelly Oubre Jr. Over 0.5 3-Pointers Made A (61%)",
+   "Luguentz Dort Under 1.5 3-Pointers Made B -> Luguentz Dort Over 0.5 3-Pointers Made A (63%)",
+   "Aday Mara Over 1.5 Blocks C -> Aday Mara Under 2.5 Blocks C (56%)"
+  ]
+ },
+ "line moves 3 step(s) against": {
+  "kept": 33,
+  "switched": 42,
+  "dropped": 184,
+  "far": 0,
+  "examples": [
+   "CJ McCollum Under 2.5 Rebounds C -> CJ McCollum Over 1 Rebounds C (68%)",
+   "Kelly Oubre Jr. Under 4.5 Rebounds C -> Kelly Oubre Jr. Over 3 Rebounds B (60%)",
+   "Nickeil Alexander-Walker Under 3.5 Rebounds C -> Nickeil Alexander-Walker Over 2 Rebounds A (61%)",
+   "Aaron Wiggins Under 2.5 3-Pointers Made C -> Aaron Wiggins Over 1 3-Pointers Made C (56%)"
+  ]
+ }
+}

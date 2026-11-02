@@ -1,0 +1,3 @@
+tracked 418 by src leg:413 alt:5 by grade C:347 B:57 A:9 ALT:5 by league nba:250 ncaaf:7 ncaab:139 nhl:22
+featured SGP leg grades: BBC BBC BBC ABB ACC
+summary {"since":"2026-11-02T20:08:41.264Z","byGrade":{"A":{"w":0,"l":0,"units":0},"B":{"w":0,"l":0,"units":0},"C":{"w":0,"l":0,"units":0}},"byLeague":{},"alt":{"w":0,"l":0,"units":0}}
