@@ -1,6 +1,6 @@
 odds api: off (no ODDS_API_KEY), using DraftKings only
 nba: 15 upcoming games
-nba: 15 games, 1264 legs, 676 alt-line legs
+nba: 15 games, 1275 legs, 678 alt-line legs
 nfl: 1 upcoming games
 nfl: 1 games, 52 legs, 0 alt-line legs
 ncaaf: 12 upcoming games
@@ -8,9 +8,9 @@ ncaaf: 12 games, 72 legs, 0 alt-line legs
 ncaab: 114 upcoming games
 ncaab: 114 games, 652 legs, 0 alt-line legs
 nhl: 4 upcoming games
-nhl: 4 games, 257 legs, 25 alt-line legs
-news: 250 articles, 205 legs with a related story
+nhl: 4 games, 257 legs, 26 alt-line legs
+news: 250 articles, 206 legs with a related story
 learning: nba:prop 26-17 k=0.99, nfl:prop 15-31 k=0.68, nhl:prop 8-6 k=0.98, ncaab:line 1-0 k=1.00
-moonshots: all 5 legs 1 in 358, basketball 5 legs 1 in 358, football 6 legs 1 in 822, hockey 4 legs 1 in 747
-tracked: 405 legs (0 graded this run)
-picks: 15, legs: 2297, games: 146, graded: 0
+moonshots: all 5 legs 1 in 356, basketball 5 legs 1 in 356, football 6 legs 1 in 822, hockey 4 legs 1 in 750
+tracked: 415 legs (0 graded this run)
+picks: 15, legs: 2308, games: 146, graded: 0

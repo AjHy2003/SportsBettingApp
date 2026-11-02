@@ -1,3 +1,3 @@
-tracked 405 by src leg:400 alt:5 by grade C:334 B:56 A:10 ALT:5 by league nba:235 ncaaf:7 ncaab:141 nhl:22
-featured SGP leg grades: BBC ACA ABC AAB CBB
-summary {"since":"2026-11-02T19:46:53.567Z","byGrade":{"A":{"w":0,"l":0,"units":0},"B":{"w":0,"l":0,"units":0},"C":{"w":0,"l":0,"units":0}},"byLeague":{},"alt":{"w":0,"l":0,"units":0}}
+tracked 415 by src leg:410 alt:5 by grade C:343 B:57 A:10 ALT:5 by league nba:246 ncaaf:7 ncaab:140 nhl:22
+featured SGP leg grades: BBC BBC ABC AAB BBC
+summary {"since":"2026-11-02T19:55:16.127Z","byGrade":{"A":{"w":0,"l":0,"units":0},"B":{"w":0,"l":0,"units":0},"C":{"w":0,"l":0,"units":0}},"byLeague":{},"alt":{"w":0,"l":0,"units":0}}
