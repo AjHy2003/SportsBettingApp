@@ -43,7 +43,7 @@ const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
 const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
-const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg, edgeShrink, shrinkLeg, learnGroup } = await import("../js/parlay.js");
+const { bestParlay, bestSameGame, decimalOdds, choosePicks, usableLeg, edgeShrink, shrinkLeg, learnGroup, isBestBet } = await import("../js/parlay.js");
 const { buildMoonshot, oneIn } = await import("../js/moonshot.js");
 const { propMove, gameMove } = await import("../js/movement.js");
 const { propLadder, gameLadder } = await import("../js/reprice.js");
@@ -473,10 +473,15 @@ const picks = choosePicks(legs);
 const snapshots = snapshotLines(history, legs);
 const known = new Set(history.picks.map((p) => p.id));
 const issued = new Date().toISOString();
+// One open pick per player per game: a later scan's second market on the same player
+// (Under 21.5 PRA, then Under 19.5 P+R) just doubles the same bet.
+const openPlayer = new Set(history.picks.filter((p) => !p.result && p.playerId).map((p) => `${p.eventId}:${p.playerId}`));
 for (const p of picks) {
   if (known.has(p.id)) continue;
+  if (p.playerId && openPlayer.has(`${p.eventId}:${p.playerId}`)) continue;
+  if (p.playerId) openPlayer.add(`${p.eventId}:${p.playerId}`);
   history.picks.push({ id: p.id, issued, start: p.start, league: p.league, eventId: p.eventId, matchup: p.matchup, kind: p.kind, marketKey: p.marketKey, market: p.market,
-    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), praw: p.praw != null ? Number(p.praw.toFixed(4)) : undefined, edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, result: null });
+    playerId: p.playerId, player: p.player, team: p.team, side: p.side, line: p.line, odds: p.odds, prob: Number(p.prob.toFixed(4)), praw: p.praw != null ? Number(p.praw.toFixed(4)) : undefined, edge: Number(p.edge.toFixed(4)), grade: p.grade, label: p.label, best: isBestBet(p) || undefined, result: null });
 }
 history.picks = history.picks.filter((p) => now - new Date(p.start) < 400 * 864e5);
 history.updated = issued;
@@ -547,10 +552,10 @@ fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
 const todayPicks = picks.filter((p) => dayOf(p) === todayET), laterPicks = picks.filter((p) => dayOf(p) !== todayET);
 const short = (l) => `${dayOf(l) === todayET ? "" : `${weekdayOf(l)} · `}${l.grade} · ${l.label}${l.kind === "prop" ? "" : ` (${l.matchup})`} ${fmtOdds(l.odds)}`;
 const counts = ["A", "B"].map((g) => `${todayPicks.filter((p) => p.grade === g).length} ${g}`).join(", ");
-// Lead with grade A when there are enough of them.
+// Lead with ⭐ best bets, then grade A, when there are enough of them.
 const todayA = todayPicks.filter((p) => p.grade === "A");
-const lead = todayA.length >= 3 ? todayA : todayPicks;
-const lines = [...lead.slice(0, 6), ...laterPicks.slice(0, Math.max(0, 4 - lead.length))].map(short);
+const lead = [...todayPicks.filter(isBestBet), ...(todayA.length >= 3 ? todayA : todayPicks).filter((p) => !isBestBet(p))];
+const lines = [...lead.slice(0, 6), ...laterPicks.slice(0, Math.max(0, 4 - lead.length))].map((l) => `${isBestBet(l) ? "⭐ " : ""}${short(l)}`);
 const parlayLine = (icon, f) => `${icon} ${f.legs.length}-leg ${f.sgp ? `same-game parlay (${f.legs[0].matchup})` : "parlay"}${f.day === todayET ? "" : ` for ${weekdayOf(f.legs[0])}`} ${fmtOdds(f.american)} (${pctTxt(f.prob)} to hit)`;
 if (featured.basketball) lines.push(parlayLine("🏀", featured.basketball));
 if (featured.football) lines.push(parlayLine("🏈", featured.football));

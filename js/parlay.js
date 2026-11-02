@@ -23,10 +23,11 @@ export function compatible(a, b, sgp = false) {
 }
 
 // Greedy best n-leg parlay from candidate legs (highest edge first), honoring compatibility.
-export function bestParlay(legs, n, { sgp = false, minEdge = 0, exclude = [] } = {}) {
+// by: "edge" (best value) or "prob" (most likely to hit, among legs with an edge).
+export function bestParlay(legs, n, { sgp = false, minEdge = 0, exclude = [], by = "edge" } = {}) {
   const pool = legs
     .filter((l) => l.prob > 0 && l.edge >= minEdge && !exclude.includes(l.id))
-    .sort((a, b) => b.edge - a.edge || b.prob - a.prob);
+    .sort(by === "prob" ? (a, b) => b.prob - a.prob || b.edge - a.edge : (a, b) => b.edge - a.edge || b.prob - a.prob);
   const pick = [];
   for (const l of pool) {
     if (pick.every((p) => compatible(p, l, sgp))) pick.push(l);
@@ -74,7 +75,7 @@ function singles(legs, budget, k) {
 const SINGLES_COUNT = (budget) => (budget <= 5 ? 2 : budget <= 10 ? 3 : budget <= 25 ? 4 : budget <= 50 ? 5 : 6);
 
 // mode: "singles" | "parlay" | "mix". Returns { bets, totals }.
-export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey = null } = {}) {
+export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey = null, style = "edge" } = {}) {
   budget = Math.max(1, Number(budget) || 10);
   const good = legs.filter((l) => l.edge > 0 && l.prob > 0 && !l.mismatch && usableLeg(l) && GRADE_WEIGHT[l.grade]);
   let bets = [];
@@ -85,7 +86,7 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
   // Asked for more legs than there are good ones: build the longest parlay available.
   const parlayOf = (n) => {
     for (let k = n; k >= 2; k--) {
-      const p = sameGame ? bestSameGame(legs, sameGame, k) : bestParlay(good, k);
+      const p = sameGame ? bestSameGame(legs, sameGame, k) : bestParlay(good, k, { by: style, minEdge: style === "prob" ? 0.025 : 0 });
       if (p) return p;
     }
     return null;
@@ -124,6 +125,20 @@ export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0) * (l.move?
 // way) was judged at an assumed -110 against a 50/50 market. Those went 15-31, so they're
 // research only: never a pick, ticket leg or moonshot leg.
 export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l.questionable;
+
+// ⭐ Best bet: grade A, a 10%+ edge, and the market not moving against it (posted line or
+// the live re-check). Since launch, NBA picks with a 10%+ edge went 9-3 and NBA picks whose
+// line moved against them went 2-4.
+export function movedAgainst(l) {
+  const lv = l.live;
+  if (l.move?.against && l.move?.strong) return true;
+  if (!lv || lv.far) return !!lv?.far;
+  if (l.kind === "prop" && lv.line0 != null && l.line !== lv.line0) return l.side === "OVER" ? l.line > lv.line0 : l.line < lv.line0;
+  return lv.odds0 != null && l.odds < lv.odds0 - 5;
+}
+export const isBestBet = (l) => l.lean && l.grade === "A" && l.edge >= 0.1 && !l.mismatch && usableLeg(l) && !movedAgainst(l);
+// The same test on a logged pick (no live data): for the running record.
+export const wasBestBet = (p) => p.grade === "A" && (p.edge ?? 0) >= 0.1 && !(p.kind === "prop" && (p.league === "nfl" || p.league === "ncaaf"));
 
 // ---------- learning from results ----------
 const GRADE_ORDER = ["A", "B", "C", "PASS"];

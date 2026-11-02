@@ -33,7 +33,8 @@ jobs:
         run: |
           mkdir -p /tmp/hist e2e-out
           git fetch -q origin picks-data && git show origin/picks-data:history.json > /tmp/hist/history.json || true
-          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log | tail -5
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log | tail -8
+          cp notify.json e2e-out/ 2>/dev/null || true
       - name: Re-pricing at the posted lines must reproduce the posted picks
         run: |
           node --input-type=module -e '
