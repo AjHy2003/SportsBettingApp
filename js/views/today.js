@@ -10,7 +10,7 @@ import { gameContext, defaultLines, evaluateLines } from "../gamemodel.js";
 import { loadPeople, propRows, scanRows } from "../scan.js";
 import { injuryReport } from "../context.js";
 import { gameWeather } from "../weather.js";
-import { planTicket, combine, compatible, choosePicks, bestSameGame, usableLeg } from "../parlay.js";
+import { planTicket, combine, compatible, choosePicks, bestSameGame, usableLeg, bestParlay, isBestBet, wasBestBet } from "../parlay.js";
 import { timeAgo } from "../news.js";
 import { placeBet } from "../sportsbooks.js";
 import { buildMoonshot, oneIn } from "../moonshot.js";
@@ -50,7 +50,7 @@ export async function renderToday(ctx, q) {
   const [today, history] = await Promise.all([getData("data/picks/today.json"), getData("data/picks/history.json")]);
   if (!ctx.alive()) return;
 
-  const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, ...loadPrefs() };
+  const prefs = { sport: "all", budget: 10, mode: "mix", legs: 3, moonStake: 10, moonTarget: 10000, moonPerGame: 1, aOnly: true, style: "prob", ...loadPrefs() };
   if (q.sport) prefs.sport = q.sport;
   if (q.focus === "moon") Object.assign(prefs, { moonStake: 10, moonTarget: 10000 });
   // days: null = today (or the next day with games for this sport), "all", or one day's key.
@@ -94,9 +94,12 @@ export async function renderToday(ctx, q) {
           <div class="small muted" id="t-bank" style="margin-top:6px"></div></div>
         <div><h3>Build</h3><div class="row"><div class="seg" id="t-mode"><button data-m="singles">Straight bets</button><button data-m="parlay">Parlay</button><button data-m="mix">Mix</button></div>
           <div class="seg" id="t-legs">${LEG_COUNTS.map((n) => `<button data-n="${n}">${n} legs</button>`).join("")}</div>
-          <div class="field" id="t-legs-custom-f" style="width:84px"><input id="t-legs-custom" type="number" min="2" max="15" step="1" placeholder="Legs" inputmode="numeric" title="Any number of legs, 2-15"/></div></div></div>
+          <div class="field" id="t-legs-custom-f" style="width:84px"><input id="t-legs-custom" type="number" min="2" max="15" step="1" placeholder="Legs" inputmode="numeric" title="Any number of legs, 2-15"/></div></div>
+          <div class="row" id="t-style-row" style="margin-top:8px"><span class="small muted">Parlay legs</span><div class="seg" id="t-style"><button data-st="prob" title="The legs with the best chance to hit (that still have an edge)">Most likely to hit</button><button data-st="edge" title="The legs with the biggest edge: bigger payouts, hits less often">Best value</button></div></div>
+          <label class="small muted row" style="gap:6px;margin-top:8px;cursor:pointer"><input type="checkbox" id="t-aonly"/> Grade A picks only <span class="faint">(the grade that's been hitting)</span></label></div>
       </div>
     </div>
+    <div class="card best" style="margin-top:14px" id="t-best"></div>
     <div class="card" style="margin-top:14px" id="t-ticket"></div>
     <div class="card moon" style="margin-top:14px" id="t-moon"></div>
     <div class="grid two" style="margin-top:14px">
@@ -156,7 +159,7 @@ export async function renderToday(ctx, q) {
   const legsInSport = () => allLegs.filter(inScope);
 
   function persist() {
-    savePrefs({ sport: state.sport, budget: state.budget, mode: state.mode, legs: state.legs, moonStake: state.moonStake, moonTarget: state.moonTarget, moonPerGame: state.moonPerGame });
+    savePrefs({ sport: state.sport, budget: state.budget, mode: state.mode, legs: state.legs, moonStake: state.moonStake, moonTarget: state.moonTarget, moonPerGame: state.moonPerGame, aOnly: state.aOnly, style: state.style });
   }
 
   function renderDays() {
@@ -181,6 +184,9 @@ export async function renderToday(ctx, q) {
     app.querySelectorAll("#t-budget .chip").forEach((b) => b.classList.toggle("on", Number(b.dataset.b) === Number(state.budget)));
     app.querySelectorAll("#t-mode button").forEach((b) => b.classList.toggle("on", b.dataset.m === state.mode));
     app.querySelectorAll("#t-legs button").forEach((b) => b.classList.toggle("on", Number(b.dataset.n) === Number(state.legs)));
+    $("#t-aonly").checked = !!state.aOnly;
+    app.querySelectorAll("#t-style button").forEach((b) => b.classList.toggle("on", b.dataset.st === state.style));
+    $("#t-style-row").classList.toggle("hidden", state.mode === "singles");
     $("#t-legs").classList.toggle("hidden", state.mode === "singles");
     $("#t-legs-custom-f").classList.toggle("hidden", state.mode === "singles");
     if (!LEG_COUNTS.includes(Number(state.legs))) $("#t-legs-custom").value = state.legs;
@@ -207,7 +213,7 @@ export async function renderToday(ctx, q) {
 
   function legRow(l, { addable = true, inMine = false } = {}) {
     return `<div class="pick" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
-      <div class="grade ${l.grade}" style="width:40px;height:40px;font-size:17px;border-radius:11px">${l.grade === "PASS" ? "—" : l.grade}</div>
+      <div class="grade ${l.grade}" style="width:40px;height:40px;font-size:17px;border-radius:11px;position:relative">${l.grade === "PASS" ? "—" : l.grade}${isBestBet(l) ? `<span class="star" title="⭐ Best bet: grade A, 10%+ edge, line not moving against it">⭐</span>` : ""}</div>
       <div style="min-width:0">
         <div style="font-weight:700"><a href="${legLink(l)}" style="color:var(--text)">${esc(l.label)}</a> <span class="muted" style="font-weight:600">${priceTag(l)}</span></div>
         <div class="small muted">${esc(leagueName(l.league))} · ${esc(l.matchup)} · ${fmtDate(l.start, { weekday: "short" })} ${fmtTime(l.start)}</div>
@@ -231,18 +237,26 @@ export async function renderToday(ctx, q) {
     return `<div style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px">
       <div class="row" style="justify-content:space-between"><b>${label}</b><span><b>${money(b.stake)}</b> to win <b class="pos">${money(b.toWin)}</b> · ${M.fmtOdds(b.american)}</span></div>
       <div class="small" style="margin-top:6px">${b.legs.map((l) => `• ${esc(l.label)} <span class="faint">${esc(l.kind === "prop" ? l.matchup : "")} ${M.fmtOdds(l.odds)}</span>`).join("<br/>")}</div>
-      <div class="small muted" style="margin-top:6px">Model: ${pct(b.prob, b.prob < 0.1 ? 1 : 0)} to hit · expected ${signed(b.expected, 2)} on ${money(b.stake)}</div>
+      <div class="small muted" style="margin-top:6px">Model: ${pct(b.prob, b.prob < 0.1 ? 1 : 0)} to hit${b.type !== "single" ? ` (about ${b.prob >= 0.5 ? `${Math.round(b.prob * 10)} in 10` : `1 in ${Math.max(2, Math.round(1 / b.prob))}`})` : ""} · expected ${signed(b.expected, 2)} on ${money(b.stake)}</div>
       ${placeBet(b.legs, { stake: b.stake, american: b.american, title: label })}
     </div>`;
   }
 
+  // Picks the tickets and the top-picks list use: graded legs, A only when that's switched on.
+  const gradeOk = (l) => l.lean && l.grade !== "PASS" && (!state.aOnly || l.grade === "A");
+  // Props without real DraftKings prices are research only (see parlay.js usableLeg).
+  function researchOnlyNote() {
+    const n = legsInSport().filter((l) => l.kind === "prop" && l.priced === false && l.lean).length;
+    return n ? `<div class="notice" style="margin-top:10px">${n} ${esc(scopeLabel().split(" · ")[0])} player prop${n === 1 ? "" : "s"} left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count.</div>` : "";
+  }
+
   function renderTicket() {
-    const legs = legsInSport().filter((l) => l.lean && l.grade !== "PASS");
-    const t = planTicket(legs, state.budget, state.mode, state.legs);
+    const legs = legsInSport().filter(gradeOk);
+    const t = planTicket(legs, state.budget, state.mode, state.legs, { style: state.style });
     const box = $("#t-ticket");
     if (!t.bets.length) {
       const none = dayGames().length && dayGames().every((g) => state.offGames.has(g.key));
-      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">${none ? "No games picked. Open 🎯 Games above and switch some on." : `No ${esc(scopeLabel())} picks with an edge right now${legsInSport().length ? "" : " (no lines posted yet)"}. Try another day or sport, or build a same-game parlay below.`}</div>`;
+      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">${none ? "No games picked. Open 🎯 Games above and switch some on." : `No ${state.aOnly ? "grade A " : ""}${esc(scopeLabel())} picks with an edge right now${legsInSport().length ? "" : " (no lines posted yet)"}. ${state.aOnly && legsInSport().some((l) => l.lean && ["B", "C"].includes(l.grade)) ? "There are B and C picks: untick <b>Grade A picks only</b> to use them, knowing B picks have hit less often. " : ""}Try another day or sport, or build a same-game parlay below.`}</div>${researchOnlyNote()}`;
       return;
     }
     const oneGame = new Set(legs.map((l) => l.gameKey)).size === 1 ? legs[0].matchup : null;
@@ -279,10 +293,11 @@ export async function renderToday(ctx, q) {
   }
 
   function renderPicks() {
-    const picks = choosePicks(legsInSport(), 15);
+    const picks = choosePicks(legsInSport().filter(gradeOk), 15);
     const box = $("#t-picks");
-    box.innerHTML = `<h3>Top picks · ${esc(scopeLabel())}</h3>
+    box.innerHTML = `<h3>Top picks · ${esc(scopeLabel())}${state.aOnly ? " · grade A" : ""}</h3>
       ${picks.length ? picks.map((l) => legRow(l, { inMine: state.mine.includes(l.id) })).join("") : `<div class="muted small">Nothing clears the bar right now. That happens; passing is a pick too.</div>`}
+      ${researchOnlyNote()}
       ${today?.featured ? `<p class="small muted" style="margin:10px 0 0">Tap <b>+</b> to add legs to your own parlay.</p>` : ""}`;
   }
 
@@ -398,6 +413,17 @@ export async function renderToday(ctx, q) {
     $("#t-sgp-use")?.addEventListener("click", () => { state.mine = best.legs.map((l) => l.id); renderAll(); });
   }
 
+  // What the model has learned from its graded picks, per league and bet type.
+  function learnBlock() {
+    const rows = Object.entries(today?.learn || {}).filter(([, x]) => x.n >= 5).sort((a, b) => b[1].n - a[1].n);
+    if (!rows.length) return "";
+    return `<h3 style="margin-top:14px">📏 Learning from results</h3>
+      <p class="small muted" style="margin:0 0 6px">Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward "all of it" until there are enough results). Fewer, stronger picks where the model has been too confident.</p>
+      <div class="table-wrap"><table><thead><tr><th>Picks</th><th class="r">Record</th><th class="r">Model said</th><th class="r">Hit</th><th class="r">Break-even</th><th class="r">Edges kept</th></tr></thead><tbody>
+      ${rows.map(([g, x]) => { const [lg, kind] = g.split(":"); return `<tr><td>${esc(leagueName(lg))} ${kind === "prop" ? "props" : "game lines"}${lg === "nfl" || lg === "ncaaf" ? (kind === "prop" ? ` <span class="faint small">(research only now)</span>` : "") : ""}</td><td class="r">${x.w}-${x.n - x.w}</td><td class="r">${pct(x.model)}</td><td class="r ${x.hit >= x.be ? "pos" : "neg"}">${pct(x.hit)}</td><td class="r">${pct(x.be)}</td><td class="r"><b>${Math.round(x.k * 100)}%</b></td></tr>`; }).join("")}
+      </tbody></table></div>`;
+  }
+
   function renderRecord() {
     const box = $("#t-record");
     const r = today?.record;
@@ -423,15 +449,45 @@ export async function renderToday(ctx, q) {
       ${cal.length ? `<h3 style="margin-top:14px">Calibration</h3><div class="table-wrap"><table><thead><tr><th>Model said</th><th class="r">Picks</th><th class="r">Expected hit %</th><th class="r">Actual hit %</th></tr></thead><tbody>
         ${cal.map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
       </tbody></table></div><p class="small faint" style="margin:6px 0 0">Small samples swing a lot; read this after a few hundred picks.</p>` : ""}
+      ${learnBlock()}
       ${clvNote}
       <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r" title="Line movement after the pick">CLV</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
         ${graded.slice(0, 25).map((p) => `<tr><td>${fmtDate(p.start)}</td><td>${esc(p.label)} <span class="faint">${esc(leagueName(p.league))}</span></td><td class="r">${M.fmtOdds(p.odds)}</td><td class="r">${esc(p.grade)}</td><td class="r">${clvCell(p)}</td><td class="r">${esc(p.actual ?? "")}</td><td class="${p.result === "W" ? "o" : p.result === "L" ? "u" : "p"}">${p.result}</td></tr>`).join("")}
       </tbody></table></div>`;
   }
 
+  // ⭐ Best bets: the picks to follow, their running record, and a 2-leg parlay of the top two.
+  function renderBest() {
+    const box = $("#t-best");
+    const best = choosePicks(legsInSport().filter(isBestBet), 8);
+    const past = (history?.picks || []).filter((p) => (p.result === "W" || p.result === "L") && (p.best || wasBestBet(p)));
+    const w = past.filter((p) => p.result === "W").length, units = past.reduce((u, p) => u + (p.result === "W" ? M.payout(p.odds ?? -110) : -1), 0);
+    const rec = past.length ? `<span class="pill ${units >= 0 ? "pos" : "neg"}" title="Graded picks that met the best-bet bar">so far ${w}-${past.length - w} · ${signed(units, 1)}u</span>` : "";
+    if (!best.length) {
+      box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">⭐ Best bets · ${esc(scopeLabel())}</h3>${rec}</div><div class="muted small" style="margin-top:6px">None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it.</div>`;
+      return;
+    }
+    const two = best.length >= 2 ? bestParlay(best, 2, { by: "prob" }) : null;
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">⭐ Best bets · ${esc(scopeLabel())}</h3>${rec}</div>
+      <p class="small muted" style="margin:6px 0 0">The picks to follow: grade A, a 10%+ edge, and the line not moving against them (re-checked live). Bet them straight; if you parlay, keep it to two.</p>
+      ${best.map((l) => legRow(l, { inMine: state.mine.includes(l.id) })).join("")}
+      ${two ? `<div style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px">
+        <div class="row" style="justify-content:space-between"><b>Best-bets 2-leg parlay</b><span>${M.fmtOdds(two.american)} · ${money(state.budget)} pays <b class="pos">${money(state.budget * two.decimal)}</b></span></div>
+        <div class="small" style="margin-top:4px">${two.legs.map((l) => `• ${esc(l.label)} ${M.fmtOdds(l.odds)}`).join("<br/>")}</div>
+        <div class="small muted" style="margin-top:6px">Model: ${pct(two.prob, 0)} to hit (about ${two.prob >= 0.5 ? `${Math.round(two.prob * 10)} in 10` : `1 in ${Math.max(2, Math.round(1 / two.prob))}`}). ${(() => { const third = best.find((l) => !two.legs.includes(l) && two.legs.every((x) => compatible(x, l))); return third ? `Adding ${esc(third.label)} would cut that to ${pct(two.prob * third.prob, 0)}.` : ""; })()}</div>
+        <div class="row" style="margin-top:8px"><button class="btn ghost sm" id="t-best-mine">+ Use in my parlay</button><button class="btn sm" id="t-best-save">★ Save parlay</button></div>
+        ${placeBet(two.legs, { stake: Number(state.budget) || 10, american: two.american, title: "Best-bets 2-leg parlay" })}</div>` : ""}`;
+    $("#t-best-mine")?.addEventListener("click", () => { state.mine = two.legs.map((l) => l.id); renderAll(); });
+    $("#t-best-save")?.addEventListener("click", () => {
+      if (!saveTicket("parlay", two.legs, Number(state.budget) || 10, two.american, { prob: two.prob, kind: "best" })) return;
+      toast("Saved · track it live under ★ My bets");
+    });
+  }
+
   function renderAll() {
     persist();
     syncControls();
+    renderBest();
     renderTicket();
     renderMoon();
     renderPicks();
@@ -478,6 +534,7 @@ export async function renderToday(ctx, q) {
   $("#t-root").addEventListener("click", (e) => {
     const ms = e.target.closest("#t-moon-stake .chip"), mt = e.target.closest("#t-moon-target .chip");
     if (ms || mt) { if (ms) state.moonStake = Number(ms.dataset.v); if (mt) state.moonTarget = Number(mt.dataset.v); moonExclude = []; persist(); renderMoon(); return; }
+    if (e.target.id === "t-aonly") { state.aOnly = e.target.checked; renderAll(); return; }
     if (e.target.id === "t-moon-pg") { state.moonPerGame = e.target.checked ? 2 : 1; moonExclude = []; persist(); renderMoon(); return; }
     const s = e.target.closest("#t-sport .chip");
     if (s) { state.sport = s.dataset.s; state.offGames = new Set(); state.sgpGame = null; state.sgpLegs = null; moonExclude = []; renderAll(); renderSgp(); return; }
@@ -489,6 +546,8 @@ export async function renderToday(ctx, q) {
     if (ga) { state.offGames = ga.dataset.gall === "1" ? new Set() : new Set(dayGames().map((g) => g.key)); moonExclude = []; renderAll(); return; }
     const b = e.target.closest("#t-budget .chip, #t-bank .chip");
     if (b) { state.budget = Number(b.dataset.b); $("#t-custom").value = ""; renderAll(); renderSgp(); return; }
+    const stl = e.target.closest("#t-style button");
+    if (stl) { state.style = stl.dataset.st; renderAll(); return; }
     const m = e.target.closest("#t-mode button");
     if (m) { state.mode = m.dataset.m; renderAll(); return; }
     const n = e.target.closest("#t-legs button");

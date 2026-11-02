@@ -23,10 +23,11 @@ export function compatible(a, b, sgp = false) {
 }
 
 // Greedy best n-leg parlay from candidate legs (highest edge first), honoring compatibility.
-export function bestParlay(legs, n, { sgp = false, minEdge = 0, exclude = [] } = {}) {
+// by: "edge" (best value) or "prob" (most likely to hit, among legs with an edge).
+export function bestParlay(legs, n, { sgp = false, minEdge = 0, exclude = [], by = "edge" } = {}) {
   const pool = legs
     .filter((l) => l.prob > 0 && l.edge >= minEdge && !exclude.includes(l.id))
-    .sort((a, b) => b.edge - a.edge || b.prob - a.prob);
+    .sort(by === "prob" ? (a, b) => b.prob - a.prob || b.edge - a.edge : (a, b) => b.edge - a.edge || b.prob - a.prob);
   const pick = [];
   for (const l of pool) {
     if (pick.every((p) => compatible(p, l, sgp))) pick.push(l);
@@ -74,7 +75,7 @@ function singles(legs, budget, k) {
 const SINGLES_COUNT = (budget) => (budget <= 5 ? 2 : budget <= 10 ? 3 : budget <= 25 ? 4 : budget <= 50 ? 5 : 6);
 
 // mode: "singles" | "parlay" | "mix". Returns { bets, totals }.
-export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey = null } = {}) {
+export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey = null, style = "edge" } = {}) {
   budget = Math.max(1, Number(budget) || 10);
   const good = legs.filter((l) => l.edge > 0 && l.prob > 0 && !l.mismatch && usableLeg(l) && GRADE_WEIGHT[l.grade]);
   let bets = [];
@@ -85,7 +86,7 @@ export function planTicket(legs, budget, mode = "mix", nLegs = 3, { sgpGameKey =
   // Asked for more legs than there are good ones: build the longest parlay available.
   const parlayOf = (n) => {
     for (let k = n; k >= 2; k--) {
-      const p = sameGame ? bestSameGame(legs, sameGame, k) : bestParlay(good, k);
+      const p = sameGame ? bestSameGame(legs, sameGame, k) : bestParlay(good, k, { by: style, minEdge: style === "prob" ? 0.025 : 0 });
       if (p) return p;
     }
     return null;
@@ -120,9 +121,57 @@ const GRADE_WEIGHT = { A: 1, B: 0.85, C: 0.6 };
 // The market moving toward a pick is a small vote of confidence; away, a small knock.
 export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0) * (l.move?.toward ? 1.1 : l.move?.against ? 0.9 : 1);
 
-// Books post TD/INT-style lines (under 2.5) at lopsided prices, so a missing price
-// can't be assumed to be -110 there.
-export const usableLeg = (l) => (l.priced !== false || l.kind !== "prop" || l.line >= 2.5) && !l.questionable;
+// A prop without real DraftKings prices (all NFL and college football props come that
+// way) was judged at an assumed -110 against a 50/50 market. Those went 15-31, so they're
+// research only: never a pick, ticket leg or moonshot leg.
+export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l.questionable;
+
+// ⭐ Best bet: grade A, a 10%+ edge, and the market not moving against it (posted line or
+// the live re-check). Since launch, NBA picks with a 10%+ edge went 9-3 and NBA picks whose
+// line moved against them went 2-4.
+export function movedAgainst(l) {
+  const lv = l.live;
+  if (l.move?.against) return true;
+  if (!lv || lv.far) return !!lv?.far;
+  if (l.kind === "prop" && lv.line0 != null && l.line !== lv.line0) return l.side === "OVER" ? l.line > lv.line0 : l.line < lv.line0;
+  return lv.odds0 != null && l.odds < lv.odds0 - 5;
+}
+export const isBestBet = (l) => l.lean && l.grade === "A" && l.edge >= 0.1 && !l.mismatch && usableLeg(l) && !movedAgainst(l);
+// The same test on a logged pick (no live data): for the running record.
+export const wasBestBet = (p) => p.grade === "A" && (p.edge ?? 0) >= 0.1 && !(p.kind === "prop" && (p.league === "nfl" || p.league === "ncaaf"));
+
+// ---------- learning from results ----------
+const GRADE_ORDER = ["A", "B", "C", "PASS"];
+export const gradeFromEdge = (e) => (e >= 0.08 ? "A" : e >= 0.05 ? "B" : e >= 0.025 ? "C" : "PASS");
+const worse = (a, b) => GRADE_ORDER[Math.max(GRADE_ORDER.indexOf(a), GRADE_ORDER.indexOf(b))];
+export const learnGroup = (l) => `${l.league}:${l.kind === "prop" ? "prop" : "line"}`;
+
+// How much of the model's claimed edge actually showed up in graded picks, per league and
+// bet type: k = (hit rate - break-even) / (model's chance - break-even), pulled toward 1
+// by a prior worth 100 picks until results pile up, and never above 1.
+export function edgeShrink(picks, prior = 100) {
+  const groups = {};
+  for (const p of picks.filter((x) => x.result === "W" || x.result === "L")) {
+    const g = (groups[learnGroup(p)] ||= { n: 0, w: 0, model: 0, be: 0 });
+    g.n++; if (p.result === "W") g.w++;
+    g.model += p.praw ?? p.prob; g.be += impliedProb(p.odds ?? -110);
+  }
+  for (const g of Object.values(groups)) {
+    const hit = g.w / g.n, model = g.model / g.n, be = g.be / g.n;
+    const raw = model - be > 0.01 ? (hit - be) / (model - be) : 1;
+    g.k = Math.min(1, (g.n * Math.max(0, Math.min(1.2, raw)) + prior) / (g.n + prior));
+    Object.assign(g, { hit, model, be });
+  }
+  return groups;
+}
+
+// A leg's chance after keeping only k of its edge, and its grade (never raised).
+export function shrinkLeg(prob, odds, grade, k) {
+  if (!(k < 0.999)) return { prob, grade };
+  const imp = impliedProb(odds ?? -110);
+  const p = imp + k * (prob - imp);
+  return { prob: p, grade: GRADE_ORDER.includes(grade) && grade !== "PASS" ? worse(grade, gradeFromEdge(p - imp)) : grade };
+}
 
 // Top picks: graded legs with real edge, one per player, at most two per game.
 export function choosePicks(legs, max = 15, minEdge = 0.02) {

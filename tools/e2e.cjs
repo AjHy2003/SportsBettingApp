@@ -178,6 +178,14 @@ const pages = [
       return { potential: (await pg.innerText("#potential").catch(() => "")).replace(/\s+/g, " ").slice(0, 900), note: (await pg.innerText("#notes").catch(() => "")).split("\n").filter((x) => /Potential/.test(x)).join(" ") };
     });
   }
+  // ⭐ Best bets and the default (most likely to hit) parlay, NBA and all sports.
+  for (const sport of ["nba", "all"]) {
+    await visit(`today-best-${sport}`, `#/today?sport=${sport}`, async (pg) => {
+      await pg.click('#t-mode button[data-m="parlay"]').catch(() => {});
+      await pg.waitForTimeout(400);
+      return { best: (await pg.innerText("#t-best").catch(() => "")).replace(/\s+/g, " ").slice(0, 1400), ticket: (await pg.innerText("#t-ticket").catch(() => "")).replace(/\s+/g, " ").slice(0, 500), learn: (await pg.innerText("#t-record").catch(() => "")).replace(/\s+/g, " ").match(/LEARNING FROM RESULTS.{0,500}/i)?.[0] || "" };
+    });
+  }
   // Live re-check: current DraftKings lines re-price the posted legs in the page.
   await visit("today-live", "#/today?sport=all&day=all", async (pg) => {
     await pg.waitForFunction(() => /checked/.test(document.querySelector("#t-live")?.innerText || ""), null, { timeout: 90000 }).catch(() => {});

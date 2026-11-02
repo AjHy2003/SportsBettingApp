@@ -6,7 +6,7 @@ import { api, getJSON, gameOdds, parseProps, pool } from "./espn.js";
 import { leagueById } from "./sports.js";
 import * as M from "./model.js";
 import { priceLine, fmtSpread } from "./gamemodel.js";
-import { decimalOdds } from "./parlay.js";
+import { decimalOdds, shrinkLeg } from "./parlay.js";
 
 // Ladder spacing for a line, and how many rungs each side of it.
 export const ladderStep = (line) => { const a = Math.abs(line); return a < 10 ? 0.5 : a < 40 ? 1 : a < 100 ? 2.5 : 5; };
@@ -76,8 +76,10 @@ export function repriceProp(leg, f) {
   M.propGuards(v, { marketWeight: rp.mw, projection: rp.pj, sdProj: rp.sd, line: f.line, statsOver: so, marketProb: mkt, last5: rp.l5 });
   const over = leg.side === "OVER";
   const odds = over ? oO : oU;
-  const prob = over ? final : 1 - final;
-  const grade = capFlags(leg, v.lean === leg.side ? v.grade : "PASS");
+  // Same learned shrink as the full scan, then the same caps.
+  const s = shrinkLeg(over ? final : 1 - final, odds, v.lean === leg.side ? v.grade : "PASS", leg.k);
+  const prob = s.prob;
+  const grade = capFlags(leg, s.grade);
   return { line: f.line, odds, priced, prob, edge: prob - M.impliedProb(odds), ev: prob * decimalOdds(odds) - 1, grade, flipped: v.lean !== leg.side,
     label: leg.label.replace(/(Over|Under) [\d.]+/, `${over ? "Over" : "Under"} ${f.line}`) };
 }
@@ -106,9 +108,11 @@ export function repriceGame(game, legs, o) {
     const { v, fin } = priceLine(mk.m, mk.push, mk.oA, mk.oB, cfg, mk.labels);
     pair.forEach((l, i) => {
       if (!l) return;
-      const prob = i ? 1 - fin : fin, odds = i ? mk.oB : mk.oA, lean = v.lean === mk.labels[i];
+      const odds = i ? mk.oB : mk.oA, lean = v.lean === mk.labels[i];
+      const s = shrinkLeg(i ? 1 - fin : fin, odds, lean ? v.grade : "PASS", l.k);
+      const prob = s.prob;
       out.set(l.id, { line: mk.lines[i], odds, priced: true, prob, edge: prob - M.impliedProb(odds), ev: prob * decimalOdds(odds) - 1,
-        grade: capFlags(l, lean ? v.grade : "PASS"), lean, label: mk.labels[i] });
+        grade: capFlags(l, s.grade), lean, label: mk.labels[i] });
     });
   }
   return out;
