@@ -36,9 +36,10 @@ export function bestParlay(legs, n, { sgp = false, minEdge = 0, exclude = [], by
   return pick.length === n ? { legs: pick, ...combine(pick) } : null;
 }
 
-// Best n-leg same-game parlay for one game.
+// Best n-leg same-game parlay for one game, from graded legs only (A-C): a leg the model
+// passes on doesn't belong in a parlay it recommends.
 export function bestSameGame(legs, gameKey, n) {
-  return bestParlay(legs.filter((l) => l.gameKey === gameKey && !l.mismatch && usableLeg(l)), n, { sgp: true, minEdge: -0.02 });
+  return bestParlay(legs.filter((l) => l.gameKey === gameKey && !l.mismatch && usableLeg(l) && GRADE_WEIGHT[l.grade]), n, { sgp: true, minEdge: 0.025 });
 }
 
 const roundStake = (x) => Math.max(1, Math.round(x * 2) / 2);

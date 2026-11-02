@@ -315,6 +315,25 @@ function loadHistory() {
   try { return JSON.parse(fs.readFileSync(HISTORY, "utf8")); } catch { return { picks: [] }; }
 }
 
+// Every graded leg the app shows (tickets, same-game parlays, top picks) and the featured
+// moonshots' long shots, recorded the first time they appear and graded like posted picks,
+// so the record and the learning cover everything, not just the top-15 list.
+const TRACKED = path.join(path.dirname(HISTORY), "tracked.json");
+function loadTracked() {
+  try { return JSON.parse(fs.readFileSync(TRACKED, "utf8")); } catch { return { picks: [] }; }
+}
+const trackRow = (l, src, issued) => ({ id: l.id, src, issued, start: l.start, league: l.league, eventId: l.eventId, kind: l.kind, marketKey: l.marketKey, playerId: l.playerId,
+  side: l.side, line: l.line, odds: l.odds, prob: Number(l.prob.toFixed(4)), praw: l.praw != null ? Number(l.praw.toFixed(4)) : undefined, grade: l.grade, label: l.label, result: null });
+function trackedSummary(t) {
+  const done = t.picks.filter((p) => p.result === "W" || p.result === "L");
+  const agg = (rows) => ({ w: rows.filter((p) => p.result === "W").length, l: rows.filter((p) => p.result === "L").length,
+    units: Number(rows.reduce((u, p) => u + (p.result === "W" ? decimalOdds(p.odds ?? -110) - 1 : -1), 0).toFixed(2)) });
+  const legs = done.filter((p) => p.src === "leg");
+  const byLeague = {};
+  for (const lg of [...new Set(legs.map((p) => p.league))]) byLeague[lg] = Object.fromEntries(["A", "B", "C"].map((g) => [g, agg(legs.filter((p) => p.league === lg && p.grade === g))]));
+  return { since: t.picks.reduce((m, p) => (!m || p.issued < m ? p.issued : m), null), byGrade: Object.fromEntries(["A", "B", "C"].map((g) => [g, agg(legs.filter((p) => p.grade === g))])), byLeague, alt: agg(done.filter((p) => p.src === "alt")) };
+}
+
 async function gradePending(history) {
   const pending = history.picks.filter((p) => !p.result && new Date(p.start) < new Date(now - 4 * 3600e3));
   let graded = 0;
@@ -456,10 +475,14 @@ console.log(`news: ${[...news.values()].reduce((s, x) => s + x.length, 0)} artic
 const history = loadHistory();
 const graded = await gradePending(history);
 for (const p of history.picks) if (p.result && p.close && !p.clv) p.clv = clvOf(p);
+const tracked = loadTracked();
+const trackedGraded = await gradePending(tracked);
 
 // Learn from results: keep only the share of each league's claimed edge that has shown
-// up in graded picks, and re-grade (never up). The live re-check applies the same k.
-const learn = edgeShrink(history.picks);
+// up in graded picks (posted picks plus every other graded leg the app showed), and
+// re-grade (never up). The live re-check applies the same k.
+const inHistory = new Set(history.picks.map((p) => p.id));
+const learn = edgeShrink([...history.picks, ...tracked.picks.filter((p) => p.src === "leg" && !inHistory.has(p.id))]);
 for (const l of [...legs, ...alts]) {
   const k = learn[learnGroup(l)]?.k;
   if (!(k < 0.999)) continue;
@@ -525,10 +548,29 @@ console.log(`moonshots: ${Object.entries(moonshots).map(([k, m]) => `${k} ${m.le
 
 // Best same-game parlays: up to 5 per day, so each day picked on the Today page has some.
 const sgps = games
-  .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, day: etDate(new Date(g.start)), sgp: bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
+  .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, day: etDate(new Date(g.start)), sgp: bestSameGame(legs.filter((l) => l.lean && l.grade === "A"), g.key, 3) || bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
   .filter((x) => x.sgp && x.sgp.ev > 0)
   .sort((a, b) => b.sgp.ev - a.sgp.ev)
   .filter((x, i, all) => all.slice(0, i).filter((y) => y.day === x.day).length < 5);
+
+// Record every graded leg shown today, and the featured moonshots' long shots.
+{
+  const seen = new Set(tracked.picks.map((p) => p.id));
+  const issuedNow = new Date().toISOString();
+  for (const l of legs) {
+    if (!l.lean || !["A", "B", "C"].includes(l.grade) || !usableLeg(l) || seen.has(l.id) || new Date(l.start) <= now) continue;
+    tracked.picks.push(trackRow(l, "leg", issuedNow)); seen.add(l.id);
+  }
+  const altById = new Map(alts.map((l) => [l.id, l]));
+  for (const m of Object.values(moonshots)) for (const id of m.legs) {
+    const l = altById.get(id);
+    if (l && !seen.has(id) && new Date(l.start) > now) { tracked.picks.push(trackRow(l, "alt", issuedNow)); seen.add(id); }
+  }
+  tracked.picks = tracked.picks.filter((p) => now - new Date(p.start) < 120 * 864e5);
+  tracked.updated = issuedNow;
+  fs.writeFileSync(TRACKED, JSON.stringify(tracked));
+  console.log(`tracked: ${tracked.picks.length} legs (${trackedGraded} graded this run)`);
+}
 
 const slim = (l) => ({ ...l, prob: Number(l.prob.toFixed(4)), edge: Number(l.edge.toFixed(4)), ev: Number(l.ev.toFixed(4)) });
 const today = {
@@ -540,6 +582,7 @@ const today = {
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
   topStories,
   record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded, clv: clvSummary(history), calibration: calibration(history), snapshots },
+  tracked: trackedSummary(tracked),
   learn: Object.fromEntries(Object.entries(learn).map(([g, x]) => [g, { n: x.n, w: x.w, hit: Number(x.hit.toFixed(4)), model: Number(x.model.toFixed(4)), be: Number(x.be.toFixed(4)), k: Number(x.k.toFixed(4)) }])),
 };
 const outDir = path.join(SITE, "data", "picks");
