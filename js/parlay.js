@@ -145,24 +145,45 @@ export const wasBestBet = (p) => p.grade === "A" && (p.edge ?? 0) >= 0.1 && !(p.
 const GRADE_ORDER = ["A", "B", "C", "PASS"];
 export const gradeFromEdge = (e) => (e >= 0.08 ? "A" : e >= 0.05 ? "B" : e >= 0.025 ? "C" : "PASS");
 const worse = (a, b) => GRADE_ORDER[Math.max(GRADE_ORDER.indexOf(a), GRADE_ORDER.indexOf(b))];
-export const learnGroup = (l) => `${l.league}:${l.kind === "prop" ? "prop" : "line"}`;
+// Props learn overs and unders separately (books shade the side the public bets, and a
+// model can lean one way); game lines learn per league.
+export const learnGroup = (l) => l.kind === "prop" ? `${l.league}:prop:${l.side === "OVER" ? "over" : "under"}` : `${l.league}:line`;
+const parentGroup = (g) => g.replace(/:(over|under)$/, "");
+// The learned share of the edge for a leg on a given side (props carry both sides' k so a
+// pick that switches sides on a re-check uses the right one).
+export const kFor = (l, side = l.side) => l.ks?.[side] ?? l.k;
 
 // How much of the model's claimed edge actually showed up in graded picks, per league and
-// bet type: k = (hit rate - break-even) / (model's chance - break-even), pulled toward 1
-// by a prior worth 100 picks until results pile up, and never above 1.
-export function edgeShrink(picks, prior = 100) {
+// bet type: k = (hit rate - break-even) / (model's chance - break-even), never above 1.
+// One night's legs are tied together (a player's points, rebounds and assists all come from
+// the same game), so each player-game (each game, for game lines) counts once however many
+// legs it had. A league's props are pulled toward "all of it" by a prior worth 100
+// player-games; its overs and unders are each pulled toward the league's props by 50.
+export function edgeShrink(picks, prior = 100, sidePrior = 50) {
+  const done = picks.filter((x) => x.result === "W" || x.result === "L");
+  const unit = (p) => (p.kind === "prop" ? `${p.league}:${p.eventId}:${p.playerId}` : `${p.league}:${p.eventId}:lines`);
+  const legsIn = {};
+  for (const p of done) legsIn[unit(p)] = (legsIn[unit(p)] || 0) + 1;
   const groups = {};
-  for (const p of picks.filter((x) => x.result === "W" || x.result === "L")) {
-    const g = (groups[learnGroup(p)] ||= { n: 0, w: 0, model: 0, be: 0 });
-    g.n++; if (p.result === "W") g.w++;
-    g.model += p.praw ?? p.prob; g.be += impliedProb(p.odds ?? -110);
+  const add = (key, p, wt) => {
+    const g = (groups[key] ||= { n: 0, w: 0, ne: 0, we: 0, model: 0, be: 0 });
+    g.n++; g.ne += wt;
+    if (p.result === "W") { g.w++; g.we += wt; }
+    g.model += wt * (p.praw ?? p.prob); g.be += wt * impliedProb(p.odds ?? -110);
+  };
+  for (const p of done) {
+    const wt = 1 / legsIn[unit(p)], key = learnGroup(p);
+    add(key, p, wt);
+    if (key !== parentGroup(key)) add(parentGroup(key), p, wt);
   }
-  for (const g of Object.values(groups)) {
-    const hit = g.w / g.n, model = g.model / g.n, be = g.be / g.n;
+  const fit = (g, toward, strength) => {
+    const hit = g.we / g.ne, model = g.model / g.ne, be = g.be / g.ne;
     const raw = model - be > 0.01 ? (hit - be) / (model - be) : 1;
-    g.k = Math.min(1, (g.n * Math.max(0, Math.min(1.2, raw)) + prior) / (g.n + prior));
+    g.k = Math.min(1, (g.ne * Math.max(0, Math.min(1.2, raw)) + strength * toward) / (g.ne + strength));
     Object.assign(g, { hit, model, be });
-  }
+  };
+  for (const [key, g] of Object.entries(groups)) if (key === parentGroup(key)) fit(g, 1, prior);
+  for (const [key, g] of Object.entries(groups)) if (key !== parentGroup(key)) fit(g, groups[parentGroup(key)].k, sidePrior);
   return groups;
 }
 

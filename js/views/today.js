@@ -56,6 +56,13 @@ export async function renderToday(ctx, q) {
   // days: null = today (or the next day with games for this sport), "all", or one day's key.
   // offGames: games switched off in the game picker.
   const state = { ...prefs, mine: [], sgpGame: q.sgp || null, sgpLegs: null, sgpPicked: [], days: q.day || null, offGames: new Set() };
+  // How each grade has actually done (every graded leg the app showed), for the A-only switch.
+  const gradeRec = (() => {
+    const b = today?.tracked?.byGrade;
+    const f = (g) => (b?.[g] && b[g].w + b[g].l ? `${g} ${b[g].w}-${b[g].l}` : null);
+    const parts = ["A", "B"].map(f).filter(Boolean);
+    return parts.length ? `so far ${parts.join(" · ")}` : "";
+  })();
   const now = Date.now();
   const todayKey = dayKey(now), tomorrowKey = dayKey(now + 864e5);
   const allLegs = (today?.legs || []).filter((l) => new Date(l.start) > now);
@@ -97,7 +104,7 @@ export async function renderToday(ctx, q) {
           <div class="seg" id="t-legs">${LEG_COUNTS.map((n) => `<button data-n="${n}">${n} legs</button>`).join("")}</div>
           <div class="field" id="t-legs-custom-f" style="width:84px"><input id="t-legs-custom" type="number" min="2" max="15" step="1" placeholder="Legs" inputmode="numeric" title="Any number of legs, 2-15"/></div></div>
           <div class="row" id="t-style-row" style="margin-top:8px"><span class="small muted">Parlay legs</span><div class="seg" id="t-style"><button data-st="prob" title="The legs with the best chance to hit (that still have an edge)">Most likely to hit</button><button data-st="edge" title="The legs with the biggest edge: bigger payouts, hits less often">Best value</button></div></div>
-          <label class="small muted row" style="gap:6px;margin-top:8px;cursor:pointer"><input type="checkbox" id="t-aonly"/> Grade A picks only <span class="faint">(the grade that's been hitting)</span></label></div>
+          <label class="small muted row" style="gap:6px;margin-top:8px;cursor:pointer"><input type="checkbox" id="t-aonly"/> Grade A picks only${gradeRec ? ` <span class="faint">(${gradeRec})</span>` : ""}</label></div>
       </div>
     </div>
     <div class="card best" style="margin-top:14px" id="t-best"></div>
@@ -120,7 +127,7 @@ export async function renderToday(ctx, q) {
       <ol class="small muted" style="padding-left:18px;margin:0">
         <li>Install the free <b>ntfy</b> app (App Store / Google Play).</li>
         <li>Tap <b>+</b> and subscribe to your private topic name (the one saved in this repo's <code>NTFY_TOPIC</code> secret).</li>
-        <li>Every day around 11:45am ET you'll get the top picks and the day's basketball and football parlays, with a link back here.</li>
+        <li>Every day in the late morning (ET) you'll get the top picks and the day's basketball and football parlays, with a link back here.</li>
       </ol>
     </div>
     <p class="small faint" style="margin-top:14px">Stakes use a quarter-Kelly split weighted by edge. Parlay odds multiply the legs' prices; a same-game parlay's real price at the book will differ because books adjust for correlated legs. Every leg's probability is a model estimate. Parlays compound both the edge and the error, so keep them small.</p></div>`;
@@ -258,7 +265,7 @@ export async function renderToday(ctx, q) {
     const box = $("#t-ticket");
     if (!t.bets.length) {
       const none = dayGames().length && dayGames().every((g) => state.offGames.has(g.key));
-      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">${none ? "No games picked. Open 🎯 Games above and switch some on." : `No ${state.aOnly ? "grade A " : ""}${esc(scopeLabel())} picks with an edge right now${legsInSport().length ? "" : " (no lines posted yet)"}. ${state.aOnly && legsInSport().some((l) => l.lean && ["B", "C"].includes(l.grade)) ? "There are B and C picks: untick <b>Grade A picks only</b> to use them, knowing B picks have hit less often. " : ""}Try another day or sport, or build a same-game parlay below.`}</div>${researchOnlyNote()}`;
+      box.innerHTML = `<h3>Your ${money(state.budget)} ticket</h3><div class="muted">${none ? "No games picked. Open 🎯 Games above and switch some on." : `No ${state.aOnly ? "grade A " : ""}${esc(scopeLabel())} picks with an edge right now${legsInSport().length ? "" : " (no lines posted yet)"}. ${state.aOnly && legsInSport().some((l) => l.lean && ["B", "C"].includes(l.grade)) ? `There are B and C picks: untick <b>Grade A picks only</b> to use them${gradeRec ? ` (${gradeRec})` : ""}. ` : ""}Try another day or sport, or build a same-game parlay below.`}</div>${researchOnlyNote()}`;
       return;
     }
     const oneGame = new Set(legs.map((l) => l.gameKey)).size === 1 ? legs[0].matchup : null;
@@ -437,13 +444,21 @@ export async function renderToday(ctx, q) {
   }
 
   function learnBlock() {
-    const rows = Object.entries(today?.learn || {}).filter(([, x]) => x.n >= 5).sort((a, b) => b[1].n - a[1].n);
+    const L = today?.learn || {};
+    // League rows biggest first, each league's props followed by its overs and unders.
+    const top = Object.entries(L).filter(([g, x]) => x.n >= 5 && g.split(":").length === 2).sort((a, b) => b[1].n - a[1].n);
+    const rows = top.flatMap(([g, x]) => [[g, x], ...["over", "under"].map((s) => [`${g}:${s}`, L[`${g}:${s}`]]).filter(([, y]) => y && y.n >= 5)]);
     if (!rows.length) return auditLine();
+    const name = (g) => {
+      const [lg, kind, side] = g.split(":");
+      if (side) return `<span style="padding-left:14px">${side === "over" ? "Overs" : "Unders"}</span>`;
+      return `${esc(leagueName(lg))} ${kind === "prop" ? "props" : "game lines"}${(lg === "nfl" || lg === "ncaaf") && kind === "prop" ? ` <span class="faint small">(research only now)</span>` : ""}`;
+    };
     return `<h3 style="margin-top:14px">📏 Learning from results</h3>
-      <p class="small muted" style="margin:0 0 6px">Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward "all of it" until there are enough results). Fewer, stronger picks where the model has been too confident.</p>
-      <div class="table-wrap"><table><thead><tr><th>Picks</th><th class="r">Record</th><th class="r">Model said</th><th class="r">Hit</th><th class="r">Break-even</th><th class="r">Edges kept</th></tr></thead><tbody>
-      ${rows.map(([g, x]) => { const [lg, kind] = g.split(":"); return `<tr><td>${esc(leagueName(lg))} ${kind === "prop" ? "props" : "game lines"}${lg === "nfl" || lg === "ncaaf" ? (kind === "prop" ? ` <span class="faint small">(research only now)</span>` : "") : ""}</td><td class="r">${x.w}-${x.n - x.w}</td><td class="r">${pct(x.model)}</td><td class="r ${x.hit >= x.be ? "pos" : "neg"}">${pct(x.hit)}</td><td class="r">${pct(x.be)}</td><td class="r"><b>${Math.round(x.k * 100)}%</b></td></tr>`; }).join("")}
-      </tbody></table></div>${auditLine()}`;
+      <p class="small muted" style="margin:0 0 6px">Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward "all of it" until there are enough results). Overs and unders are learned separately. A player's legs from one game count as one result, so one huge night can't swing everything. Fewer, stronger picks where the model has been too confident.</p>
+      <div class="table-wrap"><table><thead><tr><th>Picks</th><th class="r">Record</th><th class="r">Model said</th><th class="r" title="Each player-game counted once">Hit</th><th class="r">Break-even</th><th class="r">Edges kept</th></tr></thead><tbody>
+      ${rows.map(([g, x]) => `<tr><td>${name(g)}</td><td class="r">${x.w}-${x.n - x.w}${x.ne ? ` <span class="faint small" title="Player-games (games, for game lines)">· ${Math.round(x.ne)}</span>` : ""}</td><td class="r">${pct(x.model)}</td><td class="r ${x.hit >= x.be ? "pos" : "neg"}">${pct(x.hit)}</td><td class="r">${pct(x.be)}</td><td class="r"><b>${Math.round(x.k * 100)}%</b></td></tr>`).join("")}
+      </tbody></table></div><p class="small faint" style="margin:4px 0 0">Record counts every leg; the small number is how many separate player-games (games, for game lines) those were, and Hit counts each of those once.</p>${auditLine()}`;
   }
 
   function renderRecord() {

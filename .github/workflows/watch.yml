@@ -2,8 +2,10 @@ name: Injury alerts for today's picks
 
 on:
   schedule:
-    - cron: "5 16-23 * * *"  # hourly, noon to 7pm ET
-    - cron: "5 0-3 * * *"    # and 8pm to 11pm ET (tip-offs and kickoffs)
+    # Twice an hour, off the busy top of the hour: GitHub drops many scheduled runs, so
+    # this lands about hourly in practice. Alerts are logged, so nothing sends twice.
+    - cron: "23,51 16-23 * * *"  # noon to 7pm ET (11 to 6 in winter)
+    - cron: "23,51 0-3 * * *"    # and the evening (tip-offs and kickoffs)
   workflow_dispatch:
 
 permissions:
