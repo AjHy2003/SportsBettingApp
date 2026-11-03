@@ -1,0 +1,14 @@
+odds api: off (no ODDS_API_KEY), using DraftKings only
+nba: 0 upcoming games
+nfl: 0 upcoming games
+ncaaf: 61 upcoming games
+ncaaf: 61 games, 366 legs, 0 alt-line legs (0 too-good-to-be-true rungs dropped so far)
+ncaab: 19 upcoming games
+ncaab: 19 games, 104 legs, 0 alt-line legs (0 too-good-to-be-true rungs dropped so far)
+nhl: 11 upcoming games
+nhl: 11 games, 616 legs, 66 alt-line legs (0 too-good-to-be-true rungs dropped so far)
+news: 250 articles, 62 legs with a related story
+learning: nba:prop:under 157-117 (98 player-games) k=0.54, nba:prop 249-223 (176 player-games) k=0.36, nfl:prop:under 12-22 (31 player-games) k=0.44, nfl:prop 16-33 (41 player-games) k=0.71, nfl:prop:over 4-11 (10 player-games) k=0.59, nba:prop:over 92-106 (78 player-games) k=0.14, nhl:prop:under 7-7 (13 player-games) k=0.66, nhl:prop 15-16 (26 player-games) k=0.83, nhl:prop:over 8-9 (13 player-games) k=0.86, ncaab:line 50-94 (90 player-games) k=0.91, nba:line 9-5 (8 player-games) k=1.00, nhl:line 1-0 (1 player-games) k=1.00
+moonshots: all 3 legs 1 in 404, basketball 3 legs 1 in 420, football 4 legs 1 in 690, hockey 6 legs 1 in 724
+tracked: 778 legs (0 graded this run)
+picks: 15, legs: 1086, games: 91, graded: 0

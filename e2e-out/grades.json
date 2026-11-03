@@ -1,0 +1,171 @@
+{
+ "grades": {
+  "ncaaf:line": {
+   "A": 0,
+   "B": 0,
+   "C": 33,
+   "PASS": 150
+  },
+  "ncaab:line": {
+   "A": 0,
+   "B": 0,
+   "C": 28,
+   "PASS": 24
+  },
+  "nhl:line": {
+   "A": 0,
+   "B": 0,
+   "C": 6,
+   "PASS": 27
+  },
+  "nhl:prop:OVER": {
+   "A": 1,
+   "B": 4,
+   "C": 26,
+   "PASS": 224
+  },
+  "nhl:prop:UNDER": {
+   "A": 0,
+   "B": 1,
+   "C": 20,
+   "PASS": 271
+  }
+ },
+ "legsWithKs": 550,
+ "learn": {
+  "nba:prop:under": {
+   "n": 274,
+   "w": 157,
+   "ne": 98.5,
+   "hit": 0.5671,
+   "model": 0.5892,
+   "be": 0.53,
+   "k": 0.5372
+  },
+  "nba:prop": {
+   "n": 472,
+   "w": 249,
+   "ne": 176,
+   "hit": 0.5223,
+   "model": 0.5776,
+   "be": 0.5223,
+   "k": 0.3627
+  },
+  "nfl:prop:under": {
+   "n": 34,
+   "w": 12,
+   "ne": 30.7,
+   "hit": 0.3587,
+   "model": 0.6001,
+   "be": 0.5238,
+   "k": 0.4396
+  },
+  "nfl:prop": {
+   "n": 49,
+   "w": 16,
+   "ne": 41,
+   "hit": 0.3252,
+   "model": 0.6001,
+   "be": 0.5238,
+   "k": 0.7092
+  },
+  "nfl:prop:over": {
+   "n": 15,
+   "w": 4,
+   "ne": 10.3,
+   "hit": 0.2258,
+   "model": 0.6002,
+   "be": 0.5238,
+   "k": 0.5878
+  },
+  "nba:prop:over": {
+   "n": 198,
+   "w": 92,
+   "ne": 77.5,
+   "hit": 0.4655,
+   "model": 0.5628,
+   "be": 0.5125,
+   "k": 0.1422
+  },
+  "nhl:prop:under": {
+   "n": 14,
+   "w": 7,
+   "ne": 13,
+   "hit": 0.5385,
+   "model": 0.6401,
+   "be": 0.5704,
+   "k": 0.6586
+  },
+  "nhl:prop": {
+   "n": 31,
+   "w": 15,
+   "ne": 26,
+   "hit": 0.5,
+   "model": 0.5516,
+   "be": 0.489,
+   "k": 0.8298
+  },
+  "nhl:prop:over": {
+   "n": 17,
+   "w": 8,
+   "ne": 13,
+   "hit": 0.4615,
+   "model": 0.4632,
+   "be": 0.4076,
+   "k": 0.8589
+  },
+  "ncaab:line": {
+   "n": 144,
+   "w": 50,
+   "ne": 90,
+   "hit": 0.3315,
+   "model": 0.3405,
+   "be": 0.2907,
+   "k": 0.9139
+  },
+  "nba:line": {
+   "n": 14,
+   "w": 9,
+   "ne": 8,
+   "hit": 0.625,
+   "model": 0.5082,
+   "be": 0.457,
+   "k": 1
+  },
+  "nhl:line": {
+   "n": 1,
+   "w": 1,
+   "ne": 1,
+   "hit": 1,
+   "model": 0.5369,
+   "be": 0.495,
+   "k": 1
+  }
+ },
+ "picks": 15,
+ "best": [],
+ "alts": [
+  "Jake Evans 1+ Points 180 model 36% vs 36%",
+  "Jake Evans 2+ Points 1100 model 9% vs 8%",
+  "John Carlson 2+ Points 600 model 15% vs 14%",
+  "Justin Faulk 1+ Points 205 model 36% vs 33%",
+  "Justin Faulk 2+ Points 1300 model 9% vs 7%",
+  "Viktor Arvidsson 2+ Points 400 model 21% vs 20%",
+  "Anthony Cirelli 2+ Points 550 model 16% vs 15%",
+  "Pontus Holmberg 1+ Points 145 model 43% vs 41%",
+  "Lucas Raymond 2+ Points 370 model 22% vs 21%",
+  "Emmitt Finnie 1+ Points 125 model 46% vs 44%",
+  "Morgan Rielly 1+ Points 180 model 38% vs 36%",
+  "Jack Roslovic 2+ Points 425 model 19% vs 19%",
+  "Mikhail Sergachev 3+ Points 1200 model 8% vs 8%",
+  "Barrett Hayton 1+ Points 160 model 41% vs 38%",
+  "Logan Cooley 2+ Points 230 model 30% vs 30%",
+  "Easton Cowan 1+ Points 110 model 49% vs 48%",
+  "Adam Fox 2+ Points 275 model 27% vs 27%",
+  "Tye Kartye 2+ Points 850 model 14% vs 11%",
+  "Tye Kartye 1+ Points 145 model 44% vs 41%",
+  "Alexis Lafreniere 2+ Points 350 model 23% vs 22%"
+ ],
+ "nAlts": 66,
+ "moon": []
+}
