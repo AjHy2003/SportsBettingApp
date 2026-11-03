@@ -225,6 +225,7 @@ function propLeg(L, game, r) {
 
 // Alt-line legs from DraftKings milestones ("30+ points" at a price): plus-money rungs
 // where the model beats the price. Moonshot material, never top picks.
+let altTooGood = 0;
 function altLegs(L, game, r, ladder) {
   const res = r.res;
   if (!ladder?.length || !res?.probOver || res.verdict?.mismatch || res.verdict?.roleChange || r.context?.status?.maybe) return [];
@@ -235,6 +236,10 @@ function altLegs(L, game, r, ladder) {
     if (!(p >= 0.08)) continue;
     const edge = p - impliedProb(odds);
     if (edge <= 0) continue;
+    // A rung the model makes more than twice as likely as DraftKings' price, or 15+ points
+    // likelier, is almost always bad data or news the model hasn't seen (Nov 2's moonshot
+    // had "7+ assists" at +234 rated 54% and "40+ Pts + Reb + Ast" at +1140 rated 24%).
+    if (p > 2 * impliedProb(odds) || edge > 0.15) { altTooGood++; continue; }
     out.push({
       id: `${L.id}:${game.eventId}:${r.aid}:${r.key}:alt${at}`, league: L.id, gameKey: game.key, eventId: game.eventId, start: game.start, matchup: game.matchup,
       kind: "prop", alt: true, player: r.who.name, playerId: r.aid, team: r.who.team?.abbreviation, marketKey: r.key, market: r.m.label,
@@ -306,7 +311,7 @@ async function scanLeague(cfg) {
       console.log(`  ${cfg.id} ${e.id} failed: ${err.message}`);
     }
   });
-  console.log(`${cfg.id}: ${games.length} games, ${legs.length} legs, ${alts.length} alt-line legs`);
+  console.log(`${cfg.id}: ${games.length} games, ${legs.length} legs, ${alts.length} alt-line legs (${altTooGood} too-good-to-be-true rungs dropped so far)`);
   return { games, legs, alts };
 }
 
@@ -489,14 +494,20 @@ const trackedGraded = await gradePending(tracked);
 // re-grade (never up). The live re-check applies the same k.
 const inHistory = new Set(history.picks.map((p) => p.id));
 const learn = edgeShrink([...history.picks, ...tracked.picks.filter((p) => p.src === "leg" && !inHistory.has(p.id))]);
+const kOf = (l, side) => learn[learnGroup({ ...l, side })]?.k;
 for (const l of [...legs, ...alts]) {
-  const k = learn[learnGroup(l)]?.k;
+  // Props carry both sides' k for the live re-check (a pick can switch sides there).
+  if (l.kind === "prop") {
+    const ko = kOf(l, "OVER"), ku = kOf(l, "UNDER");
+    if (ko < 0.999 || ku < 0.999) l.ks = { OVER: Number((ko ?? 1).toFixed(4)), UNDER: Number((ku ?? 1).toFixed(4)) };
+  }
+  const k = kOf(l, l.side);
   if (!(k < 0.999)) continue;
   const s = shrinkLeg(l.prob, l.odds, l.grade, k);
   l.praw = l.prob; l.k = Number(k.toFixed(4));
   l.prob = s.prob; l.edge = s.prob - impliedProb(l.odds ?? -110); l.ev = s.prob * decimalOdds(l.odds ?? -110) - 1; l.grade = s.grade;
 }
-console.log(`learning: ${Object.entries(learn).map(([g, x]) => `${g} ${x.w}-${x.n - x.w} k=${x.k.toFixed(2)}`).join(", ") || "no graded picks yet"}`);
+console.log(`learning: ${Object.entries(learn).map(([g, x]) => `${g} ${x.w}-${x.n - x.w} (${x.ne.toFixed(0)} player-games) k=${x.k.toFixed(2)}`).join(", ") || "no graded picks yet"}`);
 
 const picks = choosePicks(legs);
 const snapshots = snapshotLines(history, legs);
@@ -589,7 +600,7 @@ const today = {
   topStories,
   record: { all: record(history), last30: record(history, 30), last7: record(history, 7), graded, clv: clvSummary(history), calibration: calibration(history), snapshots },
   tracked: trackedSummary(tracked),
-  learn: Object.fromEntries(Object.entries(learn).map(([g, x]) => [g, { n: x.n, w: x.w, hit: Number(x.hit.toFixed(4)), model: Number(x.model.toFixed(4)), be: Number(x.be.toFixed(4)), k: Number(x.k.toFixed(4)) }])),
+  learn: Object.fromEntries(Object.entries(learn).map(([g, x]) => [g, { n: x.n, w: x.w, ne: Number(x.ne.toFixed(1)), hit: Number(x.hit.toFixed(4)), model: Number(x.model.toFixed(4)), be: Number(x.be.toFixed(4)), k: Number(x.k.toFixed(4)) }])),
 };
 const outDir = path.join(SITE, "data", "picks");
 fs.mkdirSync(outDir, { recursive: true });

@@ -5,7 +5,12 @@ on:
     branches: [main]
   schedule:
     - cron: "23 9 * * *"   # ~5:20am ET: last night's results, nflverse nightly update, early lines
-    - cron: "47 15 * * *"  # ~11:45am ET: most lines and props posted -> phone notification
+    - cron: "47 15 * * *"  # ~10:45am ET (11:45 in summer): most lines and props posted -> phone notification
+    # GitHub drops scheduled runs when it's busy, so a few extra chances around then; the
+    # notification goes out once a day on the first run from 10:45am ET (tools/notify.mjs).
+    - cron: "53 15 * * *"
+    - cron: "19 16 * * *"
+    - cron: "44 16 * * *"
     - cron: "17 21 * * *"  # ~5:15pm ET: refresh for injury news and evening games
     # Full re-scan every 30 minutes from morning to after the late games: new lines,
     # new props, injury news and fresh projections (each run takes about a minute).
@@ -64,6 +69,10 @@ jobs:
         continue-on-error: true
         if: github.event.schedule == '23 9 * * *' || github.event_name == 'workflow_dispatch'
         run: node tools/audit.mjs _site/data/picks/today.json picks-data/history.json _site/data/audit.json
+      - name: Phone notification
+        continue-on-error: true
+        if: env.NTFY_TOPIC != '' && (github.event_name == 'schedule' || inputs.notify)
+        run: node tools/notify.mjs --once-daily picks-data/notified.json ${{ inputs.notify && '--force' || '' }}
       - name: Save pick history
         continue-on-error: true
         run: |
@@ -71,11 +80,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history.json tracked.json
+          [ -f notified.json ] && git add notified.json
           git diff --cached --quiet || { git commit -qm "Update pick history" && { git pull -q --rebase origin picks-data || true; } && git push -q origin picks-data; }
-      - name: Phone notification
-        continue-on-error: true
-        if: env.NTFY_TOPIC != '' && (github.event.schedule == '47 15 * * *' || inputs.notify)
-        run: node tools/notify.mjs
       - name: Assemble site
         run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
       - uses: actions/upload-pages-artifact@v3

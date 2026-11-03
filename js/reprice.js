@@ -6,7 +6,7 @@ import { api, getJSON, gameOdds, parseProps, pool } from "./espn.js";
 import { leagueById } from "./sports.js";
 import * as M from "./model.js";
 import { priceLine, fmtSpread } from "./gamemodel.js";
-import { decimalOdds, shrinkLeg } from "./parlay.js";
+import { decimalOdds, shrinkLeg, kFor } from "./parlay.js";
 
 // Ladder spacing for a line, and how many rungs each side of it.
 export const ladderStep = (line) => { const a = Math.abs(line); return a < 10 ? 0.5 : a < 40 ? 1 : a < 100 ? 2.5 : 5; };
@@ -94,9 +94,9 @@ export function priceSide(leg, side, line, odds, otherOdds = null) {
   const mine = odds ?? -110, theirs = otherOdds ?? otherSide(mine);
   const f = side === "OVER" ? { line, over: mine, under: theirs } : { line, over: theirs, under: mine };
   const { final, v } = propCore(rp, f, so, push);
-  const s = shrinkLeg(side === "OVER" ? final : 1 - final, mine, v.lean === side ? v.grade : "PASS", leg.k);
+  const s = shrinkLeg(side === "OVER" ? final : 1 - final, mine, v.lean === side ? v.grade : "PASS", kFor(leg, side));
   // The other side's grade, so "the model likes the other side" only shows when it has an edge.
-  const o = v.lean !== side ? shrinkLeg(side === "OVER" ? 1 - final : final, theirs, v.grade, leg.k) : null;
+  const o = v.lean !== side ? shrinkLeg(side === "OVER" ? 1 - final : final, theirs, v.grade, kFor(leg, side === "OVER" ? "UNDER" : "OVER")) : null;
   return { side, line, odds: mine, prob: s.prob, edge: s.prob - M.impliedProb(mine), ev: s.prob * decimalOdds(mine) - 1, grade: capFlags(leg, s.grade), lean: v.lean, otherGrade: o ? capFlags(leg, o.grade) : null, approx };
 }
 
@@ -131,7 +131,7 @@ export function repriceProp(leg, f) {
   // Same learned shrink as the full scan, then the same caps, on the side the model now leans.
   const sideFor = (side) => {
     const over = side === "OVER", odds = over ? oO : oU;
-    const s = shrinkLeg(over ? final : 1 - final, odds, v.lean === side ? v.grade : "PASS", leg.k);
+    const s = shrinkLeg(over ? final : 1 - final, odds, v.lean === side ? v.grade : "PASS", kFor(leg, side));
     const grade = capFlags(leg, s.grade);
     return { side, line: f.line, odds, priced, prob: s.prob, edge: s.prob - M.impliedProb(odds), ev: s.prob * decimalOdds(odds) - 1, grade,
       label: leg.player && leg.market ? `${leg.player} ${over ? "Over" : "Under"} ${f.line} ${leg.market}` : leg.label.replace(/(Over|Under) [\d.]+/, `${over ? "Over" : "Under"} ${f.line}`) };
