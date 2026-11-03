@@ -1,9 +1,9 @@
 {
- "n": 349,
+ "n": 350,
  "line moves 1 step(s) against": {
-  "kept": 201,
+  "kept": 205,
   "switched": 17,
-  "dropped": 131,
+  "dropped": 128,
   "far": 0,
   "examples": [
    "Grayson Allen Over 2.5 3-Pointers Made C -> Grayson Allen Under 3 3-Pointers Made C (55%)",
@@ -13,27 +13,27 @@
   ]
  },
  "line moves 2 step(s) against": {
-  "kept": 94,
+  "kept": 95,
   "switched": 41,
   "dropped": 214,
   "far": 0,
   "examples": [
+   "Jay Huff Under 1.5 3-Pointers Made C -> Jay Huff Over 0.5 3-Pointers Made C (57%)",
    "Jaylin Williams Under 1.5 3-Pointers Made C -> Jaylin Williams Over 0.5 3-Pointers Made C (57%)",
    "Aday Mara Over 1.5 Blocks C -> Aday Mara Under 2.5 Blocks C (56%)",
-   "Jay Huff Under 1.5 3-Pointers Made C -> Jay Huff Over 0.5 3-Pointers Made C (57%)",
    "Grayson Allen Over 2.5 3-Pointers Made C -> Grayson Allen Under 3.5 3-Pointers Made B (59%)"
   ]
  },
  "line moves 3 step(s) against": {
   "kept": 35,
-  "switched": 59,
-  "dropped": 255,
+  "switched": 58,
+  "dropped": 257,
   "far": 0,
   "examples": [
-   "Donovan Mitchell Under 4.5 Assists C -> Donovan Mitchell Over 3 Assists A (62%)",
-   "Isaiah Hartenstein Under 13.5 Pts + Ast C -> Isaiah Hartenstein Over 10.5 Pts + Ast C (55%)",
-   "Isaiah Hartenstein Under 12.5 Reb + Ast C -> Isaiah Hartenstein Over 9.5 Reb + Ast C (57%)",
-   "Jaylin Williams Under 2.5 Assists C -> Jaylin Williams Over 1 Assists C (62%)"
+   "CJ McCollum Under 6.5 Reb + Ast C -> CJ McCollum Over 5 Reb + Ast C (56%)",
+   "Nickeil Alexander-Walker Under 3.5 Assists C -> Nickeil Alexander-Walker Over 2 Assists C (59%)",
+   "Onyeka Okongwu Under 12.5 Reb + Ast C -> Onyeka Okongwu Over 9.5 Reb + Ast C (57%)",
+   "Dyson Daniels Under 12.5 Reb + Ast C -> Dyson Daniels Over 9.5 Reb + Ast C (55%)"
   ]
  }
 }
