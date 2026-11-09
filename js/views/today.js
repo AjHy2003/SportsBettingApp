@@ -452,7 +452,7 @@ export async function renderToday(ctx, q) {
     const name = (g) => {
       const [lg, kind, side] = g.split(":");
       if (side) return `<span style="padding-left:14px">${side === "over" ? "Overs" : "Unders"}</span>`;
-      return `${esc(leagueName(lg))} ${kind === "prop" ? "props" : "game lines"}${(lg === "nfl" || lg === "ncaaf") && kind === "prop" ? ` <span class="faint small">(research only now)</span>` : ""}`;
+      return `${esc(leagueName(lg))} ${kind === "prop" ? "props" : kind === "ml" ? "moneylines" : "spreads & totals"}${(lg === "nfl" || lg === "ncaaf") && kind === "prop" ? ` <span class="faint small">(research only now)</span>` : ""}`;
     };
     return `<h3 style="margin-top:14px">📏 Learning from results</h3>
       <p class="small muted" style="margin:0 0 6px">Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward "all of it" until there are enough results). Overs and unders are learned separately. A player's legs from one game count as one result, so one huge night can't swing everything. Fewer, stronger picks where the model has been too confident.</p>
@@ -480,9 +480,30 @@ export async function renderToday(ctx, q) {
       const good = c.pts > 0 || (c.pts === 0 && c.prob > 0);
       return `<span class="${good ? "pos" : "neg"}">${c.pts ? signed(c.pts, 1) : signed(c.prob * 100, 1) + "%"}</span>`;
     };
+    // Where the record comes from, by bet type. Kinds the app no longer posts are marked so
+    // they don't hide how the picks it still makes are doing (or flatter them).
+    const typeOf = (p) => (p.kind === "ml" && (p.odds ?? 0) >= 150 ? ["Long-shot moneylines (+150 and up)", "not posted now"]
+      : p.kind === "prop" && (p.league === "nfl" || p.league === "ncaaf") ? ["NFL props", "not posted now"]
+      : p.kind === "prop" ? [`${leagueName(p.league)} props`, ""]
+      : p.kind === "ml" ? ["Moneylines (under +150)", ""] : ["Spreads & totals", ""]);
+    const types = new Map();
+    for (const p of graded.filter((x) => x.result === "W" || x.result === "L")) {
+      const [name, gone] = typeOf(p);
+      const x = types.get(name) || { name, gone, w: 0, l: 0, units: 0, be: 0 };
+      if (p.result === "W") { x.w++; x.units += M.payout(p.odds ?? -110); } else { x.l++; x.units -= 1; }
+      x.be += M.impliedProb(p.odds ?? -110);
+      types.set(name, x);
+    }
+    const rowsT = [...types.values()].sort((a, b) => (a.gone ? 1 : 0) - (b.gone ? 1 : 0) || b.w + b.l - (a.w + a.l));
+    const still = rowsT.filter((x) => !x.gone).reduce((s, x) => ({ w: s.w + x.w, l: s.l + x.l, units: s.units + x.units }), { w: 0, l: 0, units: 0 });
+    const typeTable = rowsT.length > 1 ? `<h3 style="margin-top:14px">By bet type</h3><div class="table-wrap"><table><thead><tr><th>Bet type</th><th class="r">Record</th><th class="r">Hit</th><th class="r">Needed</th><th class="r">Units</th></tr></thead><tbody>
+        ${rowsT.map((x) => `<tr${x.gone ? ' class="faint"' : ""}><td style="white-space:normal;min-width:120px">${esc(x.name)}${x.gone ? `<div class="small">${x.gone}</div>` : ""}</td><td class="r">${x.w}-${x.l}</td><td class="r">${pct(x.w / (x.w + x.l))}</td><td class="r">${pct(x.be / (x.w + x.l))}</td><td class="r ${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</td></tr>`).join("")}
+      </tbody></table></div><p class="small faint" style="margin:4px 0 0">Needed = the hit rate the prices required to break even. Long-shot moneylines and NFL props stay in the all-time record; the app no longer posts them.</p>` : "";
     box.innerHTML = `<h3>Track record</h3>
       <div class="kpis">${line("Last 7 days", r.last7)}${line("Last 30 days", r.last30)}${line("All time", r.all)}
+        ${still.w + still.l && still.w + still.l < r.all.w + r.all.l ? `<div class="kpi" title="All time, without long-shot moneylines and NFL props, which the app no longer posts"><div class="k">Kinds it still posts</div><div class="v">${still.w}-${still.l} <small class="${still.units >= 0 ? "pos" : "neg"}">${signed(still.units, 1)}u</small></div></div>` : ""}
         ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g]) : "").join("")}${clvBlock}</div>
+      ${typeTable}
       ${cal.length ? `<h3 style="margin-top:14px">Calibration</h3><div class="table-wrap"><table><thead><tr><th>Model said</th><th class="r">Picks</th><th class="r">Expected hit %</th><th class="r">Actual hit %</th></tr></thead><tbody>
         ${cal.map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
       </tbody></table></div><p class="small faint" style="margin:6px 0 0">Small samples swing a lot; read this after a few hundred picks.</p>` : ""}
