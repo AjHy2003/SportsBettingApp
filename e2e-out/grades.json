@@ -1,0 +1,258 @@
+{
+ "grades": {
+  "nba:line": {
+   "A": 0,
+   "B": 0,
+   "C": 2,
+   "PASS": 19
+  },
+  "nba:prop:OVER": {
+   "A": 0,
+   "B": 0,
+   "C": 0,
+   "PASS": 316
+  },
+  "nba:prop:UNDER": {
+   "A": 0,
+   "B": 0,
+   "C": 0,
+   "PASS": 294
+  },
+  "nfl:line": {
+   "A": 0,
+   "B": 0,
+   "C": 1,
+   "PASS": 1
+  },
+  "ncaaf:line": {
+   "A": 0,
+   "B": 0,
+   "C": 1,
+   "PASS": 27
+  },
+  "ncaab:line": {
+   "A": 0,
+   "B": 0,
+   "C": 6,
+   "PASS": 63
+  },
+  "nhl:line": {
+   "A": 0,
+   "B": 0,
+   "C": 0,
+   "PASS": 9
+  },
+  "nhl:prop:UNDER": {
+   "A": 0,
+   "B": 0,
+   "C": 0,
+   "PASS": 101
+  },
+  "nhl:prop:OVER": {
+   "A": 0,
+   "B": 0,
+   "C": 2,
+   "PASS": 76
+  }
+ },
+ "legsWithKs": 937,
+ "learn": {
+  "nba:prop:under": {
+   "n": 458,
+   "w": 236,
+   "ne": 177.5,
+   "hit": 0.5297,
+   "model": 0.5857,
+   "be": 0.5235,
+   "k": 0.1399
+  },
+  "nba:prop": {
+   "n": 656,
+   "w": 328,
+   "ne": 255,
+   "hit": 0.5102,
+   "model": 0.5788,
+   "be": 0.5202,
+   "k": 0.2817
+  },
+  "nfl:prop:under": {
+   "n": 34,
+   "w": 12,
+   "ne": 30.7,
+   "hit": 0.3587,
+   "model": 0.6001,
+   "be": 0.5238,
+   "k": 0.4396
+  },
+  "nfl:prop": {
+   "n": 49,
+   "w": 16,
+   "ne": 41,
+   "hit": 0.3252,
+   "model": 0.6001,
+   "be": 0.5238,
+   "k": 0.7092
+  },
+  "nfl:prop:over": {
+   "n": 15,
+   "w": 4,
+   "ne": 10.3,
+   "hit": 0.2258,
+   "model": 0.6002,
+   "be": 0.5238,
+   "k": 0.5878
+  },
+  "nba:prop:over": {
+   "n": 198,
+   "w": 92,
+   "ne": 77.5,
+   "hit": 0.4655,
+   "model": 0.5628,
+   "be": 0.5125,
+   "k": 0.1104
+  },
+  "nhl:prop:under": {
+   "n": 118,
+   "w": 64,
+   "ne": 100.8,
+   "hit": 0.5455,
+   "model": 0.6155,
+   "be": 0.5585,
+   "k": 0.151
+  },
+  "nhl:prop": {
+   "n": 283,
+   "w": 140,
+   "ne": 231,
+   "hit": 0.4921,
+   "model": 0.5317,
+   "be": 0.4809,
+   "k": 0.4555
+  },
+  "nhl:prop:over": {
+   "n": 165,
+   "w": 76,
+   "ne": 130.2,
+   "hit": 0.4507,
+   "model": 0.4667,
+   "be": 0.4208,
+   "k": 0.597
+  },
+  "ncaab:line": {
+   "n": 114,
+   "w": 64,
+   "ne": 62.7,
+   "hit": 0.5612,
+   "model": 0.5651,
+   "be": 0.5241,
+   "k": 0.9634
+  },
+  "nba:ml": {
+   "n": 21,
+   "w": 4,
+   "ne": 10.2,
+   "hit": 0.1967,
+   "model": 0.3841,
+   "be": 0.3398,
+   "k": 0.9077
+  },
+  "nba:line": {
+   "n": 32,
+   "w": 15,
+   "ne": 19.8,
+   "hit": 0.4622,
+   "model": 0.5663,
+   "be": 0.5224,
+   "k": 0.8345
+  },
+  "ncaab:ml": {
+   "n": 171,
+   "w": 16,
+   "ne": 128.3,
+   "hit": 0.0883,
+   "model": 0.1433,
+   "be": 0.0813,
+   "k": 0.5013
+  },
+  "ncaaf:line": {
+   "n": 31,
+   "w": 16,
+   "ne": 23.7,
+   "hit": 0.493,
+   "model": 0.5567,
+   "be": 0.5198,
+   "k": 0.8086
+  },
+  "ncaaf:ml": {
+   "n": 18,
+   "w": 4,
+   "ne": 12.3,
+   "hit": 0.2027,
+   "model": 0.3602,
+   "be": 0.3233,
+   "k": 0.8902
+  },
+  "nhl:ml": {
+   "n": 8,
+   "w": 2,
+   "ne": 5.5,
+   "hit": 0.3636,
+   "model": 0.5161,
+   "be": 0.48,
+   "k": 0.9479
+  },
+  "nfl:line": {
+   "n": 8,
+   "w": 4,
+   "ne": 5.7,
+   "hit": 0.5,
+   "model": 0.5566,
+   "be": 0.524,
+   "k": 0.9464
+  },
+  "nfl:ml": {
+   "n": 3,
+   "w": 0,
+   "ne": 1.3,
+   "hit": 0,
+   "model": 0.2402,
+   "be": 0.2052,
+   "k": 0.9868
+  },
+  "nhl:line": {
+   "n": 7,
+   "w": 3,
+   "ne": 4.5,
+   "hit": 0.4444,
+   "model": 0.5917,
+   "be": 0.5614,
+   "k": 0.9569
+  }
+ },
+ "picks": 12,
+ "best": [],
+ "alts": [
+  "CJ McCollum 6+ Assists 554 model 16% vs 15%",
+  "CJ McCollum 7+ Assists 1060 model 9% vs 9%",
+  "CJ McCollum 20+ Pts + Ast 198 model 34% vs 34%",
+  "CJ McCollum 20+ Pts + Reb + Ast 121 model 46% vs 45%",
+  "Luka Doncic 40+ Points 141 model 42% vs 41%",
+  "Nickeil Alexander-Walker 25+ Points 207 model 33% vs 33%",
+  "Nickeil Alexander-Walker 30+ Points 539 model 16% vs 16%",
+  "Nickeil Alexander-Walker 4+ 3-Pointers Made 114 model 47% vs 47%",
+  "Nickeil Alexander-Walker 5+ 3-Pointers Made 247 model 29% vs 29%",
+  "Nickeil Alexander-Walker 30+ Pts + Reb 255 model 28% vs 28%",
+  "Nickeil Alexander-Walker 25+ Pts + Reb 103 model 49% vs 49%",
+  "Sandro Mamukelashvili 12+ Points 186 model 35% vs 35%",
+  "Sandro Mamukelashvili 6+ Rebounds 204 model 33% vs 33%",
+  "Sandro Mamukelashvili 20+ Pts + Reb 346 model 23% vs 22%",
+  "Luguentz Dort 10+ Points 182 model 36% vs 35%",
+  "Luguentz Dort 12+ Points 323 model 24% vs 24%",
+  "Luguentz Dort 4+ 3-Pointers Made 750 model 12% vs 12%",
+  "Luguentz Dort 20+ Pts + Reb 780 model 11% vs 11%",
+  "Aaron Wiggins 18+ Points 269 model 28% vs 27%",
+  "Aaron Wiggins 20+ Points 421 model 20% vs 19%"
+ ],
+ "nAlts": 415,
+ "moon": []
+}

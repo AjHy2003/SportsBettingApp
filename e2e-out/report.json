@@ -1,0 +1,941 @@
+[
+ {
+  "name": "home",
+  "hash": "#/",
+  "url": "http://localhost:8765/#/",
+  "errors": [],
+  "failed": [],
+  "text": "Fresh picks every morning · 24 leagues Smarter bets. Every game. Game logs, hit rates and matchups for any prop, spread or total, graded against the real DraftKings line. Search any player, or pick a league below. 🔥 Today's picks 🚀 $10 → $10K moonshot 🔥 Today's top picks Build my ticket › C BU +14.5 -110 · College Basketball · 8:00 PM C EWU +17.5 -118 · College Basketball · 9:30 PM C ILST +15.5 -115 · College Basketball · 8:30 PM C Connor McDavid Over 1.5 Assists +165 · NHL · 8:00 PM 🎬 Latest highlights All news & highlights › ▶ 1:07 TB 24 – CHI 27 Bears survive, take down Bucs with walk-off field goal 🏈 NFL · 17h ago ▶ 1:13 NO 123 – LAC 139 New Orleans Pelicans vs. LA Clippers: Game Highlights 🏀 NBA · 17h ago ▶ 1:14 MIA 114 – SAC 108 Miami Heat vs. Sacramento Kings: Game Highlights 🏀 NBA · 17h ago ▶ 1:00 LAR 20 – WSH 13 Rams outlast Commanders with defensive showcase 🏈 NFL · 18h ago 🗞️ TOP STORIES Sources: Jaguars acquire Eagles DT Jordan Davis in blockbuster trade The Jaguars are trading a 2027 first-round pick and a 2029 second-round pick to the Eagles for defensive tackle Jordan Davis, sources told ESPN's Adam Schefter. 🏈 NFL · 1m ago Cardinals WR Michael Wilson (neck) to miss rest of season Cardinals wide receiver Michael Wilson will miss the rest of the season after suffering a neck fracture on the fourth play of Sunday's game that he played through. 🏈 NFL · 4m ago Raiders' Klint Kubiak expresses confidence in DC Rob Leonard amid struggles Raiders coach Klint"
+ },
+ {
+  "name": "nba-slate",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA 🏀 NBA Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 Mon 7:00 PM State Farm Arena Lakers9-2 Hawks7-4 Spread ATL -1.5 O/U 236.5 ML +101 / -119 Mon 7:00 PM Spectrum Center Cavaliers5-5 Hornets3-7 Spread CLE -8.5 O/U 215.5 ML -337 / +270 Mon 7:00 PM Little Caesars Arena Wizards4-6 Pistons6-3 Spread DET -10.5 O/U 219.5 ML +394 / -518 Mon 7:30 PM Scotiabank Arena Grizzlies6-3 Raptors5-4 Spread TOR -2.5 O/U 228.5 ML +114 / -135 Mon 8:00 PM American Airlines Center Pacers3-7 Mavericks6-4 Spread DAL -4.5 O/U 226.5 ML +143 / -170 Mon 8:30 PM Toyota Center (Houston) Nuggets5-3 Rockets7-3 Spread HOU -4.5 O/U 223.5 ML +146 / -173 Mon 9:00 PM Mortgage Matchup Center Spurs8-2 Suns3-5 Spread SA -8.5 O/U 226.5 ML -372 / +296 Mon 10:00 PM Chase Center Pelicans4-6 Warriors7-3 Spread GS -11.5 O/U 229.5 ML +426 / -569"
+ },
+ {
+  "name": "lebron",
+  "hash": "#/l/nba/p/1966",
+  "url": "http://localhost:8765/#/l/nba/p/1966",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NBA › LeBron James LeBron James Philadelphia 76ers · F · #23 Next: vs BOS · Tue, Nov 10 8:00 PM · game page › Latest: James supplied 22 points (8-16 FG, 2-5 3Pt, 4-5 FT), five rebounds, five assists and one steal across 33 minutes during Sunday's 127-121 win over Chicago. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted points line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans over 17.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 53.1% vs 52.4% needed to break even · edge +0.7 pts · EV +1.3% Over: stats only 53% · no market anchor PROJECTION 18.5 P(OVER) 53% FAIR ODDS -113 o AVG / MED 19.6 / 19.0 L10 OVER 4/10 EXP. MIN 33.8 ★ Save pick HIT RATE Showing over hit rates at 17.5 L5 40% 2/5 L10 40% 4/10 L20 65% 13/20 This season 33% 3/9 Last season 70% 51/73 Home 75% 15/20 vs BOS 100% 1/1 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 10+ 93.1% -1358 9/10 "
+ },
+ {
+  "name": "embiid",
+  "hash": "#/l/nba/p/3059318",
+  "url": "http://localhost:8765/#/l/nba/p/3059318",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500",
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NBA › Joel Embiid Joel Embiid Philadelphia 76ers · C · #21 Next: vs BOS · Tue, Nov 10 8:00 PM · game page › Latest: Embiid (foot) is available for Sunday's game against the Bulls. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted points line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 21.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 61.5% vs 52.4% needed to break even · edge +9.2 pts · EV +17.5% Over: stats only 38% · no market anchor PROJECTION 18.8 P(OVER) 38% FAIR ODDS -160 u AVG / MED 25.8 / 26.0 L10 OVER 4/10 EXP. MIN 31.6 ★ Save pick HIT RATE Showing under hit rates at 21.5 L5 80% 4/5 L10 60% 6/10 L20 50% 10/20 This season 67% 6/9 Last season 27% 12/45 Home 30% 6/20 vs BOS 50% 3/6 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 5+ 99.5% — 10/10 10+ 94.0% -1577 9/10 15+ 78% -351 7/10 20+ 49% +105 5/10 25+ 23% +328 2/10 30+ 7.2% +1293 0/10 3"
+ },
+ {
+  "name": "nfl-slate",
+  "hash": "#/l/nfl",
+  "url": "http://localhost:8765/#/l/nfl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL 🏈 NFL Custom calculator ‹ Week 8 Week 9 Week 10 › Mon 8:15 PM U.S. Bank Stadium Bills6-1 Vikings6-1 Spread BUF -3.5 O/U 45.5 ML -192 / +160 Final M&T Bank Stadium Jaguars6-2 33 Ravens4-5 10 No lines posted yet Final Santiago Bernabéu Bengals6-2 34 Falcons3-6 17 No lines posted yet Final Lucas Oil Stadium Cowboys4-5 27 Colts2-7 23 No lines posted yet Final Arrowhead Stadium Jets2-7 12 Chiefs6-2 35 No lines posted yet Final Hard Rock Stadium Lions6-2 19 Dolphins1-7 9 No lines posted yet Final/OT Caesars Superdome Browns5-4 22 Saints3-5 23 No lines posted yet Final Lincoln Financial Field Giants5-2-1 19 Eagles2-7 11 No lines posted yet Final Northwest Stadium Rams5-4 20 Commanders2-5-1 13 No lines posted yet Final Bank of America Stadium Broncos7-2 26 Panthers3-5 21 No lines posted yet Final SoFi Stadium Texans3-5 44 Chargers0-8 22 No lines posted yet Final Gillette Stadium Packers6-3 45 Patriots5-4 27 No lines posted yet Final Levi's Stadium Raiders4-5 17 49ers7-1 38 No lines posted yet Final Lumen Field Cardinals3-6 3 Seahawks5-4 17 No lines posted yet Final Soldier Field Buccaneers3-6 24 Bears7-2 27 No lines posted yet"
+ },
+ {
+  "name": "chase",
+  "hash": "#/l/nfl/p/4362628",
+  "url": "http://localhost:8765/#/l/nfl/p/4362628",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Ja'Marr Chase Ja'Marr Chase Cincinnati Bengals · WR · #1 Next: vs PIT · Sun, Nov 15 8:20 PM · game page › Latest: Chase caught 10 of 12 targets for 155 yards and a touchdown in Sunday's 34-17 win over the Falcons. more MARKET Receptions Receiving Yards Targets Longest Reception Rush + Rec Yards Total TDs (rush + rec) YOUR LINE Line Over odds Under odds No posted receiving yards line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 84.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 54.5% vs 52.4% needed to break even · edge +2.2 pts · EV +4.1% Over: stats only 45% · no market anchor PROJECTION 77.0 P(OVER) 45% FAIR ODDS -120 u AVG / MED 85.8 / 92.5 L10 OVER 4/10 ★ Save pick HIT RATE Showing under hit rates at 84.5 L5 60% 3/5 L10 60% 6/10 L20 40% 8/20 This season 63% 5/8 Last season 38% 6/16 Home 25% 3/12 vs PIT 33% 1/3 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 1+ 97.7% -4256 10/10 51+ 76% -308 8/10 101+ 31% +225 2/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far "
+ },
+ {
+  "name": "lamar",
+  "hash": "#/l/nfl/p/3916387",
+  "url": "http://localhost:8765/#/l/nfl/p/3916387",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Lamar Jackson Lamar Jackson Baltimore Ravens · QB · #8 · Day-To-Day Next: vs LAC · Mon, Nov 16 8:15 PM · game page › Injury: Injured Reserve Thumb Latest: Jackson, who is scheduled to undergo surgery on his injured right thumb, has told teammates he plans to return later this season, Ian Rapoport of NFL Network reports. more MARKET Passing Yards Pass Attempts Completions Passing TDs Interceptions Rushing Yards Rush Attempts Longest Rush Pass + Rush Yards YOUR LINE Line Over odds Under odds No posted passing yards line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans over 185.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Injury report: Injured Reserve — no grade; props are usually voided if the player doesn't play. Model 52.9% vs 52.4% needed to break even · edge +0.5 pts · EV +1.0% Over: stats only 53% · no market anchor PROJECTION 180.8 P(OVER) 53% FAIR ODDS -112 o AVG / MED 195.3 / 206.5 L10 OVER 7/10 ★ Save pick HIT RATE Showing over hit rates at 185.5 L5 80% 4/5 L10 70% 7/10 L20 67% 12/18 This season 80% 4/5 Last season 62% 8/13 Home 78% 7/9 vs LAC — no games 🪜 ALT LINES Model only"
+ },
+ {
+  "name": "mahomes",
+  "hash": "#/l/nfl/p/3139477",
+  "url": "http://localhost:8765/#/l/nfl/p/3139477",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Patrick Mahomes Patrick Mahomes Kansas City Chiefs · QB · #15 Next: @ ATL · Sun, Nov 15 1:00 PM · game page › Injury: Questionable Elbow Latest: Chiefs coach Andy Reid said Monday that Mahomes (elbow) is considered day-to-day as this Sunday's game against the Falcons approaches, Sam McDowell of The Kansas City Star reports. more MARKET Passing Yards Pass Attempts Completions Passing TDs Interceptions Rushing Yards Rush Attempts Longest Rush Pass + Rush Yards YOUR LINE Line Over odds Under odds No posted passing yards line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 250.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Injury report: Questionable Model 52.8% vs 52.4% needed to break even · edge +0.4 pts · EV +0.8% Over: stats only 47% · no market anchor PROJECTION 248.1 P(OVER) 47% FAIR ODDS -112 u AVG / MED 255.6 / 257.5 L10 OVER 3/10 ★ Save pick HIT RATE Showing under hit rates at 250.5 L5 60% 3/5 L10 70% 7/10 L20 45% 9/20 This season 63% 5/8 Last season 36% 5/14 Away 56% 5/9 vs ATL — no games 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 150+ 97.1% -3331 10/10 200+ 79% -"
+ },
+ {
+  "name": "mlb-judge",
+  "hash": "#/l/mlb/p/33192",
+  "url": "http://localhost:8765/#/l/mlb/p/33192",
+  "errors": [],
+  "failed": [],
+  "text": "Home › MLB › Aaron Judge Aaron Judge New York Yankees · RF · #99 Latest: Yankees general manager Brian Cashman said Wednesday that Judge has a follow-up exam scheduled with Dr. Gregory Pearl regarding his rib, Bryan Hoch of MLB.com reports. more MARKET Hits Total Bases Hits + Runs + RBIs Home Runs RBIs Runs Walks (batter) Strikeouts (batter) YOUR LINE Line Over odds Under odds Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 1.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 63.7% vs 52.4% needed to break even · edge +11.3 pts · EV +21.6% Over: stats only 36% · no market anchor PROJECTION 1.5 P(OVER) 36% FAIR ODDS -176 u AVG / MED 1.7 / 1.0 L10 OVER 2/10 ★ Save pick HIT RATE Showing under hit rates at 1.5 L5 80% 4/5 L10 80% 8/10 L20 75% 15/20 This season 56% 37/66 Last season 47% 75/160 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 1+ 60% -151 5/10 3+ 21% +387 1/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot. L5 L10 L20 Season Last season All All Home Away 0 2 4 0 NYM"
+ },
+ {
+  "name": "nhl-slate",
+  "hash": "#/l/nhl",
+  "url": "http://localhost:8765/#/l/nhl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NHL 🏒 NHL Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 Mon 8:00 PM Rogers Place Rangers10-7-1 Oilers12-3-3 Spread EDM -162 O/U 6.5 ML +136 / -162 Mon 9:30 PM Rogers Arena Flyers4-10-5 Canucks3-15-1 Spread PHI -135 O/U 6.5 ML -135 / +114 Mon 10:00 PM SAP Center at San Jose Islanders7-6-3 Sharks7-11-1 Spread NYI -142 O/U 6.5 ML -142 / +120"
+ },
+ {
+  "name": "mcdavid",
+  "hash": "#/l/nhl/p/3895074",
+  "url": "http://localhost:8765/#/l/nhl/p/3895074",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NHL › Connor McDavid Connor McDavid Edmonton Oilers · C · #97 Next: vs NYR · Mon, Nov 9 8:00 PM · game page › Latest: McDavid registered three assists (one on the power play) and three shots on goal in Saturday's 4-2 win over the Canucks. more MARKET Shots on Goal 3.5 Points 1.5 Goals Assists 1.5 Blocked Shots Hits Time on Ice (min) YOUR LINE Line Over odds Under odds DraftKings: 3.5 (o +130 / u -175) · over opened +125 Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under Model 63.3% vs 63.6% needed to break even · edge -0.3 pts · EV -0.5% Over: stats only 33% · market 41% · blended 37% PROJECTION 3.0 P(OVER) 37% FAIR ODDS -173 u AVG / MED 3.4 / 3.0 L10 OVER 2/10 EXP. MIN 23.8 ★ Save pick HIT RATE Showing under hit rates at 3.5 L5 80% 4/5 L10 80% 8/10 L20 75% 15/20 This season 78% 14/18 Last season 53% 47/88 Home 55% 11/20 vs NYR 33% 1/3 🪜 ALT LINES Model only · anchored to the 3.5 main line LINE MODEL FAIR ODDS LAST 10 1+ 96.5% -2777 10/10 2+ 85% -557 9/10 3+ 66% -194 8/10 4+ 37% +173 2/10 5+ 19% +431 1/10 6+ 10.0% +903 1/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: "
+ },
+ {
+  "name": "epl-slate",
+  "hash": "#/l/epl",
+  "url": "http://localhost:8765/#/l/epl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League ⚽ Premier League Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 No Premier League games on this day. Try another date."
+ },
+ {
+  "name": "haaland",
+  "hash": "#/l/epl/p/253989",
+  "url": "http://localhost:8765/#/l/epl/p/253989",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League › Erling Haaland Erling Haaland Manchester City · F · #9 Next: vs FUL · Sat, Nov 21 7:30 AM · game page › MARKET Shots Shots on Target Goals Goals + Assists Fouls Committed YOUR LINE Line Over odds Under odds No posted shots line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans over 3.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 62.5% vs 52.4% needed to break even · edge +10.1 pts · EV +19.4% Over: stats only 63% · no market anchor PROJECTION 4.3 P(OVER) 63% FAIR ODDS -167 o AVG / MED 3.6 / 4.0 L10 OVER 7/10 ★ Save pick HIT RATE Showing over hit rates at 3.5 L5 60% 3/5 L10 70% 7/10 L20 65% 13/20 This season 70% 7/10 Last season 60% 6/10 Home 90% 9/10 vs FUL — no games 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 2+ 93.9% -1547 10/10 3+ 80% -402 8/10 4+ 63% -172 7/10 5+ 37% +171 3/10 6+ 20% +407 0/10 7+ 11% +786 0/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot. L5 L10 L20 Season"
+ },
+ {
+  "name": "f1",
+  "hash": "#/l/f1",
+  "url": "http://localhost:8765/#/l/f1",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Formula 1 🏎️ Formula 1 Next: Las Vegas Grand Prix Las Vegas Strip Street Circuit · Sat, Nov 21 Probabilities update once qualifying is posted. BET CHECKER Driver Max Verstappen Andrea Kimi Antonelli Charles Leclerc George Russell Lewis Hamilton Lando Norris Ryo Hirakawa Oscar Piastri Isack Hadjar Rafael Camara Liam Lawson Nico Hülkenberg Gabriel Bortoleto Arvid Lindblad Yuki Tsunoda Franco Colapinto Fernando Alonso Pierre Gasly Esteban Ocon Oliver Bearman Carlos Sainz Alexander Albon Sergio Pérez Lance Stroll Valtteri Bottas Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds Max Verstappen wins: 23.6% fair +323 MAX VERSTAPPEN · RECENT FINISHES AVG FINISH 6.4 TOP 10S 16/20 MODEL AVG 8.7 Bars are finishing positions (lower is better); green = top 10. 0 10 20 3 Canadi 5/24 22 Monaco 6/7 4 Barcel 6/14 2 Austri 6/28 20 Britis 7/5 3 Belgia 7/19 2 Hungar 7/26 22 Dutch 8/23 3 Italia 9/6 2 Spanis 9/13 2 Azerba 9/26 1 Bahrai 10/4 1 Singap 10/11 3 United 10/25 1 Mexico 11/1 2 Brazil 11/8 Line 10.5 Proj 4.9 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN AT TRACK WINS DNF LAST 5 Max Verstappen Red Bull 23.6% 42% 52% 67% +323 6.4 1.0 (1) 3 4 2 1 3 1 1 Andrea Kimi Antonelli Mercedes 16.0% 51% 71% 90% +525 3.4 3.0 (1) 9 1 5 3 1 3 2 Charles Leclerc Ferrari 13.6% 36% 50% 71% +634 6.2 4.0 (1) 1 3 8 4 2 2 4 George Russell Mercedes 11.6% 28% 40% 61% +765 6.7 2.0 (1) 3 3 4 6 8 9 20 Lewis Hamilton Ferrari 10.0% 31% 48% 75% +898 5.2 8.0 (1) 1 1 9 2 4 6 3 L"
+ },
+ {
+  "name": "nascar",
+  "hash": "#/l/nascar",
+  "url": "http://localhost:8765/#/l/nascar",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NASCAR Cup 🏁 NASCAR Cup Season complete — table shows season form. BET CHECKER Driver William Byron Kyle Larson Ryan Blaney Chandler Smith Tyler Reddick Christopher Bell Gray Gaulding Josh Berry Carson Hocevar Ty Gibbs Chase Briscoe Chase Elliott Bubba Wallace Corey Heim Anthony Alfredo Ross Chastain Denny Hamlin Alex Bowman Austin Cindric Joey Logano Austin Dillon Kevin Magnussen Daniel Suárez Corey LaJoie Michael McDowell Justin Allgaier Shane Van Gisbergen Ryan Preece Kyle Busch Justin Haley Noah Gragson Cole Custer Ricky Stenhouse Jr Chris Buescher Zane Smith BJ McLeod Todd Gilliland Connor Zilisch Jimmie Johnson Casey Mears Harrison Burton JJ Yeley Brad Keselowski Erik Jones Joey Gase Austin Hill AJ Allmendinger Ty Dillon Jesse Love Daniel Dye Riley Herbst John H. Nemechek Katherine Legge Cody Ware Timmy Hill Josh Bilicki Chad Finchum Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds William Byron wins: 9.8% fair +925 WILLIAM BYRON · RECENT FINISHES AVG FINISH 15.2 TOP 10S 18/36 MODEL AVG 20.2 LAPS LED 578 DRIVER RATING 88.6 Bars are finishing positions (lower is better); green = top 10. 0 20 40 12 Window 7/19 21 Bricky 7/26 9 Iowa C 8/9 9 Cook O 8/15 30 Dollar 8/23 22 Coke Z 8/29 37 Cook O 9/6 4 Enjoy 9/13 9 Bass P 9/19 7 Hollyw 9/27 6 South 10/4 39 Bank o 10/11 21 Freewa 10/18 2 YellaW 10/25 1 Xfinit 11/1 3 NASCAR 11/8 Line 10.5 Proj 13.5 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN WINS DNF LAST 5 William Byron Hendrick M"
+ },
+ {
+  "name": "indycar",
+  "hash": "#/l/indycar",
+  "url": "http://localhost:8765/#/l/indycar",
+  "errors": [],
+  "failed": [],
+  "text": "Home › IndyCar 🏁 IndyCar Season complete — table shows season form. BET CHECKER Driver Scott McLaughlin Christian Lundgaard David Malukas Will Power Pato O'Ward Kyle Kirkwood Álex Palou Marcus Ericsson Felix Rosenqvist Takuma Sato Conor Daly Josef Newgarden Rinus VeeKay Alexander Rossi Jack Harvey Jacob Abel Helio Castroneves Christian Rasmussen Ryan Hunter-Reay Marcus Armstrong Graham Rahal Katherine Legge Ed Carpenter Romain Grosjean Nolan Siegel Santino Ferrucci Kyffin Simpson Louis Foster Scott Dixon Mick Schumacher Dennis Hauger Caio Collet Sting Ray Robb Market Win Podium / Top 3 Top 5 Top 10 Head to head Odds Scott McLaughlin wins: 9.2% fair +982 SCOTT MCLAUGHLIN · RECENT FINISHES AVG FINISH 9.1 TOP 10S 10/16 MODEL AVG 10.3 Bars are finishing positions (lower is better); green = top 10. 0 10 20 2 of St. 3/1 8 of Pho 3/7 11 of Arl 3/15 16 of Ala 3/29 16 of Ind 5/9 3 Indian 5/24 19 of Det 5/31 7 of Roa 6/21 16 of Mid 7/5 4 of Nas 7/20 7 of Por 8/9 8 of Ont 8/16 22 of Was 8/23 4 of Mil 8/29 2 of Mil 8/30 1 of Mon 9/6 Line 10.5 Proj 8.8 FIELD · 5,000 SIMULATED RACES DRIVER WIN TOP 3 TOP 5 TOP 10 FAIR WIN AVG FIN WINS DNF LAST 5 Scott McLaughlin 9.2% 24% 36% 60% +982 9.1 — 1 0 1 2 4 22 8 Christian Lundgaard 8.4% 28% 44% 73% +1090 6.2 — 2 0 6 3 6 2 6 David Malukas 8.4% 23% 33% 56% +1090 7.8 — 0 0 5 4 2 24 17 Will Power 7.3% 17% 25% 40% +1274 12.9 — 0 0 13 14 25 3 3 Pato O'Ward 7.3% 22% 36% 64% +1277 7.6 — 3 0 11 1 1 16 5 Kyle Kirkwood 6.9% 22% 36% 61% +1345 7.0 — 2 0 2 6 15"
+ },
+ {
+  "name": "pga",
+  "hash": "#/l/pga",
+  "url": "http://localhost:8765/#/l/pga",
+  "errors": [],
+  "failed": [],
+  "text": "Home › PGA Tour ⛳ PGA Tour World Wide Technology Championship Nov 5 · · 120 players Tap a golfer in the field (or search one) to see recent finishes and price top-5/10/20, make-cut and round-score bets. FIELD (LEADERBOARD) # PLAYER SCORE ROUNDS 1 Blades Brown -25 66 68 68 63 2 Ben James -24 65 64 66 70 3 Michael Kim -22 73 66 63 64 4 Kensei Hirata -21 65 69 67 66 5 David Ford -20 67 68 67 66 6 Alvaro Ortiz -19 69 66 66 68 7 Denny McCarthy -19 68 65 67 69 8 Jordan Smith -18 70 67 70 63 9 Séamus Power -18 69 70 65 66 10 Keith Mitchell -18 68 66 67 69 11 Ryan Gerard -18 66 68 65 71 12 Ben Griffin -17 70 67 69 65 13 Beau Hossler -17 66 69 70 66 14 Sudarshan Yellamaraju -17 71 63 71 66 15 Jay Leng -17 67 70 67 67 16 Harry Hall -17 65 71 67 68 17 Chris Kirk -17 63 72 65 71 18 Isaiah Salinda -16 68 71 65 68 19 Peter Malnati -16 66 64 73 69 20 Paul Peterson -16 68 67 66 71 21 Jackson Koivun -15 70 67 69 67 22 Emiliano Grillo -15 70 67 69 67 23 Austin Eckroat -15 68 66 72 67 24 Rico Hoey -15 67 69 67 70 25 John Parry -14 69 67 72 66 26 Patton Kizzire -14 66 71 70 67 27 Chad Ramey -14 68 68 71 67 28 Ben Kohles -14 68 66 73 67 29 Alejandro Tosti -14 66 70 70 68 30 Stephan Jaeger -14 68 65 72 69 31 Zac Blair -14 64 68 73 69 32 Adrien Dumont de Chassart -14 67 70 66 71 33 Tony Finau -13 70 68 71 66 34 David Lipsky -13 71 65 73 66 35 Austin Hitt -13 69 70 69 67 36 Jesper Svensson -13 70 66 72 67 37 Nick Taylor -13 69 70 67 69 38 Luke Clanton -13 69 70 67 69 39 Pierceson Coody -13 68 70 68 "
+ },
+ {
+  "name": "atp",
+  "hash": "#/l/atp",
+  "url": "http://localhost:8765/#/l/atp",
+  "errors": [],
+  "failed": [],
+  "text": "Home › ATP Tennis 🎾 ATP Tennis ESPN doesn't publish per-match stats for ATP Tennis, so these cards show the market's fair (no-vig) price and grade your own estimate. For stat props (aces, games, significant strikes, rounds), use the custom calculator with recent results. Upcoming & live Men's Singles · Round 1 Tue, Nov 10 7:00 AM Aleksandr Shevchenko Adrian Mannarino Price check Men's Singles · Round 2 Tue, Nov 10 7:00 AM Juan Manuel Cerundolo Alex Michelsen Price check Men's Singles · Round 1 Tue, Nov 10 8:30 AM Quentin Halys Lorenzo Sonego Price check Men's Singles · Round 2 Tue, Nov 10 8:30 AM Thiago Agustin Tirante Tomas Martin Etcheverry Price check Men's Singles · Round 1 Tue, Nov 10 10:00 AM Miomir Kecmanovic Arthur Rinderknech Price check Men's Singles · Round 1 Tue, Nov 10 12:00 PM Zizou Bergs Holger Rune Price check Men's Singles · Round 2 Tue, Nov 10 1:30 PM Toby Samuel Lorenzo Musetti Price check Men's Singles · Round 2 Wed, Nov 11 12:00 AM Alejandro Tabilo TBD Price check Men's Singles · Round 2 Wed, Nov 11 12:00 AM Casper Ruud TBD Price check Men's Singles · Round 2 Wed, Nov 11 12:00 AM TBD TBD Price check Men's Singles · Round 2 Wed, Nov 11 12:00 AM Ugo Humbert Borna Gojo Price check Men's Singles · Round 2 Wed, Nov 11 12:00 AM Cameron Norrie Taylor Fritz Price check Men's Singles · Quarterfinal Thu, Nov 12 12:00 AM TBD TBD Price check Men's Singles · Quarterfinal Thu, Nov 12 12:00 AM TBD TBD Price check Men's Singles · Quarterfinal Thu, Nov 12 12:00 AM TBD TB"
+ },
+ {
+  "name": "ufc",
+  "hash": "#/l/ufc",
+  "url": "http://localhost:8765/#/l/ufc",
+  "errors": [],
+  "failed": [],
+  "text": "Home › UFC 🥊 UFC ESPN doesn't publish per-match stats for UFC, so these cards show the market's fair (no-vig) price and grade your own estimate. For stat props (aces, games, significant strikes, rounds), use the custom calculator with recent results. Upcoming & live UFC 334: Gane vs. Hokit · Lightweight Sat, Nov 14 5:00 PM Evan Elder 10-2-0 Samuel Sanches 11-1-0 Price check UFC 334: Gane vs. Hokit · Bantamweight Sat, Nov 14 5:00 PM Adrian Yañez 18-6-1 Juan Diaz 16-1-1 Price check UFC 334: Gane vs. Hokit · W Bantamweight Sat, Nov 14 5:00 PM Macy Chiasson 11-6-0 Bia Mesquita 8-0-0 Price check UFC 334: Gane vs. Hokit · Lightweight Sat, Nov 14 5:00 PM Jared Gordon 21-9-0 Melquizael Costa 26-8-0 Price check UFC 334: Gane vs. Hokit · Middleweight Sat, Nov 14 7:00 PM Cesar Almeida 7-3-0 Donte Johnson 9-0-0 Price check UFC 334: Gane vs. Hokit · Lightweight Sat, Nov 14 7:00 PM Jim Miller 39-19-0 Terrance McKinney 18-9-0 Price check UFC 334: Gane vs. Hokit · Lightweight Sat, Nov 14 7:00 PM Drew Dober 29-15-0 Chris Duncan 15-3-0 Price check UFC 334: Gane vs. Hokit · Welterweight Sat, Nov 14 7:00 PM Stephen Thompson 17-9-1 Charles Radtke 12-5-0 Price check UFC 334: Gane vs. Hokit · Flyweight Sat, Nov 14 9:00 PM Luis Gurule 11-4-0 Bilal Hasan 10-0-0 Price check UFC 334: Gane vs. Hokit · Welterweight Sat, Nov 14 9:00 PM Kevin Holland 29-15-0 Uroš Medić 14-3-0 Price check UFC 334: Gane vs. Hokit · Middleweight Sat, Nov 14 9:00 PM Caio Borralho 18-2-0 Yousri Belgaroui 11-3-0 Price check UFC"
+ },
+ {
+  "name": "ncaaf",
+  "hash": "#/l/ncaaf",
+  "url": "http://localhost:8765/#/l/ncaaf",
+  "errors": [],
+  "failed": [],
+  "text": "Home › College Football 🏈 College Football Custom calculator ‹ Week 10 Week 11 Week 12 › Tue 7:00 PM InfoCision Stadium W Michigan6-3 Akron1-8 Spread WMU -14 O/U 48.5 ML -625 / +455 Tue 7:00 PM Doyt L. Perry Stadium Kent State3-6 Bowling Green2-7 Spread BGSU -5.5 O/U 44.5 ML +180 / -218 Tue 8:00 PM Yager Stadium Ohio7-2 Miami OH5-4 Spread OHIO -1.5 O/U 46.5 ML -118 / -102 Wed 7:30 PM Scheumann Stadium Buffalo6-3 Ball State3-6 Spread BUF -2.5 O/U 51.5 ML -135 / +114 Wed 7:30 PM Kelly/Shorts Stadium Sacramento St2-8 C Michigan4-5 Spread CMU -18.5 O/U 43.5 ML +675 / -1050 Wed 7:30 PM Glass Bowl UMass5-4 Toledo7-2 Spread TOL -14.5 O/U 52.5 ML +455 / -625 Thu 8:00 PM Raymond James Stadium Memphis7-2 South Florida6-3 Spread MEM -4.5 O/U 50.5 ML -192 / +160 Thu 9:00 PM Malone Stadium Louisiana6-3 UL Monroe2-7 Spread UL -11.5 O/U 48.5 ML -410 / +320 Fri 7:00 PM Acrisure Stadium Florida St4-5 Pitt6-3 Spread PITT -3.5 O/U 54.5 ML +142 / -170 Fri 9:00 PM Rose Bowl Illinois6-3 UCLA9-0 Spread UCLA -10 O/U 47.5 ML +300 / -380 Fri 10:15 PM Folsom Field Houston7-2 Colorado3-6 Spread HOU -10.5 O/U 50.5 ML -395 / +310 Sat 12:00 PM Hard Rock Stadium Duke7-2 Miami8-1 Spread MIA -13.5 O/U 54.5 ML +410 / -550 Sat 12:00 PM Ohio Stadium Northwestern6-3 Ohio State6-3 Spread OSU -12.5 O/U 47.5 ML +360 / -470 Sat 12:00 PM Gerald J. Ford Stadium Wake Forest8-1 SMU7-2 Spread WAKE -1.5 O/U 61.5 ML -115 / -105 Sat 12:00 PM Jack Trice Stadium Cincinnati5-4 Iowa State4-5 Spread ISU -3 O/U 60.5 ML +130 / -15"
+ },
+ {
+  "name": "ncaab",
+  "hash": "#/l/ncaab",
+  "url": "http://localhost:8765/#/l/ncaab",
+  "errors": [],
+  "failed": [],
+  "text": "Home › College Basketball 🏀 College Basketball Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 Final Physical Education Complex Cheyney (PA) 53 Coppin St1-2 90 No lines posted yet Mon 6:00 PM Dunn-Oliver Acadome GA Gwinnett Alabama St0-1 No lines posted yet Mon 6:00 PM Chesapeake Employers Insurance Arena McDaniel UMBC0-2 No lines posted yet Mon 6:00 PM Koessler Athletic Center Hiram Canisius0-2 No lines posted yet Mon 6:00 PM Schottenstein Center Marshall1-1 Ohio State1-1 Spread OSU -25.5 O/U 162.5 ML +2000 / -6500 Mon 6:30 PM The Palestra Howard1-1 Penn0-1 Spread PENN -5.5 O/U 156.5 ML +210 / -258 Mon 6:30 PM Broadview Arena PSU Schuylkill Buffalo0-2 No lines posted yet Mon 6:30 PM Gainbridge Fieldhouse Syracuse2-0 Indiana2-0 Spread IU -5.5 O/U 146.5 ML +205 / -250 Mon 7:00 PM M&T Bank Center at Gampel Pavilion Wagner0-2 UConn2-0 Spread CONN -39.5 O/U 140.5 ML — / — Mon 7:00 PM Moody Center Grambling1-0 Texas2-0 Spread TEX -37.5 O/U 154.5 ML — / — Mon 7:00 PM Food City Center Radford0-2 Tennessee1-0 Spread TENN -30.5 O/U 153.5 ML +5000 / -100000 Mon 7:00 PM Watsco Center North Florida1-1 Miami1-1 Spread MIA -36.5 O/U 164.5 ML — / — Mon 7:00 PM Western Hall Simpson (IA) W Illinois0-2 No lines posted yet Mon 7:00 PM James A. Rhodes Arena Muskingum Akron1-0 No lines posted yet Mon 7:00 PM Credit Union 1 Arena UNC Greensboro1-1 UIC2-0 Spread UIC -19.5 O/U 148.5 ML +1500 / -3600 Mon 7:00 PM Purcell Pavilion E Illinois0-"
+ },
+ {
+  "name": "custom",
+  "hash": "#/custom",
+  "url": "http://localhost:8765/#/custom",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Custom calculator 🧮 Custom prop calculator For any sport or stat that isn't covered automatically — boxing, cricket, swimming, darts, esports, tennis aces. Paste recent results (most recent first) and your line. What are you betting? Recent results (most recent first) Tennis — aces UFC — significant strikes Cricket — batter runs Boxing — rounds lasted Darts — 180s Line Over odds Under odds Stat type Auto-detect Count (strikes, aces, shots) Rare count (goals, TDs, 180s) Large total (yards, runs, points) Time / decimal (seconds, distance) Matchup adj. % Matchup adj.: your read on the opponent, venue or conditions, e.g. −10 vs an elite returner, +10 on a fast court. Enter at least 3 results and a line. HIT RATE RESULTS ODDS TOOLS American odds Implied % Parlay legs (odds, comma separated)"
+ },
+ {
+  "name": "picks",
+  "hash": "#/picks",
+  "url": "http://localhost:8765/#/picks",
+  "errors": [],
+  "failed": [],
+  "text": "Home › My bets ★ My bets 🔎 Check a slip ☁️ Save your picks to an account Sign in and your bets, picks, bankroll and books are saved and show up on every device. Sign in 📡 Live & today History 🏦 BANKROLL Set bankroll ⬇ Back up ⬆ Restore Set the money you've put aside for betting to get a daily budget, spending limits and a running balance. Back up your bets to a file so you don't lose them when you switch phones or clear your browser. Stored in this browser only. Units assume 1 unit per pick at the saved odds. RECORD 0-0 WIN % — UNITS 0.00 ROI — PENDING 0 Auto-grade finished games No saved picks yet. Hit ★ Save on any analysis."
+ },
+ {
+  "name": "nba-game",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba/g/401909952",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA › LAL @ ATL Los Angeles Lakers 9-2 · Away Monday, Nov 9 · 7:00 PM State Farm Arena Atlanta Hawks 7-4 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 Los Angeles visits Atlanta following Reaves' 43-point game Los Angeles Lakers (9-2, first in the Western Conference) vs. Atlanta Hawks (7-4, fourth in the Eastern Conference) Preview · 15h ago Bobby Marks' NBA core danger tiers: 19 teams with major decisions looming With tax and apron penalties lurking everywhere, Bobby Marks examines 19 teams barreling toward core-altering decisions. Bobby Marks · 7h ago LINES · DraftKings Opened: ATL +2.5 → -1.5 · O/U 236.5 · ATL ML +112 → -119 ATL spread ATL odds LAL odds Total Over odds Under odds LAL ML ATL ML MODEL LAL 119.3 ATL 118.4 MARGIN (H) -0.9 TOTAL 237.7 MARKET PICK PROB EDGE GRADE Spread ATL covers: model 42% → blended 47% lean LAL +1.5 52.7% +0.3 PASS ★ DK ＋ Total Over: model 53% → blended 52% lean Over 236.5 51.5% -1.8 PASS ★ DK ＋ Moneyline ATL wins: model 47% → blended 50% lean LAL ML 49.6% -0.2 PASS ★ DK ＋ ESPN Matchup Predictor: ATL 53.5% to win. How this is calculated TEAM COMPARISON LAL ATL 121.9 PPG (season) 118.6 114.5 PPG allowed 115.5 126.0 PPG last 5 118.0 115.8 Allowed last 5 116.6 +6.0 Avg margin +2.8 TEAM PROFILE (BOX SCORES) LAL ATL Pace (poss/48) 99.6 16th 102.4 28th Offensive rating 122.5 1st 115.7 12th Defensive rating 115.0 18th 112.6 12th FG misses/g 40.8 1st 53.1 30th Opponent FG misses/g 46.7 11th 44.6 5th Rebound rate 49.4% 18th 49.1% 22nd "
+ },
+ {
+  "name": "nfl-game",
+  "hash": "#/l/nfl",
+  "url": "http://localhost:8765/#/l/nfl/g/401873051",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › BUF @ MIN Buffalo Bills 6-1 · Away Monday, Nov 9 · 8:15 PM U.S. Bank Stadium 🏟️ Indoors / roof Minnesota Vikings 6-1 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 Bills have the NFL's most points. Vikings are the hardest to score on. Which side gives on Monday? — The Buffalo Bills are back to playing their usual catch-us-if-you-can game this season under first-year coach Joe Brady, Preview · 4d ago LINES · DraftKings Opened: MIN +3 → +3.5 · O/U 48.5 → 45.5 · MIN ML +130 → +160 MIN spread MIN odds BUF odds Total Over odds Under odds BUF ML MIN ML MODEL BUF 20.2 MIN 22.8 MARGIN (H) +2.6 TOTAL 43.0 MARKET PICK PROB EDGE GRADE Spread MIN covers: model 67% → blended 57% MIN +3.5 56.8% +3.3 C ★ DK ＋ Total Over: model 43% → blended 47% lean Under 45.5 53.3% -0.2 PASS ★ DK ＋ Moneyline MIN wins: model 58% → blended 44% MIN ML 44.2% +5.7 B ★ DK ＋ ESPN Matchup Predictor: MIN 34.1% to win. How this is calculated TEAM COMPARISON BUF MIN 33.3 PPG (season) 20.0 25.9 PPG allowed 13.3 31.2 PPG last 5 18.4 23.8 Allowed last 5 13.6 +7.4 Avg margin +6.7 404.6 Total Yards 299.3 256.1 Yards Passing 185.4 148.4 Yards Rushing 113.9 366.4 Yards Allowed 296.9 269.0 Pass Yards Allowed 180.1 97.4 Rush Yards Allowed 116.7 EFFICIENCY (NFLVERSE PLAY-BY-PLAY) Rank pills: 1st = best OFFENSE BUF MIN EPA/play 0.15 2nd -0.12 29th EPA/dropback 0.30 1st -0.03 25th EPA/rush 0.02 3rd -0.20 28th Pass rate 0.55 0.56 Plays/game 62.1 59.0 DEFENSE BUF MIN EPA/play allowed 0.06 26th -0.17 1st EPA/d"
+ },
+ {
+  "name": "nhl-game",
+  "hash": "#/l/nhl",
+  "url": "http://localhost:8765/#/l/nhl/g/401892680",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NHL › NYR @ EDM New York Rangers 10-7-1 · Away Monday, Nov 9 · 8:00 PM Rogers Place Edmonton Oilers 12-3-3 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 New York brings 3-game win streak into matchup against Edmonton New York Rangers (10-7-1, in the Metropolitan Division) vs. Edmonton Oilers (12-3-3, in the Pacific Division) Preview · 2d ago NHL Tonight: Guide to Rangers-Oilers, Flyers-Canucks, Islanders-Sharks Find game previews, betting intel, broadcast information, stats and highlights here. ESPN staff · 11h ago LINES · DraftKings Opened: EDM -1.5 · O/U 6.5 · EDM ML -155 → -162 EDM spread EDM odds NYR odds Total Over odds Under odds NYR ML EDM ML MODEL NYR 2.77 EDM 3.66 MARGIN (H) +0.89 TOTAL 6.44 MARKET PICK PROB EDGE GRADE Spread EDM covers: model 40% → blended 38% lean EDM -1.5 38.5% -0.9 PASS ★ DK ＋ Total Over: model 46% → blended 49% lean Under 6.5 51.0% -0.9 PASS ★ DK ＋ Moneyline EDM wins: model 65% → blended 61% lean EDM ML 61.1% -0.7 PASS ★ DK ＋ How this is calculated TEAM COMPARISON NYR EDM 3.1 Goals/G (season) 4.2 2.9 Goals/G allowed 3.1 2.8 Goals/G last 5 3.8 3.2 Allowed last 5 2.4 -1.0 Avg margin +0.7 TEAM PROFILE (BOX SCORES) NYR EDM Shots on goal/g 25.5 27th 25.9 22nd Shots against/g 26.6 11th 26.2 10th Goals/g 3.06 18th 4.17 1st Goals against/g 2.89 7th 3.06 11th Hits/g 25.9 24.3 Blocks/g 14.8 13.2 NYR RECENT DATE OPP SCORE MARGIN Nov 7 @ SEA W 4-3 +1 Nov 5 vs PHI W 3-2 +1 Nov 3 vs STL W 3-1 +2 Nov 1 vs EDM L 1-4 -3 Oct 26 vs LA L 3-6 -3 Oct "
+ },
+ {
+  "name": "epl-game",
+  "hash": "#/l/epl",
+  "url": "http://localhost:8765/#/l/epl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Premier League ⚽ Premier League Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 No Premier League games on this day. Try another date."
+ },
+ {
+  "name": "mlb-game",
+  "hash": "#/l/mlb",
+  "url": "http://localhost:8765/#/l/mlb",
+  "errors": [],
+  "failed": [],
+  "text": "Home › MLB ⚾ MLB Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 No MLB games on this day. Try another date — the MLB season may be over; player pages still show last season's game logs."
+ },
+ {
+  "name": "today",
+  "hash": "#/today",
+  "url": "http://localhost:8765/#/today",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:08 PM · 10 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 46 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · ALL SPORTS · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $10 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket bui"
+ },
+ {
+  "name": "today-bball-5-parlay",
+  "hash": "#/today?sport=basketball",
+  "url": "http://localhost:8765/#/today?sport=basketball",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:08 PM · 10 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 42 🎯 Games: all 42 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏀 ALL BASKETBALL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏀 All basketball · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 3 🏀 All basketball player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs "
+ },
+ {
+  "name": "today-sgp-football",
+  "hash": "#/today?sport=football",
+  "url": "http://localhost:8765/#/today?sport=football",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:08 PM · 10 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 1 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏈 ALL FOOTBALL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏈 All football · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lotter"
+ },
+ {
+  "name": "today-sgp-ncaaf",
+  "hash": "#/today?sport=ncaaf",
+  "url": "http://localhost:8765/#/today?sport=ncaaf",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:08 PM · 10 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days No College FB games today, so this shows Tomorrow. 🎯 Games: all 3 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · COLLEGE FB · TOMORROW so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A College FB · Tomorrow picks with an edge right now. Try another day or sport, or build a same-game parlay below. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game The College FB · Tomorrow legs can't reach $10k on $10. The biggest ticket available is below; try All sports, All days, a bigger bet or a smaller target. ODDS +602 $10 WINS $60 REAL CHANCE (EST.)"
+ },
+ {
+  "name": "today-sgp-basketball",
+  "hash": "#/today?sport=basketball",
+  "url": "http://localhost:8765/#/today?sport=basketball",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:08 PM · 10 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 42 🎯 Games: all 42 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏀 ALL BASKETBALL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏀 All basketball · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 3 🏀 All basketball player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs "
+ },
+ {
+  "name": "context-nba",
+  "hash": "#/l/nba/p/4397136?m=reb",
+  "url": "http://localhost:8765/#/l/nba/p/4397136?m=reb",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA › Saddiq Bey Saddiq Bey New Orleans Pelicans · F · #41 Next: @ GS · Mon, Nov 9 10:00 PM · game page › Latest: Bey recorded 17 points (5-13 FG, 3-6 3Pt, 4-4 FT), five rebounds, four assists and one block over 31 minutes off the bench during Friday's 115-109 loss to the Timberwolves. more MARKET Points 19.5 Rebounds 6.5 Assists 3-Pointers Made 2.5 Pts + Reb + Ast Pts + Reb 25.5 Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds DraftKings: 6.5 (o +111 / u -146) · opened 3.5 (money on the over) Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under Zion Williamson is out tonight, and this player has rarely played without that teammate. A line this far above the projection is likely the book pricing a bigger role. No grade on the under. The line (6.5) is far from recent production (projection 4.8). Books move a line this far when they know something the box score doesn't: an injury, a new starting role, a minutes limit. No grade until you've checked the news. Model 69.2% vs 59.3% needed to break even · edge +9.8 pts · EV +16.6% Over: stats only 17% · market 44% · blended 31% PROJECTION 4.8 P(OVER"
+ },
+ {
+  "name": "context-nfl",
+  "hash": "#/l/nfl/p/4379399?m=rush_yds",
+  "url": "http://localhost:8765/#/l/nfl/p/4379399?m=rush_yds",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › James Cook III James Cook III Buffalo Bills · RB · #4 Next: @ MIN · Mon, Nov 9 8:15 PM · game page › Latest: Cook rushed 21 times for 80 yards and a touchdown while catching two of three targets for 21 yards in Sunday's 36-10 win over the Ravens. more MARKET Rushing Yards 86.5 Rush Attempts 18.5 Receptions 1.5 Receiving Yards 8.5 Targets Longest Reception Longest Rush Rush + Rec Yards 100.5 Total TDs (rush + rec) YOUR LINE Line Over odds Under odds DraftKings: 86.5 (o — / u —) · opened 78.5 (money on the over) Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. B OVER 86.5 Rushing Yards Model 57.6% vs 52.4% needed to break even · edge +5.2 pts · EV +9.9% Over: stats only 65% · market 50% · blended 58% PROJECTION 115.5 P(OVER) 58% FAIR ODDS -136 o AVG / MED 95.8 / 101.0 L10 OVER 5/10 ★ Save pick Place it · you bet in the book's app; PickLab never sees your account ⚙ My books DraftKings ↗ FanDuel ↗ BetMGM ↗ Caesars ↗ Fanatics ↗ 📋 Copy 🔗 Share link HIT RATE Showing over hit rates at 86.5 L5 60% 3/5 L10 50% 5/10 L20 55% 11/20 This season 57% 4/7 Last season 58% 11/19 Away 77% 10/13 vs MIN — no games 🪜 ALT LINES DraftKings milestones (no prices posted) · anchored to the 86.5 main line LINE MODEL FAIR ODDS LAST 10 40+ 91.2% -1036 9/10 50+ 86% -597 8/10"
+ },
+ {
+  "name": "news",
+  "hash": "#/news?sport=all",
+  "url": "http://localhost:8765/#/news?sport=all",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:08 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (35) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 0:24 WICH 86 – USC 93 Adonis Ratliff rises above his defender and throws down a two-handed jam 🏀 College Basketball · 17h ago ▶ 0:23 CAL 68 – HOU 86 Dedan Thomas Jr. gets the bucket and the foul for Houston 🏀 College Basketball · 17h ago ▶ 1:07 TB 24 – CHI 27 Bears survive, take down Bucs with walk-off field goal 🏈 NFL · 17h ago ▶ 1:13 NO 123 – LAC 139 New Orleans Pelicans vs. LA Clippers: Game Highlights 🏀 NBA · 17h ago ▶ 1:14 MIA 114 – SAC 108 Miami Heat vs. Sacramento Kings: Game Highlights 🏀 NBA · 18h ago ▶ 1:00 LAR 20 – WSH 13 Rams outlast Commanders with defensive showcase 🏈 NFL · 19h ago ▶ 1:14 BOS 117 – MIL 97 Boston Celtics vs. Milwaukee Bucks: Game Highlights 🏀 NBA · 19h ago ▶ 1:13 BKN 93 – DAL 130 Mavericks win big over the Nets at home 🏀 NBA · 19h ago ▶ 1:14 UTAH 100 – MIN 115 Utah Jazz vs. Minnesota Timberwolves: Game Highlights 🏀 NBA · 19h ago ▶ 1:11 LAL 121 – DET 116 Los Angeles Lakers vs. Detroit Pistons: Game Highlights 🏀 NBA · 20h ago ▶ 1:00 GB 45 – NE 27 Green Bay Packers vs. New England Patriots: Game Highlights 🏈 NFL · 21h ago ▶ 1:05 HOU 44 – LAC 22 Houston Texans vs. Los Angeles Chargers: Game Highlights 🏈 NFL · 21h ago Show 23 more 🗞️ Top stories Sources: ",
+  "extra": {
+   "first": {
+    "count": "1 of 35",
+    "title": "Adonis Ratliff rises above his defender and throws down a two-handed jam",
+    "src": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/wsc/2026/1109/9b41c68c-11b1-4d76-a3e4-fcb267831b96/9b41c68c-11b1-4d7",
+    "readyState": 4,
+    "time": 5.607976,
+    "duration": 24.031995,
+    "paused": false,
+    "error": null,
+    "msg": ""
+   },
+   "next": {
+    "count": "2 of 35",
+    "time": 3.729145,
+    "error": null
+   }
+  }
+ },
+ {
+  "name": "news-videos",
+  "hash": "#/news?sport=nba",
+  "url": "http://localhost:8765/#/news?sport=nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:08 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (7) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:13 NO 123 – LAC 139 New Orleans Pelicans vs. LA Clippers: Game Highlights 17h ago ▶ 1:14 MIA 114 – SAC 108 Miami Heat vs. Sacramento Kings: Game Highlights 18h ago ▶ 1:14 BOS 117 – MIL 97 Boston Celtics vs. Milwaukee Bucks: Game Highlights 19h ago ▶ 1:13 BKN 93 – DAL 130 Mavericks win big over the Nets at home 19h ago ▶ 1:14 UTAH 100 – MIN 115 Utah Jazz vs. Minnesota Timberwolves: Game Highlights 19h ago ▶ 1:11 LAL 121 – DET 116 Los Angeles Lakers vs. Detroit Pistons: Game Highlights 20h ago ▶ 1:14 PHI 127 – CHI 121 Philadelphia 76ers vs. Chicago Bulls: Game Highlights 23h ago 🗞️ Top stories Monday's fantasy hoops adds, NBA bets to make: Ty Jerome primed for a big game Andre Snellings breaks down Monday's eight-game NBA slate, highlighting the fantasy streamers to add and bets to make. Andre Snellings · 42m ago NBA buzz: Latest on trades, news, roster moves and intel The NBA is back. The buzz never left. Bookmark this page for the latest news, rumblings and analysis from ESPN's insiders. ESPN staff · 1h ago Nuggets upgrade starters to probable vs. Rockets after delayed arrival Hampered by plane delays leaving Mexico City, the Nuggets have listed their entire starting lineup as questionable",
+  "extra": {
+   "first": {
+    "count": "",
+    "title": "Giddey balls out with 19 points and 15 assists vs. 76ers",
+    "src": "https://espnmedia-cdn.akamaized.net/espn/media/16x9/2026/1108/dm_261108_NBA_Highlight__Giddey_balls_out_with_19_PTS_and_",
+    "readyState": 4,
+    "time": 5.611105,
+    "duration": 77.744333,
+    "paused": false,
+    "error": null,
+    "msg": ""
+   },
+   "next": {
+    "count": "",
+    "time": 9.866275,
+    "error": null
+   }
+  }
+ },
+ {
+  "name": "news-football",
+  "hash": "#/news?sport=football",
+  "url": "http://localhost:8765/#/news?sport=football",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:08 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (25) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:07 TB 24 – CHI 27 Bears survive, take down Bucs with walk-off field goal 🏈 NFL · 17h ago ▶ 1:00 LAR 20 – WSH 13 Rams outlast Commanders with defensive showcase 🏈 NFL · 19h ago ▶ 1:00 GB 45 – NE 27 Green Bay Packers vs. New England Patriots: Game Highlights 🏈 NFL · 21h ago ▶ 1:05 HOU 44 – LAC 22 Houston Texans vs. Los Angeles Chargers: Game Highlights 🏈 NFL · 21h ago ▶ 0:57 ARI 3 – SEA 17 Arizona Cardinals vs. Seattle Seahawks: Game Highlights 🏈 NFL · 22h ago ▶ 1:10 LV 17 – SF 38 49ers move to 7-1 with 38-17 win over the Raiders 🏈 NFL · 22h ago ▶ 1:20 CLE 22 – NO 23 Cleveland Browns vs. New Orleans Saints Game Highlights 🏈 NFL · 1d ago ▶ 1:10 DAL 27 – IND 23 Dallas Cowboys vs. Indianapolis Colts: Game Highlights 🏈 NFL · 1d ago ▶ 0:52 NYG 19 – PHI 11 New York Giants vs. Philadelphia Eagles: Game Highlights 🏈 NFL · 1d ago ▶ 1:00 NYJ 12 – KC 35 Chiefs take care of business at home 🏈 NFL · 1d ago ▶ 1:04 DET 19 – MIA 9 Detroit Lions vs. Miami Dolphins Game Highlights 🏈 NFL · 1d ago ▶ 1:02 DEN 26 – CAR 21 Denver Broncos vs. Carolina Panthers: Game Highlights 🏈 NFL · 1d ago Show 13 more 🗞️ Top stories Sources: Jaguars acquire Eagles DT Jordan Davis in blockbuster trade The Jaguars are"
+ },
+ {
+  "name": "news-nhl",
+  "hash": "#/news?sport=nhl",
+  "url": "http://localhost:8765/#/news?sport=nhl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:09 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (6) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. ▶ 1:20 PIT 2 – ANA 5 Pittsburgh Penguins vs. Anaheim Ducks: Game Highlights 18h ago ▶ 1:20 PHI 3 – CGY 4 Philadelphia Flyers vs. Calgary Flames: Game Highlights 19h ago ▶ 1:35 NJ 4 – TOR 0 New Jersey Devils vs. Toronto Maple Leafs: Game Highlights 19h ago ▶ 1:17 TB 3 – WPG 4 Tampa Bay Lightning vs. Winnipeg Jets: Game Highlights 20h ago ▶ 1:19 VGK 4 – BUF 1 Vegas Golden Knights vs. Buffalo Sabres: Game Highlights 23h ago ▶ 1:14 FLA 1 – BOS 4 Florida Panthers vs. Boston Bruins: Game Highlights 1d ago 🗞️ Top stories U.S. routs Austria at women's hockey worlds; Canada puts 10 on Denmark Caroline Harvey scored a hat trick and defending champion the United States routed Austria 11-1 in the women's ice hockey world championship on Monday. 17m ago Jets disappointed ex-goalie Connor Hellebuyck sitting out The Jets are disappointed they won't get closure for the departure of ex-goalie Connor Hellebuyck as he won't be starting for the Devils when they play in Winnipeg on Tuesday. Greg Wyshynski · 1h ago Fantasy hockey: Pick up Maxim Shabanov, Jamie Drysdale, plus other moves to make Begin your fantasy hockey week with forwards, defensemen, goalies and streamers to add to your lineup. Victoria Matiash · "
+ },
+ {
+  "name": "news-mlb",
+  "hash": "#/news?sport=mlb",
+  "url": "http://localhost:8765/#/news?sport=mlb",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:09 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (0) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. No finished MLB games with highlights yet. Check back after tonight's games. 🗞️ Top stories MLB free agency tracker: 2026-27 offseason trades, moves We've got you covered on all the major MLB hot stove signings and trades. ESPN · 57m ago Who will win MVP? Cy Young? Picks, analysis for 2026 MLB awards week Baseball's best players and managers of 2026 collect their hardware this week -- starting tonight with the year's top rookies. Bradford Doolittle · 2h ago 2026 MLB offseason manager changes: Tracking hirings, firings The offseason carousel is in motion. Here's who is out -- and who could be in line to replace them. ESPN · 3h ago Pedro Martinez appeals for MLB resolution, reflects on effects of 1994 strike Pedro Martinez appealed to both MLB players and owners to find a solution to their CBA talks, saying \"get something done and don't lock out baseball for the fans.\" 1d ago Jyun-Yue Tseng, 25-year-old right-hander, will enter MLB's posting system Reliever Jyun-Yue Tseng, a 25-year-old right-hander who was 5-3 with 25 saves this year in the Chinese Professional Baseball League, is entering Major League Baseball's posting system and will be available to sign as a free agent from Sunday till Dec."
+ },
+ {
+  "name": "news-soccer",
+  "hash": "#/news?sport=soccer",
+  "url": "http://localhost:8765/#/news?sport=soccer",
+  "errors": [],
+  "failed": [],
+  "text": "Home › News 📰 News & highlights Updated 5:09 PM ↻ Refresh All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL ⚾ MLB ⚽ Soccer 🎬 Game highlights ▶ Play all (0) Every finished game from yesterday and today (this week and last week for football). Tap to watch here. No finished Soccer games with highlights yet. Check back after tonight's games. 🗞️ Top stories Transfer rumors, news: Man United to hire USMNT's Pochettino to replace Carrick? Manchester United are in the relegation zone and could turn to United States head coach Mauricio Pochettino to replace Michael Carrick. Transfer Talk has the latest. ⚽ Premier League · ESPN · 49m ago Chelsea warn staff over team leaks on Fantasy Premier League - sources Chelsea have warned staff about the risks of playing Fantasy Premier League, sources have told ESPN. ⚽ Premier League · James Olley · 1h ago Man United weighing up Michael Carrick's future despite comebacks - sources Man United's hierarchy are continuing to discuss Carrick's position with bosses keen to take their time before making a decision, sources have told ESPN. ⚽ Premier League · Rob Dawson · 4h ago Xabi Alonso insists Chelsea were not 'bullied' by Sunderland after defeat Chelsea boss Xabi Alonso does not believe his side were bullied during their 1-0 defeat to Sunderland on Sunday. ⚽ Premier League · PA · 5h ago 'The World Cup never really ended': U.S.-based betting sees rise in wagering on MLS, European soccer Before the World Cup, many wondered "
+ },
+ {
+  "name": "nba-game-highlights",
+  "hash": "#/l/nba",
+  "url": "http://localhost:8765/#/l/nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA 🏀 NBA Custom calculator Sat 11/7 Sun 11/8 Today 11/9 Tue 11/10 Wed 11/11 Thu 11/12 Fri 11/13 Sat 11/14 Sun 11/15 Mon 7:00 PM State Farm Arena Lakers9-2 Hawks7-4 Spread ATL -1.5 O/U 236.5 ML +101 / -119 Mon 7:00 PM Spectrum Center Cavaliers5-5 Hornets3-7 Spread CLE -8.5 O/U 215.5 ML -337 / +270 Mon 7:00 PM Little Caesars Arena Wizards4-6 Pistons6-3 Spread DET -10.5 O/U 219.5 ML +394 / -518 Mon 7:30 PM Scotiabank Arena Grizzlies6-3 Raptors5-4 Spread TOR -2.5 O/U 227.5 ML +114 / -135 Mon 8:00 PM American Airlines Center Pacers3-7 Mavericks6-4 Spread DAL -4.5 O/U 226.5 ML +143 / -170 Mon 8:30 PM Toyota Center (Houston) Nuggets5-3 Rockets7-3 Spread HOU -4.5 O/U 223.5 ML +146 / -173 Mon 9:00 PM Mortgage Matchup Center Spurs8-2 Suns3-5 Spread SA -8.5 O/U 226.5 ML -372 / +296 Mon 10:00 PM Chase Center Pelicans4-6 Warriors7-3 Spread GS -11.5 O/U 229.5 ML +426 / -569",
+  "extra": {
+   "skipped": "no finished NBA game on today's slate"
+  }
+ },
+ {
+  "name": "weather-ncaaf-401866459",
+  "hash": "#/l/ncaaf/g/401866459",
+  "url": "http://localhost:8765/#/l/ncaaf/g/401866459",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/events/401866459/competitions/401866459/odds/100/propBets?limit"
+  ],
+  "text": "Home › College Football › KENT @ BGSU Kent State Golden Flashes 3-6 · Away Tuesday, Nov 10 · 7:00 PM Doyt L. Perry Stadium 💨 6 mph, gusts 17 · 47°F · Clear Bowling Green Falcons 2-7 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 MAC matchup features Bowling Green playing Kent State Kent State (3-6) at Bowling Green (2-7), Nov. 10 at 7 p.m. EST. Preview · 1d ago LINES · DraftKings Opened: BGSU -5.5 · O/U 44.5 · BGSU ML -205 → -218 BGSU spread BGSU odds KENT odds Total Over odds Under odds KENT ML BGSU ML MODEL KENT 15.7 BGSU 24.2 MARGIN (H) +8.5 TOTAL 39.8 MARKET PICK PROB EDGE GRADE Spread BGSU covers: model 57% → blended 53% lean BGSU -5.5 52.9% +0.1 PASS ★ DK ＋ Total Over: model 39% → blended 46% lean Under 44.5 54.0% +1.6 PASS ★ DK ＋ Moneyline BGSU wins: model 70% → blended 67% lean BGSU ML 67.3% -1.2 PASS ★ DK ＋ ESPN Matchup Predictor: BGSU 72.9% to win. How this is calculated TEAM COMPARISON KENT BGSU 14.3 PPG (season) 17.8 30.6 PPG allowed 29.0 12.8 PPG last 5 25.4 26.2 Allowed last 5 23.2 -16.2 Avg margin -11.2 287.8 Total Yards 286.2 188.6 Yards Passing 176.3 99.2 Yards Rushing 109.9 360.7 Yards Allowed 377.9 216.4 Pass Yards Allowed 165.9 144.2 Rush Yards Allowed 212.0 KENT RECENT DATE OPP SCORE MARGIN Oct 30 @ SAC L 10-31 -21 Oct 24 vs AKR W 35-20 +15 Oct 17 @ USF L 2-29 -27 Oct 10 @ WMU L 7-38 -31 Oct 3 vs OHIO L 10-13 -3 Sep 26 vs BALL W 26-13 +13 Sep 19 @ OSU L 3-59 -56 Sep 12 vs WOF W 36-15 +21 BGSU RECENT DATE OPP SCORE MARGIN Oct 31 @ WMU L 10-23 -13 ",
+  "extra": {
+   "weather": {
+    "indoor": false,
+    "venue": "Doyt L. Perry Stadium",
+    "at": "2026-11-11T00:00Z",
+    "wind": 6,
+    "gust": 17,
+    "temp": 47,
+    "precip": 0,
+    "snow": 0,
+    "desc": "Clear"
+   },
+   "header": "Kent State Golden Flashes 3-6 · Away Tuesday, Nov 10 · 7:00 PM Doyt L. Perry Stadium 💨 6 mph, gusts 17 · 47°F · Clear Bowling Green Falcons 2-7 · Home Build a same-game parlay ›"
+  }
+ },
+ {
+  "name": "weather-ncaaf-401866458",
+  "hash": "#/l/ncaaf/g/401866458",
+  "url": "http://localhost:8765/#/l/ncaaf/g/401866458",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/events/401866458/competitions/401866458/odds/100/propBets?limit"
+  ],
+  "text": "Home › College Football › WMU @ AKR Western Michigan Broncos 6-3 · Away Tuesday, Nov 10 · 7:00 PM InfoCision Stadium 💨 3 mph · 44°F · Clear Akron Zips 1-8 · Home Build a same-game parlay › 📰 PREVIEW & NEWS 📰 Western Michigan squares off against Akron in MAC action Western Michigan (6-3) at Akron (1-8), Nov. 10 at 7 p.m. EST. Preview · 1d ago LINES · DraftKings Opened: AKR +13.5 → +14 · O/U 47.5 → 48.5 · AKR ML +440 → +455 AKR spread AKR odds WMU odds Total Over odds Under odds WMU ML AKR ML MODEL WMU 28.8 AKR 17.6 MARGIN (H) -11.3 TOTAL 46.4 MARKET PICK PROB EDGE GRADE Spread AKR covers: model 57% → blended 52% lean AKR +14 52.4% +0.1 PASS ★ DK ＋ Total Over: model 45% → blended 47% lean Under 48.5 53.0% -1.1 PASS ★ DK ＋ Moneyline AKR wins: model 24% → blended 20% lean AKR ML 19.7% +1.7 PASS ★ DK ＋ ESPN Matchup Predictor: AKR 10.1% to win. How this is calculated TEAM COMPARISON WMU AKR 26.2 PPG (season) 19.1 19.2 PPG allowed 32.2 28.0 PPG last 5 18.8 18.6 Allowed last 5 32.6 +7.0 Avg margin -13.1 327.0 Total Yards 354.6 161.8 Yards Passing 217.2 165.2 Yards Rushing 137.3 358.1 Yards Allowed 407.1 208.9 Pass Yards Allowed 223.6 149.2 Rush Yards Allowed 183.6 WMU RECENT DATE OPP SCORE MARGIN Oct 31 vs BGSU W 23-10 +13 Oct 24 @ TOL L 38-45 -7 Oct 17 @ CMU W 21-14 +7 Oct 10 vs KENT W 38-7 +31 Oct 3 @ BUFF W 20-17 +3 Sep 26 vs BOIS L 7-32 -25 Sep 19 @ RICE W 28-21 +7 Sep 12 vs MONM W 49-14 +35 AKR RECENT DATE OPP SCORE MARGIN Nov 3 vs OHIO L 20-28 -8 Oct 24 @ KENT L 20-35 -15 Oc",
+  "extra": {
+   "weather": {
+    "indoor": false,
+    "venue": "InfoCision Stadium",
+    "at": "2026-11-11T00:00Z",
+    "wind": 3,
+    "gust": 10,
+    "temp": 44,
+    "precip": 0,
+    "snow": 0,
+    "desc": "Clear"
+   },
+   "header": "Western Michigan Broncos 6-3 · Away Tuesday, Nov 10 · 7:00 PM InfoCision Stadium 💨 3 mph · 44°F · Clear Akron Zips 1-8 · Home Build a same-game parlay ›"
+  }
+ },
+ {
+  "name": "ladder-nba",
+  "hash": "#/l/nba/p/2490149?m=pts",
+  "url": "http://localhost:8765/#/l/nba/p/2490149?m=pts",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NBA › CJ McCollum CJ McCollum Atlanta Hawks · G · #3 Next: vs LAL · Mon, Nov 9 7:00 PM · game page › Latest: McCollum contributed nine points (4-14 FG, 1-6 3Pt), four rebounds, three assists, two blocks and two steals across 21 minutes during Saturday's 124-121 win over the Nets. more MARKET Points 12.5 Rebounds Assists 3.5 3-Pointers Made 1.5 Pts + Reb + Ast 17.5 Pts + Reb 14.5 Pts + Ast 15.5 Reb + Ast 5.5 Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds DraftKings: 12.5 (o -107 / u -119) · over opened -102 Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans over Model 89.2% vs 91.2% needed to break even · edge -2.0 pts · EV -2.2% Over: stats only 89% · no market anchor PROJECTION 14.1 P(OVER) 89% FAIR ODDS -828 o AVG / MED 17.0 / 17.0 L10 OVER 8/10 EXP. MIN 26.4 ★ Save pick HIT RATE Showing over hit rates at 5.5 L5 80% 4/5 L10 80% 8/10 L20 90% 18/20 This season 82% 9/11 Last season 98% 80/82 Home 90% 18/20 vs LAL 100% 1/1 🪜 ALT LINES vs DraftKings milestone prices · anchored to the 12.5 main line LINE MODEL FAIR ODDS DRAFTKINGS EDGE LAST 10 6+ 88% -762 -1040 -2.8 8/10 8+ 82% -464 -462 +0.1 8/10 10+ 71% -247 -241 +",
+  "extra": {
+   "ladder": "🪜 ALT LINES vs DraftKings milestone prices · anchored to the 12.5 main line LINE MODEL FAIR ODDS DRAFTKINGS EDGE LAST 10 6+ 88% -762 -1040 -2.8 8/10 8+ 82% -464 -462 +0.1 8/10 10+ 71% -247 -241 +0.5 7/10 12+ 61% -159 -137 +3.5 7/10 13+ 56% -127 -107 +4.2 ✓ 7/10 15+ 39% +158 +151 -1.0 3/10 18+ 22% +363 +302 -3.3 1/10 20+ 14% +597 +481 -2.9 1/10 25+ 4.1% +2367 +1340 -2.9 0/10 30+ 0.8% — +2900 -2.5 0/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot.",
+   "afterClick": "PASS PASS · leans over Model 89.2% vs 91.2% needed to break even · edge -2.0 pts · EV -2.2% Over: stats only 89% · no market anchor PROJECTION 14.1 P(OVER) 89% FAIR ODDS -828 o AVG / MED 17.0 / 17.0 L"
+  }
+ },
+ {
+  "name": "ladder-nfl",
+  "hash": "#/l/nfl/p/2573079?m=pass_yds",
+  "url": "http://localhost:8765/#/l/nfl/p/2573079?m=pass_yds",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Carson Wentz Carson Wentz Minnesota Vikings · QB · #11 Next: vs BUF · Mon, Nov 9 8:15 PM · game page › Latest: Wentz is stated to start Monday night's game against the Bills, Ian Rapoport of NFL Network reports. more MARKET Passing Yards 214.5 Pass Attempts 30.5 Completions 20.5 Passing TDs 1.5 Interceptions 0.5 Rushing Yards 7.5 Rush Attempts 2.5 Longest Rush Pass + Rush Yards 226.5 YOUR LINE Line Over odds Under odds DraftKings: 214.5 (o — / u —) · opened 202.5 (money on the over) Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under DraftKings only sells the over (160+) on alt lines, and the model leans under here, so there's no bet at this line. Model 50.3% vs 52.4% needed to break even · edge -2.0 pts · EV -3.9% Over: stats only 50% · no market anchor PROJECTION 174.8 P(OVER) 50% FAIR ODDS -101 u AVG / MED 186.5 / 158.5 L10 OVER 4/8 ★ Save pick HIT RATE Showing under hit rates at 159.5 L5 80% 4/5 L10 50% 4/8 L20 50% 4/8 This season 100% 3/3 Last season 20% 1/5 Home 20% 1/5 vs BUF — no games 🪜 ALT LINES DraftKings milestones (no prices posted) · anchored to the 214.5 main line LINE MODEL FAIR ODDS LAST 10 160+ 62% -160 4/8 170+ 59% -143 4/8 180+ 54% -118 3/8 190+ 51% -105 3/8 200+ 48% +107 3/8 210+ 45% +121 3/8 215+ 44% +1",
+  "extra": {
+   "ladder": "🪜 ALT LINES DraftKings milestones (no prices posted) · anchored to the 214.5 main line LINE MODEL FAIR ODDS LAST 10 160+ 62% -160 4/8 170+ 59% -143 4/8 180+ 54% -118 3/8 190+ 51% -105 3/8 200+ 48% +107 3/8 210+ 45% +121 3/8 215+ 44% +128 3/8 220+ 42% +136 3/8 230+ 39% +154 3/8 240+ 34% +195 2/8 250+ 31% +221 2/8 260+ 28% +252 2/8 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: treat anything under ~20% as a long shot.",
+   "afterClick": "PASS PASS · leans under DraftKings only sells the over (160+) on alt lines, and the model leans under here, so there's no bet at this line. Model 50.3% vs 52.4% needed to break even · edge -2.0 pts · "
+  }
+ },
+ {
+  "name": "tracker",
+  "hash": "#/picks?tab=live",
+  "url": "http://localhost:8765/#/picks?tab=live",
+  "errors": [],
+  "failed": [],
+  "text": "Home › My bets ★ My bets 🔎 Check a slip ☁️ Save your picks to an account Sign in and your bets, picks, bankroll and books are saved and show up on every device. Sign in 📡 Live & today History No games in progress · last checked 5:09 PM ↻ Refresh Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ LeBron James Over 21.5 Points PHI 127 – CHI 121 · Final 22 — cleared 21.5 Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ Under 248.5 PHI 127 – CHI 121 · Final 248 points — stayed under Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ PHI ML PHI 127 – CHI 121 · Final PHI won Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ Jake LaRavia Over 4.5 Points LAL 121 – DET 116 · Final 5 — cleared 4.5 Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ Under 237.5 LAL 121 – DET 116 · Final 237 points — stayed under Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ LAL ML LAL 121 – DET 116 · Final LAL won Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 LOST 🔗 ✕ ❌ LeBron James Over 22.5 Po",
+  "extra": {
+   "expect": [
+    "W",
+    "L",
+    "W",
+    "W",
+    "W",
+    "L",
+    "W",
+    "W"
+   ],
+   "got": [
+    "W",
+    "L",
+    "W",
+    "W",
+    "W",
+    "L",
+    "W",
+    "W"
+   ],
+   "ok": true,
+   "text": "No games in progress · last checked 5:09 PM ↻ Refresh Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ LeBron James Over 21.5 Points PHI 127 – CHI 121 · Final 22 — cleared 21.5 Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ Under 248.5 PHI 127 – CHI 121 · Final 248 points — stayed under Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ PHI ML PHI 127 – CHI 121 · Final PHI won Stake $ Book — DraftKings FanDuel BetMGM Caesars Fanatics BetRivers bet365 Other Straight bet · $1 to win $0.91 · -110 WON +$0.91 🔗 ✕ ✅ Jake LaRavia Over 4.5 Points LAL 121 – DET 116 · Final 5 — cleared 4.5 Stake $ Book — DraftKings Fan"
+  }
+ },
+ {
+  "name": "moonshot-all",
+  "hash": "#/today?sport=all",
+  "url": "http://localhost:8765/#/today?sport=all",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:09 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 46 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · ALL SPORTS · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket buil",
+  "extra": {
+   "moon": "🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game ODDS +100269 $10 WINS $10,027 REAL CHANCE (EST.) 1 in 867 10 legs · the book's price implies 1 in 1,004. The estimate counts only half of each leg's model edge (a quarter for alt lines, and never more than 1.6× the book's own odds), because big edges are usually overstated and a parlay multiplies the error. Even built from the best legs, a moonshot almost always loses: play it with lottery-ticket money only. C Connor McDavid Over 1.5 Assists +165 NHL · NYR @ EDM · Mon 8:00 PM 42% to hit vs 37.7% break-even · edge +4.2 · Projection 1.8 vs line 1.5 · over in 6/10 of last 10 · matchup ×0.95 · team total 4.0 DK ↗ — Oliver Bonk Over 0.5 Points +145 NHL · PHI @ VAN · Mon 9:30 PM 43% to hit vs 40.8% break-even · edge +2.2 · Projection 0.7 vs line 0.5 · over ",
+   "books": [
+    "https://sportsbook.draftkings.com/leagues/hockey/nhl",
+    "https://sportsbook.fanduel.com/navigation/nhl",
+    "https://sports.betmgm.com/en/sports/ice-hockey-12",
+    "https://sportsbook.caesars.com/",
+    "https://sportsbook.fanatics.com/"
+   ],
+   "dkExactLegs": 8,
+   "pickDk": []
+  }
+ },
+ {
+  "name": "moonshot-basketball",
+  "hash": "#/today?sport=basketball",
+  "url": "http://localhost:8765/#/today?sport=basketball",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:09 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 42 🎯 Games: all 42 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏀 ALL BASKETBALL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏀 All basketball · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 3 🏀 All basketball player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs ",
+  "extra": {
+   "moon": "🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game ODDS +100374 $10 WINS $10,037 REAL CHANCE (EST.) 1 in 916 7 legs · the book's price implies 1 in 1,005 · includes DraftKings alt lines (X+). The estimate counts only half of each leg's model edge (a quarter for alt lines, and never more than 1.6× the book's own odds), because big edges are usually overstated and a parlay multiplies the error. Even built from the best legs, a moonshot almost always loses: play it with lottery-ticket money only. C EWU +17.5 -118 College Basketball · EWU @ ORST · Mon 9:30 PM 59% to hit vs 54.1% break-even · edge +5.1 · ORST covers: model 10% → blended 41% 📉 home opened -15.5, now -17.5 · market moving hard against this DK ＋ C CLT +4.5 -112 College Basketball · HALL @ CLT · Mon 9:00 PM 55% to hit vs 52.8% break-even · ed",
+   "books": [
+    "https://sportsbook.draftkings.com/leagues/basketball/ncaab",
+    "https://sportsbook.fanduel.com/navigation/ncaab",
+    "https://sports.betmgm.com/en/sports/basketball-7",
+    "https://sportsbook.caesars.com/",
+    "https://sportsbook.fanatics.com/"
+   ],
+   "dkExactLegs": 6,
+   "pickDk": []
+  }
+ },
+ {
+  "name": "moonshot-football",
+  "hash": "#/today?sport=football",
+  "url": "http://localhost:8765/#/today?sport=football",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:09 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 1 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏈 ALL FOOTBALL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏈 All football · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lotter",
+  "extra": {
+   "moon": "🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game The 🏈 All football · Today legs can't reach $10k on $10. The biggest ticket available is below; try All sports, All days, a bigger bet or a smaller target. ODDS -115 $10 WINS $9 REAL CHANCE (EST.) 1 in 2 1 legs · the book's price implies 1 in 2. The estimate counts only half of each leg's model edge (a quarter for alt lines, and never more than 1.6× the book's own odds), because big edges are usually overstated and a parlay multiplies the error. Even built from the best legs, a moonshot almost always loses: play it with lottery-ticket money only. C MIN +3.5 -115 NFL · BUF @ MIN · Mon 8:15 PM 57% to hit vs 53.5% break-even · edge +3.2 · MIN covers: model 67% → blended 57% 📉 home opened +3, now +3.5 · moving against 📰 How to bet Bills-Vikings: Analys",
+   "books": [
+    "https://sportsbook.draftkings.com/event/34118167?outcomes=0HC84695600P350_1",
+    "https://sportsbook.fanduel.com/navigation/nfl",
+    "https://sports.betmgm.com/en/sports/football-11",
+    "https://sportsbook.caesars.com/",
+    "https://sportsbook.fanatics.com/"
+   ],
+   "dkExactLegs": 0,
+   "pickDk": []
+  }
+ },
+ {
+  "name": "moonshot-nhl",
+  "hash": "#/today?sport=nhl",
+  "url": "http://localhost:8765/#/today?sport=nhl",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:09 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 3 🎯 Games: all 3 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏒 NHL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏒 NHL · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game The 🏒 NHL · Today legs can't reach $10k on $10. The biggest ticket available is below; try All sports, All days, a bigger bet or a smaller target. ODDS +25055 $10 WINS $2,506 REAL CHANCE (EST.) 1 in 262 3 legs · the book'",
+  "extra": {
+   "moon": "🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25k $50k 2 legs per game The 🏒 NHL · Today legs can't reach $10k on $10. The biggest ticket available is below; try All sports, All days, a bigger bet or a smaller target. ODDS +25055 $10 WINS $2,506 REAL CHANCE (EST.) 1 in 262 3 legs · the book's price implies 1 in 252 · includes DraftKings alt lines (X+). The estimate counts only half of each leg's model edge (a quarter for alt lines, and never more than 1.6× the book's own odds), because big edges are usually overstated and a parlay multiplies the error. Even built from the best legs, a moonshot almost always loses: play it with lottery-ticket money only. — Kiefer Sherwood Over 0.5 Assists +330 NHL · NYI @ SJ · Mon 10:00 PM 24% to hit vs 23.3% break-even · edge +0.9 · Projection 0.3 vs line 0.5 · over in 4/10 of last 10 ·",
+   "books": [
+    "https://sportsbook.draftkings.com/leagues/hockey/nhl",
+    "https://sportsbook.fanduel.com/navigation/nhl",
+    "https://sports.betmgm.com/en/sports/ice-hockey-12",
+    "https://sportsbook.caesars.com/",
+    "https://sportsbook.fanatics.com/"
+   ],
+   "dkExactLegs": 0,
+   "pickDk": []
+  }
+ },
+ {
+  "name": "pot-lebron-ast",
+  "hash": "#/l/nba/p/1966?m=ast",
+  "url": "http://localhost:8765/#/l/nba/p/1966?m=ast",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NBA › LeBron James LeBron James Philadelphia 76ers · F · #23 Next: vs BOS · Tue, Nov 10 8:00 PM · game page › Latest: James supplied 22 points (8-16 FG, 2-5 3Pt, 4-5 FT), five rebounds, five assists and one steal across 33 minutes during Sunday's 127-121 win over Chicago. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted assists line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 6.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 57.4% vs 52.4% needed to break even · edge +5.1 pts · EV +9.7% Over: stats only 43% · no market anchor PROJECTION 5.8 P(OVER) 43% FAIR ODDS -135 u AVG / MED 7.3 / 7.0 L10 OVER 5/10 EXP. MIN 33.8 ★ Save pick HIT RATE Showing under hit rates at 6.5 L5 40% 2/5 L10 50% 5/10 L20 45% 9/20 This season 44% 4/9 Last season 49% 36/73 Home 45% 9/20 vs BOS 100% 1/1 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 1+ 99.5% — 10/10 3+ 94.7%",
+  "extra": {
+   "potential": "🎯 POTENTIAL · ASSISTS projection ×0.997 What his chances say he should have had (teammates' shooting on his passes), vs what he actually got. Weighting recent games more, over 9 games he's right in line with his chances, so nothing changes. POTENTIAL ASSISTS (EST.)/G 14.6 EXPECTED/G 6.5 ACTUAL/G 6.6 DATE OPP POTENTIAL ASSISTS (EST.) EXPECTED ACTUAL LUCK Nov 8 @ CHI 10.9 5.0 5 +0.0 Nov 6 @ CLE 7.8 3.5 3 -0.5 Nov 4 @ DET 17.9 8.1 8 -0.1 Nov 2 vs CHI 16.7 7.6 9 +1.4 Oct 30 vs NY 16.6 7.5 8 +0.5 Oct 28 @ IND 21.4 9.7 10 +0.3 Oct 25 vs DET 13.4 6.1 5 -1.1 Oct 22 vs CLE 10.5 4.8 5 +0.2 Oct 20 @ NY 16.6 7.5 7 -0.5 NBA.com's tracking data isn't reachable from the data servers, so these are box-score estimates: potential assists = assists ÷ teammates' FG% that game; rebound chances = misses while he's on the floor.",
+   "note": ""
+  }
+ },
+ {
+  "name": "pot-embiid-reb",
+  "hash": "#/l/nba/p/3059318?m=reb",
+  "url": "http://localhost:8765/#/l/nba/p/3059318?m=reb",
+  "errors": [],
+  "failed": [
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500",
+   "404 https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/401909961/competitions/401909961/odds/100/propBets?limit=500"
+  ],
+  "text": "Home › NBA › Joel Embiid Joel Embiid Philadelphia 76ers · C · #21 Next: vs BOS · Tue, Nov 10 8:00 PM · game page › Latest: Embiid (foot) is available for Sunday's game against the Bulls. more MARKET Points Rebounds Assists 3-Pointers Made Pts + Reb + Ast Pts + Reb Pts + Ast Reb + Ast Steals Blocks Steals + Blocks Turnovers Field Goals Made Field Goal Attempts Free Throws Made 3-Point Attempts Minutes YOUR LINE Line Over odds Under odds No posted rebounds line found for the next game; the starting line is set near the projection. Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 8.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 52.6% vs 52.4% needed to break even · edge +0.2 pts · EV +0.3% Over: stats only 47% · no market anchor PROJECTION 8.4 P(OVER) 47% FAIR ODDS -111 u AVG / MED 8.4 / 8.5 L10 OVER 5/10 EXP. MIN 31.6 ★ Save pick HIT RATE Showing under hit rates at 8.5 L5 60% 3/5 L10 50% 5/10 L20 50% 10/20 This season 44% 4/9 Last season 60% 27/45 Home 50% 10/20 vs BOS 50% 3/6 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 2+ 99.5% — 10/10 4+ 97.5% -3859 10/10 6+ 85% -553 9/10 8+ 59% -143 6/10 10+ 37% +167 5/10 12+ 15% +588 1/10 14+ 5.9%",
+  "extra": {
+   "potential": "🎯 POTENTIAL · REBOUNDS projection ×0.984 What his chances say he should have had (rebound chances at his usual conversion), vs what he actually got. Weighting recent games more, over 9 games he's above what his chances say: some of that is luck, so the model leans down. REBOUND CHANCES (EST.)/G 68.7 EXPECTED/G 9.2 ACTUAL/G 9.7 DATE OPP REBOUND CHANCES (EST.) EXPECTED ACTUAL LUCK Nov 8 @ CHI 59.0 8.1 10 +1.9 Nov 6 @ CLE 56.3 7.7 7 -0.7 Nov 4 @ DET 65.7 9.0 15 +6.0 Nov 2 vs CHI 53.3 7.3 8 +0.7 Oct 30 vs NY 63.6 8.7 7 -1.7 Oct 28 @ IND 83.2 11.4 11 -0.4 Oct 24 vs MIL 83.4 11.4 11 -0.4 Oct 22 vs CLE 73.8 10.1 7 -3.1 Oct 20 @ NY 80.2 11.0 11 +0.0 NBA.com's tracking data isn't reachable from the data servers, so these are box-score estimates: potential assists = assists ÷ teammates' FG% that game; rebound chances = misses while he's on the floor.",
+   "note": ""
+  }
+ },
+ {
+  "name": "pot-chase-recyds",
+  "hash": "#/l/nfl/p/4362628?m=rec_yds",
+  "url": "http://localhost:8765/#/l/nfl/p/4362628?m=rec_yds",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Ja'Marr Chase Ja'Marr Chase Cincinnati Bengals · WR · #1 Next: vs PIT · Sun, Nov 15 8:20 PM · game page › Latest: Chase caught 10 of 12 targets for 155 yards and a touchdown in Sunday's 34-17 win over the Falcons. more MARKET Receptions Receiving Yards Targets Longest Reception Rush + Rec Yards Total TDs (rush + rec) YOUR LINE Line Over odds Under odds No posted receiving yards line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans under 84.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Model 54.5% vs 52.4% needed to break even · edge +2.2 pts · EV +4.1% Over: stats only 45% · no market anchor PROJECTION 77.0 P(OVER) 45% FAIR ODDS -120 u AVG / MED 85.8 / 92.5 L10 OVER 4/10 ★ Save pick HIT RATE Showing under hit rates at 84.5 L5 60% 3/5 L10 60% 6/10 L20 40% 8/20 This season 63% 5/8 Last season 38% 6/16 Home 25% 3/12 vs PIT 33% 1/3 🪜 ALT LINES Model only LINE MODEL FAIR ODDS LAST 10 1+ 97.7% -4256 10/10 51+ 76% -308 8/10 101+ 31% +225 2/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ",
+  "extra": {
+   "potential": "🎯 POTENTIAL · RECEIVING YARDS projection ×0.964 What his chances say he should have had (his targets, air yards and field position), vs what he actually got. Weighting recent games more, over 24 games he's above what his chances say: some of that is luck, so the model leans down. AIR YARDS/G 87.1 EXPECTED/G 82.5 ACTUAL/G 90.0 DATE OPP AIR YARDS EXPECTED ACTUAL LUCK Nov 8 vs ATL 103.0 100.2 155 +54.8 Nov 1 vs TEN 218.0 132.7 141 +8.3 Oct 25 @ BAL 67.0 49.7 62 +12.3 Oct 11 @ MIA 124.0 80.7 77 -3.7 Oct 4 vs JAX 12.0 23.6 27 +3.4 Sep 27 @ PIT 99.0 94.9 98 +3.1 Sep 20 @ HOU 81.0 69.9 75 +5.1 Sep 13 vs TB 34.0 36.5 12 -24.5 Jan 4 vs CLE 86.0 75.8 96 +20.2 Dec 28 vs ARI 47.0 72.1 60 -12.1 Expected stats come from nflverse play-by-play (ffopportunity): what the same targets, carries and throws are usually worth, adjusted to his own usual efficiency so only the swing beyond his normal counts as ",
+   "note": ""
+  }
+ },
+ {
+  "name": "pot-lamar-passyds",
+  "hash": "#/l/nfl/p/3916387?m=pass_yds",
+  "url": "http://localhost:8765/#/l/nfl/p/3916387?m=pass_yds",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NFL › Lamar Jackson Lamar Jackson Baltimore Ravens · QB · #8 · Day-To-Day Next: vs LAC · Mon, Nov 16 8:15 PM · game page › Injury: Injured Reserve Thumb Latest: Jackson, who is scheduled to undergo surgery on his injured right thumb, has told teammates he plans to return later this season, Ian Rapoport of NFL Network reports. more MARKET Passing Yards Pass Attempts Completions Passing TDs Interceptions Rushing Yards Rush Attempts Longest Rush Pass + Rush Yards YOUR LINE Line Over odds Under odds No posted passing yards line found for the next game; the starting line is set near the projection. Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. — Enter your line · leans over 185.5 No sportsbook line is posted for this market yet. Type the line and odds from your book above to get a grade. Injury report: Injured Reserve — no grade; props are usually voided if the player doesn't play. Model 52.9% vs 52.4% needed to break even · edge +0.5 pts · EV +1.0% Over: stats only 53% · no market anchor PROJECTION 180.8 P(OVER) 53% FAIR ODDS -112 o AVG / MED 195.3 / 206.5 L10 OVER 7/10 ★ Save pick HIT RATE Showing over hit rates at 185.5 L5 80% 4/5 L10 70% 7/10 L20 67% 12/18 This season 80% 4/5 Last season 62% 8/13 Home 78% 7/9 vs LAC — no games 🪜 ALT LINES Model only",
+  "extra": {
+   "potential": "🎯 POTENTIAL · PASSING YARDS projection ×0.985 What his chances say he should have had (his pass attempts and air yards), vs what he actually got. Weighting recent games more, over 18 games he's above what his chances say: some of that is luck, so the model leans down. PASS ATTEMPTS/G 20.4 EXPECTED/G 174.9 ACTUAL/G 183.3 DATE OPP PASS ATTEMPTS EXPECTED ACTUAL LUCK Nov 1 @ BUF 1.0 13.9 0 -13.9 Oct 4 vs TEN 20.0 181.4 222 +40.6 Sep 27 vs DAL 20.0 164.2 186 +21.8 Sep 20 vs NO 31.0 292.2 235 -57.2 Sep 13 @ IND 25.0 254.1 324 +69.9 Jan 4 @ PIT 18.0 149.0 238 +89.0 Dec 21 vs NE 10.0 108.4 101 -7.4 Dec 14 @ CIN 12.0 113.9 150 +36.1 Dec 7 vs PIT 35.0 231.4 219 -12.4 Nov 27 vs CIN 32.0 316.1 246 -70.1 Expected stats come from nflverse play-by-play (ffopportunity): what the same targets, carries and throws are usually worth, adjusted to his own usual efficiency so only the swing beyond his normal ",
+   "note": ""
+  }
+ },
+ {
+  "name": "pot-mcdavid-sog",
+  "hash": "#/l/nhl/p/3895074?m=sog",
+  "url": "http://localhost:8765/#/l/nhl/p/3895074?m=sog",
+  "errors": [],
+  "failed": [],
+  "text": "Home › NHL › Connor McDavid Connor McDavid Edmonton Oilers · C · #97 Next: vs NYR · Mon, Nov 9 8:00 PM · game page › Latest: McDavid registered three assists (one on the power play) and three shots on goal in Saturday's 4-2 win over the Canucks. more MARKET Shots on Goal 3.5 Points 1.5 Goals Assists 1.5 Blocked Shots Hits Time on Ice (min) YOUR LINE Line Over odds Under odds DraftKings: 3.5 (o +130 / u -175) · over opened +125 Expected minutes Role / injury adj. % Opponent adj. On Off Tonight's context On Off Tonight's context = Vegas team total, game script, blowout risk and injured teammates (with/without splits), applied automatically. Role adj. is for anything else you know, e.g. −20 for a minutes limit. PASS PASS · leans under Model 63.3% vs 63.6% needed to break even · edge -0.3 pts · EV -0.5% Over: stats only 33% · market 41% · blended 37% PROJECTION 3.0 P(OVER) 37% FAIR ODDS -173 u AVG / MED 3.4 / 3.0 L10 OVER 2/10 EXP. MIN 23.8 ★ Save pick HIT RATE Showing under hit rates at 3.5 L5 80% 4/5 L10 80% 8/10 L20 75% 15/20 This season 78% 14/18 Last season 53% 47/88 Home 55% 11/20 vs NYR 33% 1/3 🪜 ALT LINES Model only · anchored to the 3.5 main line LINE MODEL FAIR ODDS LAST 10 1+ 96.5% -2777 10/10 2+ 85% -557 9/10 3+ 66% -194 8/10 4+ 37% +173 2/10 5+ 19% +431 1/10 6+ 10.0% +903 1/10 X+ means at least X (same as over X−0.5). Tap a row to analyze it above. ✓ = model beats the price by 4+ points. Alt lines carry extra vig, and the far ends are where any model is least sure: ",
+  "extra": {
+   "potential": "🎯 POTENTIAL · SHOTS ON GOAL projection ×0.989 What his chances say he should have had (shot attempts at his usual on-target rate), vs what he actually got. Weighting recent games more, over 18 games he's above what his chances say: some of that is luck, so the model leans down. SHOT ATTEMPTS/G 4.2 EXPECTED/G 2.74 ACTUAL/G 2.84 DATE OPP SHOT ATTEMPTS EXPECTED ACTUAL LUCK Nov 7 vs VAN 4.0 2.64 3 +0.36 Nov 5 vs ANA 5.0 3.30 3 -0.30 Nov 3 @ NJ 2.0 1.32 1 -0.32 Nov 1 @ NYR 7.0 4.62 6 +1.38 Oct 31 @ NYI 3.0 1.98 3 +1.02 Oct 28 vs CGY 4.0 2.64 3 +0.36 Oct 26 vs DET 3.0 1.98 2 +0.02 Oct 24 vs TOR 6.0 3.96 3 -0.96 Oct 22 vs CAR 4.0 2.64 3 +0.36 Oct 20 vs MIN 4.0 2.64 4 +1.36 From shot attempts in each box score and his season on-target and shooting rates, shrunk toward the league.",
+   "note": ""
+  }
+ },
+ {
+  "name": "today-best-nba",
+  "hash": "#/today?sport=nba",
+  "url": "http://localhost:8765/#/today?sport=nba",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 8 🎯 Games: all 8 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · NBA · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A NBA · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 3 NBA player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $25",
+  "extra": {
+   "best": "⭐ BEST BETS · NBA · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it.",
+   "ticket": "YOUR $5 TICKET No grade A NBA · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 3 NBA player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count.",
+   "learn": "LEARNING FROM RESULTS Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward \"all of it\" until there are enough results). Overs and unders are learned separately. A player's legs from one game count as one result, so one huge night can't swing everything. Fewer, stronger picks where the model has been too confident. PICKS RECORD MODEL SAID HIT BREAK-EVEN EDGES KEPT NBA props 328-328 · 255 58% 51% 52% 28% Overs 92-106 · 78 56% 47% 51% "
+  }
+ },
+ {
+  "name": "today-best-all",
+  "hash": "#/today?sport=all",
+  "url": "http://localhost:8765/#/today?sport=all",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 46 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · ALL SPORTS · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket buil",
+  "extra": {
+   "best": "⭐ BEST BETS · ALL SPORTS · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it.",
+   "ticket": "YOUR $5 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count.",
+   "learn": "LEARNING FROM RESULTS Every scan compares what the picks claimed with what actually hit, and keeps only the share of each edge that has shown up (pulled toward \"all of it\" until there are enough results). Overs and unders are learned separately. A player's legs from one game count as one result, so one huge night can't swing everything. Fewer, stronger picks where the model has been too confident. PICKS RECORD MODEL SAID HIT BREAK-EVEN EDGES KEPT NBA props 328-328 · 255 58% 51% 52% 28% Overs 92-106 · 78 56% 47% 51% "
+  }
+ },
+ {
+  "name": "check-slip",
+  "hash": "#/check?t=CJ%20McCollum%20Over%2012.5%20Points%20-107%0ACJ%20McCollum%20under%204.5%20Assists%20-120%0ASome%20Nobody%20over%205.5%20assists",
+  "url": "http://localhost:8765/#/check?t=CJ%20McCollum%20Over%2012.5%20Points%20-107%0ACJ%20McCollum%20under%204.5%20Assists%20-120%0ASome%20Nobody%20over%205.5%20assists",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Check my slip 🔎 Check my slip Type or paste your bets the way FanDuel (or any book) shows them, one per line, with the price. Each one is graded at that exact line and price, with the same model as the picks (5:04 PM scan). Check bet ($) · no price on a line? it assumes −110 EACH LEG AT YOUR PRICE — CJ McCollum Over 12.5 Points -107 ❌ No edge at this price: 52% vs 52% needed. Fair price would be about -109. same game as another leg: books pay less on same-game parlays — CJ McCollum Under 4.5 Assists -120 ❌ No edge at this price: 55% vs 55% needed. Fair price would be about -123. DraftKings has 3.5 (+125 / -166) · same game as another leg: books pay less on same-game parlays ? Some Nobody over 5.5 assists ❓ Couldn't find that player or team in today's scan (it covers NBA, NHL, college basketball, and NFL and college football games). YOUR TICKET 2-leg parlay as entered +255 · $5 pays $17.73 • CJ McCollum Over 12.5 Points -107 • CJ McCollum Under 4.5 Assists -120 Chance it hits: 29% (about 1 in 3) · worth it at this price 1 line couldn't be checked and isn't counted. ★ Save to My bets 🔗 Share Chances multiply across legs and treat them as independent. If a leg says \"no edge\", the book's price is better for the book than for you.",
+  "extra": {
+   "out": "EACH LEG AT YOUR PRICE — CJ McCollum Over 12.5 Points -107 ❌ No edge at this price: 52% vs 52% needed. Fair price would be about -109. same game as another leg: books pay less on same-game parlays — CJ McCollum Under 4.5 Assists -120 ❌ No edge at this price: 55% vs 55% needed. Fair price would be about -123. DraftKings has 3.5 (+125 / -166) · same game as another leg: books pay less on same-game parlays ? Some Nobody over 5.5 assists ❓ Couldn't find that player or team in today's scan (it covers NBA, NHL, college basketball, and NFL and college football games). YOUR TICKET 2-leg parlay as entered +255 · $5 pays $17.73 • CJ McCollum Over 12.5 Points -107 • CJ McCollum Under 4.5 Assists -120 Chance it hits: 29% (about 1 in 3) · worth it at this price 1 line couldn't be checked and isn't counted. ★ Save to My bets 🔗 Share Chances multiply across legs and treat them as independent. If a leg says \"no edge\", the book's price is better for the book than for you."
+  }
+ },
+ {
+  "name": "saved-bet-app-read",
+  "errors": [],
+  "extra": {
+   "reads": [
+    "⏳ Josh Allen Under 229.5 Passing Yards Mon 8:15 PM · BUF @ MIN 📊 App now (5:04 PM scan): Josh Allen Under 229.5 Passing Yards -110 · grade C · same as your bet",
+    "⏳ Josh Allen Over 19.5 Completions Mon 8:15 PM · BUF @ MIN 📊 App now (5:04 PM scan): Josh Allen Under 19.5 Completions -110 · grade C · the other side from your bet"
+   ]
+  }
+ },
+ {
+  "name": "today-live",
+  "hash": "#/today?sport=all&day=all",
+  "url": "http://localhost:8765/#/today?sport=all&day=all",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 57 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · ALL SPORTS · ALL DAYS so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A All sports · all days picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticke",
+  "extra": {
+   "bar": "Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause",
+   "whatChanged": "",
+   "changes": []
+  }
+ },
+ {
+  "name": "today-days-nfl",
+  "hash": "#/today?sport=nfl",
+  "url": "http://localhost:8765/#/today?sport=nfl",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 1 🎯 Games: all 1 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · NFL · TODAY so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A NFL · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 NFL player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticket built from the model's best long-shot legs Bet $1 $2 $5 $10 $20 To win $1k $5k $10k $2",
+  "extra": {
+   "first": {
+    "days": "Today 1",
+    "note": "",
+    "games": "🎯 Games: all 1 · choose which games to build from",
+    "ticket": "YOUR $5 TICKET No grade A NFL · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 NFL player props left out: DraftKings'",
+    "pickDays": []
+   },
+   "other": [
+    {
+     "d": "2026-11-09",
+     "days": "Today 1",
+     "note": "",
+     "games": "🎯 Games: all 1 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A NFL · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 NFL player props left out: DraftKings'",
+     "pickDays": []
+    }
+   ]
+  }
+ },
+ {
+  "name": "today-days-football",
+  "hash": "#/today?sport=football",
+  "url": "http://localhost:8765/#/today?sport=football",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 12 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · 🏈 ALL FOOTBALL · ALL DAYS so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A 🏈 All football · all days picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a",
+  "extra": {
+   "first": {
+    "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+    "note": "",
+    "games": "🎯 Games: all 1 · choose which games to build from",
+    "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player pro",
+    "pickDays": []
+   },
+   "other": [
+    {
+     "d": "2026-11-09",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 1 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player pro",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-10",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Tomorrow picks with an edge right now. Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-11",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Wed, 11/11 picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-12",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 2 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Thu, 11/12 picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-13",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · Fri, 11/13 picks with an edge right now. Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "all",
+     "days": "Today 1 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 12 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A 🏈 All football · all days picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 49 🏈 All football player ",
+     "pickDays": []
+    }
+   ]
+  }
+ },
+ {
+  "name": "today-days-all",
+  "hash": "#/today?sport=all",
+  "url": "http://localhost:8765/#/today?sport=all",
+  "errors": [],
+  "failed": [
+   "404 http://localhost:8765/data/audit.json"
+  ],
+  "text": "Home › Today 🔥 Today's picks Updated Mon, Nov 9 5:04 PM · 📈 Trends · 📡 Live · Last 30 days 125-209 -26.2u Live re-check checked 5:10 PM · 12 lines or prices moved since the 5:04 PM scan · 0 grades changed Check now Pause 🔎 Betting at FanDuel or another book? Check your slip at their exact lines and prices › SPORT All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL DAY Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days 🎯 Games: all 57 · choose which games to build from BUDGET $5 $10 $25 $50 $100 🏦 Set your bankroll to get a suggested daily budget and spending limits. BUILD Straight bets Parlay Mix 2 legs 3 legs 4 legs 5 legs 6 legs 8 legs 10 legs Parlay legs Most likely to hit Best value Grade A picks only (so far A 4-14 · B 76-65) ⭐ BEST BETS · ALL SPORTS · ALL DAYS so far 11-4 · +6.6u None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it. YOUR $5 TICKET No grade A All sports · all days picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left out: DraftKings' prices for NFL and college football props aren't available, and judged at an assumed −110 they went 15-31. They're research only (open a player to see the analysis); spreads, totals and moneylines still count. 🚀 MOONSHOT a lottery ticke",
+  "extra": {
+   "first": {
+    "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+    "note": "",
+    "games": "🎯 Games: all 46 · choose which games to build from",
+    "ticket": "YOUR $5 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left ou",
+    "pickDays": []
+   },
+   "other": [
+    {
+     "d": "2026-11-09",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 46 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · Today picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left ou",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-10",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · Tomorrow picks with an edge right now. Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-11",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · Wed, 11/11 picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-12",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 2 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · Thu, 11/12 picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "2026-11-13",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 3 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · Fri, 11/13 picks with an edge right now. Try another day or sport, or build a same-game parlay below.",
+     "pickDays": []
+    },
+    {
+     "d": "all",
+     "days": "Today 46 Tomorrow 3 Wed, 11/11 3 Thu, 11/12 2 Fri, 11/13 3 All days",
+     "note": "",
+     "games": "🎯 Games: all 57 · choose which games to build from",
+     "ticket": "YOUR $5 TICKET No grade A All sports · all days picks with an edge right now. There are B and C picks: untick Grade A picks only to use them (so far A 4-14 · B 76-65). Try another day or sport, or build a same-game parlay below. 52 All sports player props left",
+     "pickDays": []
+    }
+   ]
+  }
+ },
+ {
+  "name": "trends-all",
+  "hash": "#/trends?sport=all",
+  "url": "http://localhost:8765/#/trends?sport=all",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Trends 📈 Trends From the 5:04 PM update · 🔥 Today's picks · 📡 Live games All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL 🔥 HOT STREAKS VS TODAY'S LINES Players who cleared today's line (on the model's side) in 8+ of their last 10. Books know about streaks too, so the model column says whether there's still value at today's price. PICK LAST 10 MODEL EDGE GRADE Ryan Kalkbrenner Under 7.5 Points -111 · CLE @ CHA 📈 price -107 → -111 · market moving your way 10/10 55% +2.2 PASS Ryan Kalkbrenner Under 14.5 Pts + Reb -121 · CLE @ CHA 📉 opened 13.5, now 14.5 · moving against 10/10 57% +2.1 PASS Saddiq Bey Under 6.5 Rebounds -146 · NO @ GS 📉 opened 3.5, now 6.5 · market moving hard against this 10/10 61% +1.4 PASS Gabe Perreault Under 0.5 Assists -280 · NYR @ EDM 📉 price -295 → -280 · moving against 10/10 74% +0.6 PASS Adam Pelech Under 0.5 Assists -550 · NYI @ SJ 10/10 84% -0.2 PASS T.J. Hockenson Under 4.5 Receptions -110 · BUF @ MIN 9/10 55% +2.9 C Evan Bouchard Over 0.5 Assists -160 · NYR @ EDM 📉 price -170 → -160 · moving against 9/10 64% +2.4 PASS Ty Johnson Over 1.5 Receptions -110 · BUF @ MIN 📉 opened 2.5, now 1.5 · market moving hard against this 9/10 55% +2.3 PASS Ryan Kalkbrenner Under 6.5 Rebounds -104 · CLE @ CHA 📈 price +103 → -104 · market moving your way 9/10 53% +1.8 PASS Royce O'Neale Under 8.5 Points -116 · CLE @ CHA 📈 price -109 → -116 · market moving your way 9/10 55% +1.6 PASS Evan Bouchard Over 0.5 Points -245 · NYR ",
+  "extra": {
+   "streaks": 88,
+   "teamRows": 10,
+   "moves": 30
+  }
+ },
+ {
+  "name": "trends-nfl",
+  "hash": "#/trends?sport=nfl",
+  "url": "http://localhost:8765/#/trends?sport=nfl",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Trends 📈 Trends From the 5:04 PM update · 🔥 Today's picks · 📡 Live games All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL 🔥 HOT STREAKS VS TODAY'S LINES Players who cleared today's line (on the model's side) in 8+ of their last 10. Books know about streaks too, so the model column says whether there's still value at today's price. PICK LAST 10 MODEL EDGE GRADE T.J. Hockenson Under 4.5 Receptions -110 · BUF @ MIN 9/10 55% +2.9 C Ty Johnson Over 1.5 Receptions -110 · BUF @ MIN 📉 opened 2.5, now 1.5 · market moving hard against this 9/10 55% +2.3 PASS Justin Jefferson Under 6.5 Receptions -110 · BUF @ MIN 📉 opened 5.5, now 6.5 · market moving hard against this 8/10 57% +5.0 C Aaron Jones Sr. Over 30.5 Rushing Yards -110 · BUF @ MIN 📉 opened 33.5, now 30.5 · market moving hard against this 8/10 57% +4.3 C Aaron Jones Sr. Over 8.5 Rush Attempts -110 · BUF @ MIN 8/10 56% +3.2 C Jordan Addison Under 3.5 Receptions -110 · BUF @ MIN 8/10 55% +2.6 C Ray Davis Under 5.5 Rushing Yards -110 · BUF @ MIN 8/10 52% -0.6 PASS 📊 TEAMS AGAINST THE SPREAD This season vs DraftKings' closing lines. Teams covering 70%+ (or 30% or less) with 5+ games are highlighted. GAME TEAM ATS LAST 5 HOME/AWAY ATS O/U LAST 5 BUF @ MIN NFL · BUF -3.5 BUF away 5-2 71% away 2-1 5-2 O-U BUF @ MIN NFL · BUF -3.5 MIN home 4-3 57% home 1-2 1-6 O-U Records vs the spread are noisy over small samples and books adjust to them quickly. Treat them as a nudge, not a system. 📉📈 BIGGEST",
+  "extra": {
+   "streaks": 9,
+   "teamRows": 1,
+   "moves": 30
+  }
+ },
+ {
+  "name": "trends-nba",
+  "hash": "#/trends?sport=nba",
+  "url": "http://localhost:8765/#/trends?sport=nba",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Trends 📈 Trends From the 5:04 PM update · 🔥 Today's picks · 📡 Live games All 🏀 All basketball NBA College BB 🏈 All football NFL College FB 🏒 NHL 🔥 HOT STREAKS VS TODAY'S LINES Players who cleared today's line (on the model's side) in 8+ of their last 10. Books know about streaks too, so the model column says whether there's still value at today's price. PICK LAST 10 MODEL EDGE GRADE Ryan Kalkbrenner Under 7.5 Points -111 · CLE @ CHA 📈 price -107 → -111 · market moving your way 10/10 55% +2.2 PASS Ryan Kalkbrenner Under 14.5 Pts + Reb -121 · CLE @ CHA 📉 opened 13.5, now 14.5 · moving against 10/10 57% +2.1 PASS Saddiq Bey Under 6.5 Rebounds -146 · NO @ GS 📉 opened 3.5, now 6.5 · market moving hard against this 10/10 61% +1.4 PASS Ryan Kalkbrenner Under 6.5 Rebounds -104 · CLE @ CHA 📈 price +103 → -104 · market moving your way 9/10 53% +1.8 PASS Royce O'Neale Under 8.5 Points -116 · CLE @ CHA 📈 price -109 → -116 · market moving your way 9/10 55% +1.6 PASS Coby White Under 3.5 Assists -106 · CLE @ CHA 📉 price -112 → -106 · moving against 9/10 53% +1.4 PASS Grayson Allen Under 7.5 Reb + Ast -137 · CLE @ CHA 📉 opened 6.5, now 7.5 · market moving hard against this 9/10 59% +1.3 PASS Naz Reid Under 2.5 Assists -122 · CLE @ CHA 📈 price -108 → -122 · market moving your way 9/10 56% +1.2 PASS Royce O'Neale Under 2.5 3-Pointers Made -157 · CLE @ CHA 📈 price -153 → -157 · market moving your way 9/10 62% +1.2 PASS Grayson Allen Under 1.5 Steals -197 · CLE @ CHA 📉 p",
+  "extra": {
+   "streaks": 56,
+   "teamRows": 7,
+   "moves": 30
+  }
+ },
+ {
+  "name": "live-games",
+  "hash": "#/live",
+  "url": "http://localhost:8765/#/live",
+  "errors": [],
+  "failed": [],
+  "text": "Home › Live games 📡 Live games Updated 5:11 PM ↻ Refresh ESPN's live win probability next to DraftKings' live moneyline (vig removed). A big gap is worth a look, not a sure thing: ESPN's number is a model too, and live prices move by the second. NO GAMES LIVE RIGHT NOW This page fills in when games tip off; it updates every 30 seconds while open. COMING UP GGC @ ALST College Basketball · 6:00 PM MCD @ UMBC College Basketball · 6:00 PM HIRM @ CAN College Basketball · 6:00 PM MRSH @ OSU College Basketball · 6:00 PM HOW @ PENN College Basketball · 6:30 PM PSUS @ BUF College Basketball · 6:30 PM SYR @ IU College Basketball · 6:30 PM LAL @ ATL NBA · 7:00 PM CLE @ CHA NBA · 7:00 PM WSH @ DET NBA · 7:00 PM WAG @ CONN College Basketball · 7:00 PM GRAM @ TEX College Basketball · 7:00 PM",
+  "extra": {
+   "cards": 0,
+   "text": "NO GAMES LIVE RIGHT NOW This page fills in when games tip off; it updates every 30 seconds while open. COMING UP GGC @ ALST College Basketball · 6:00 PM MCD @ UMBC College Basketball · 6:00 PM HIRM @ CAN College Basketball · 6:00 PM MRSH @ OSU College Basketball · 6:00 PM HOW @ PENN College Basketball · 6:30 PM PSUS @ BUF College Basketball · 6:30 PM SYR @ IU College Basketball · 6:30 PM LAL @ ATL NBA · 7:00 PM CLE @ CHA NBA · 7:00 PM WSH @ DET NBA · 7:00 PM WAG @ CONN College Basketball · 7:00 PM GRAM @ TEX College Basketball · 7:00 PM"
+  }
+ },
+ {
+  "name": "home-with-picks",
+  "hash": "#/",
+  "url": "http://localhost:8765/#/",
+  "errors": [],
+  "failed": [],
+  "text": "Fresh picks every morning · 24 leagues Smarter bets. Every game. Game logs, hit rates and matchups for any prop, spread or total, graded against the real DraftKings line. Search any player, or pick a league below. 🔥 Today's picks 🚀 $10 → $10K moonshot 🔥 Today's top picks Build my ticket › C BU +14.5 -110 · College Basketball · 8:00 PM C EWU +17.5 -118 · College Basketball · 9:30 PM C ILST +15.5 -115 · College Basketball · 8:30 PM C Connor McDavid Over 1.5 Assists +165 · NHL · 8:00 PM 🎬 Latest highlights All news & highlights › ▶ 1:07 TB 24 – CHI 27 Bears survive, take down Bucs with walk-off field goal 🏈 NFL · 17h ago ▶ 1:13 NO 123 – LAC 139 New Orleans Pelicans vs. LA Clippers: Game Highlights 🏀 NBA · 17h ago ▶ 1:14 MIA 114 – SAC 108 Miami Heat vs. Sacramento Kings: Game Highlights 🏀 NBA · 18h ago ▶ 1:00 LAR 20 – WSH 13 Rams outlast Commanders with defensive showcase 🏈 NFL · 19h ago 🗞️ TOP STORIES 2026 NFL trade deadline updates: Jordan Davis, Andre Cisco on the move The NFL trade deadline is Tuesday at 4 p.m. ET. We're following all the action, including Jessie Bates III, Davon Godchaux and Jordan Davis to the Jaguars. 🏈 NFL · ESPN staff · 2m ago Sources: Jaguars acquire Eagles DT Jordan Davis in blockbuster trade The Jaguars are trading a 2027 first-round pick and a 2029 second-round pick to the Eagles for defensive tackle Jordan Davis, sources told ESPN's Adam Schefter. 🏈 NFL · 4m ago Cardinals WR Michael Wilson (neck) to miss rest of season Cardinals wide rece"
+ }
+]
