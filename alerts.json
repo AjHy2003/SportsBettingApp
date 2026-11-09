@@ -1,10 +1,4 @@
 {
- "nfl:401873035:4697815:rush_att:UNDER:move": {
-  "level": "move",
-  "why": "now 12.5",
-  "at": "2026-11-01T20:19:51.228Z",
-  "start": "2026-11-02T01:20Z"
- },
  "nba:401909912:4395626:pts:OVER:move": {
   "level": "move",
   "why": "now 8.5",
