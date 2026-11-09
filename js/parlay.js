@@ -125,7 +125,12 @@ export const pickScore = (l) => l.edge * (GRADE_WEIGHT[l.grade] || 0) * (l.move?
 // A prop without real DraftKings prices (all NFL and college football props come that
 // way) was judged at an assumed -110 against a 50/50 market. Those went 15-31, so they're
 // research only: never a pick, ticket leg or moonshot leg.
-export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l.questionable;
+// Moneyline underdogs at +150 or longer are research only too: the team models rate big
+// underdogs far too high (posted ones went 4-70, college basketball +1000 to +5000 dogs 2-55,
+// rated about 10% to win when they won 3.5%), and the market prices mismatches better.
+export const LONGSHOT_ML = 150;
+export const isLongshotML = (l) => l.kind === "ml" && (l.odds ?? 0) >= LONGSHOT_ML;
+export const usableLeg = (l) => !(l.kind === "prop" && l.priced === false) && !l.questionable && !isLongshotML(l);
 
 // ⭐ Best bet: grade A, a 10%+ edge, and the market not moving against it (posted line or
 // the live re-check). Since launch, NBA picks with a 10%+ edge went 9-3 and NBA picks whose
@@ -146,8 +151,8 @@ const GRADE_ORDER = ["A", "B", "C", "PASS"];
 export const gradeFromEdge = (e) => (e >= 0.08 ? "A" : e >= 0.05 ? "B" : e >= 0.025 ? "C" : "PASS");
 const worse = (a, b) => GRADE_ORDER[Math.max(GRADE_ORDER.indexOf(a), GRADE_ORDER.indexOf(b))];
 // Props learn overs and unders separately (books shade the side the public bets, and a
-// model can lean one way); game lines learn per league.
-export const learnGroup = (l) => l.kind === "prop" ? `${l.league}:prop:${l.side === "OVER" ? "over" : "under"}` : `${l.league}:line`;
+// model can lean one way); game lines per league, moneylines apart from spreads and totals.
+export const learnGroup = (l) => l.kind === "prop" ? `${l.league}:prop:${l.side === "OVER" ? "over" : "under"}` : `${l.league}:${l.kind === "ml" ? "ml" : "line"}`;
 const parentGroup = (g) => g.replace(/:(over|under)$/, "");
 // The learned share of the edge for a leg on a given side (props carry both sides' k so a
 // pick that switches sides on a re-check uses the right one).

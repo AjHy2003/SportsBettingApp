@@ -612,6 +612,7 @@ fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
 const todayPicks = picks.filter((p) => dayOf(p) === todayET), laterPicks = picks.filter((p) => dayOf(p) !== todayET);
 const short = (l) => `${dayOf(l) === todayET ? "" : `${weekdayOf(l)} · `}${l.grade} · ${l.label}${l.kind === "prop" ? "" : ` (${l.matchup})`} ${fmtOdds(l.odds)}`;
 const counts = ["A", "B"].map((g) => `${todayPicks.filter((p) => p.grade === g).length} ${g}`).join(", ");
+const strongToday = todayPicks.filter((p) => p.grade === "A" || p.grade === "B").length;
 // Lead with ⭐ best bets, then grade A, when there are enough of them.
 const todayA = todayPicks.filter((p) => p.grade === "A");
 const lead = [...todayPicks.filter(isBestBet), ...(todayA.length >= 3 ? todayA : todayPicks).filter((p) => !isBestBet(p))];
@@ -634,8 +635,9 @@ if (weekday === "Mon" && wk.w + wk.l) {
 } else if (rec.w + rec.l) lines.push(`Last 30 days: ${rec.w}-${rec.l}, ${rec.units >= 0 ? "+" : ""}${rec.units.toFixed(1)}u`);
 fs.writeFileSync("notify.json", JSON.stringify({
   skip: failedLeagues === LEAGUES.length,
-  title: todayPicks.length ? `PickLab: ${todayPicks.length} picks today (${counts})${laterPicks.length ? ` + ${laterPicks.length} later` : ""}` : picks.length ? `PickLab: ${picks.length} picks for later this week` : "PickLab: no strong edges today",
-  body: picks.length ? lines.join("\n") : "Nothing cleared the bar. Sitting out is a pick too.",
+  // Only A and B count as picks in the title; a day of C leans says so instead.
+  title: strongToday ? `PickLab: ${strongToday} picks today (${counts})${laterPicks.length ? ` + ${laterPicks.length} later` : ""}` : todayPicks.length ? `PickLab: no strong edges today · ${todayPicks.length} thin C lean${todayPicks.length === 1 ? "" : "s"}` : picks.length ? `PickLab: ${picks.length} picks for later this week` : "PickLab: no strong edges today",
+  body: picks.length ? `${!strongToday && todayPicks.length ? "Nothing graded A or B today. C leans are close to coin flips: skip them or bet small.\n" : ""}${lines.join("\n")}` : "Nothing cleared the bar. Sitting out is a pick too.",
   click: `${SITE_URL}#/today`,
 }));
 console.log(`picks: ${picks.length}, legs: ${legs.length}, games: ${games.length}, graded: ${graded}`);
