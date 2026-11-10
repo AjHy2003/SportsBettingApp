@@ -1,0 +1,88 @@
+name: test-moon
+# Temporary: per-side learning, moonshot guard and the full E2E on live data, on the
+# claude/moon-history branch. Sends nothing anywhere.
+on:
+  push:
+    branches: ["claude/moon-history"]
+    paths-ignore: ["e2e-out/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+      - name: Build data
+        run: python pipeline/build.py --out _site/data --cache cache > build.log 2>&1
+      - name: Daily picks
+        run: |
+          mkdir -p /tmp/hist e2e-out
+          git fetch -q origin picks-data
+          git show origin/picks-data:history.json > /tmp/hist/history.json
+          git show origin/picks-data:tracked.json > /tmp/hist/tracked.json
+          node tools/daily-picks.mjs --site _site --history /tmp/hist/history.json 2>&1 | tee picks.log | tail -12
+          grep -E "^learning:|alt-line legs" picks.log > e2e-out/learning.txt || true
+          node -e 'const m=JSON.parse(require("fs").readFileSync("/tmp/hist/moonshots.json"));for(const t of m.tickets)console.log(t.id,t.legs.length,"legs",t.american,t.result,t.legs.map(l=>l.label+" "+l.odds+" "+(l.result||"-")).join(" | "));' | tee e2e-out/moon.txt
+          ls -la _site/data/picks/ | tee -a e2e-out/moon.txt
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const { isBestBet, usableLeg } = await import("./js/parlay.js");
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            const tally = {};
+            for (const l of t.legs.filter((x) => x.lean && usableLeg(x))) {
+              const k = `${l.league}:${l.kind === "prop" ? "prop:" + l.side : "line"}`;
+              const x = (tally[k] ||= { A: 0, B: 0, C: 0, PASS: 0 }); x[l.grade] = (x[l.grade] || 0) + 1;
+            }
+            const withKs = t.legs.filter((l) => l.ks).length;
+            const best = t.legs.filter(isBestBet).map((l) => `${l.label} ${l.grade} ${(l.edge * 100).toFixed(1)}%`);
+            const alts = (t.alts || []).map((a) => `${a.label} ${a.odds} model ${(a.prob * 100).toFixed(0)}% vs ${(100 / (a.odds / 100 + 1)).toFixed(0)}%`);
+            const out = { grades: tally, legsWithKs: withKs, learn: t.learn, picks: t.picks?.length, best, alts: alts.slice(0, 20), nAlts: alts.length, moon: (t.featured?.moonshot?.legs || []).map((id) => t.alts.find((a) => a.id === id)?.label || t.legs.find((l) => l.id === id)?.label) };
+            console.log(JSON.stringify(out, null, 1)); fs.writeFileSync("e2e-out/grades.json", JSON.stringify(out, null, 1));
+          '
+      - name: Re-pricing at the posted lines must reproduce the posted picks
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const { repriceProp } = await import("./js/reprice.js");
+            const t = JSON.parse(fs.readFileSync("_site/data/picks/today.json", "utf8"));
+            let n = 0, bad = 0, ex = [];
+            for (const l of t.legs.filter((x) => x.kind === "prop" && x.rp && x.book)) {
+              const r = repriceProp(l, { line: l.book.line, over: l.book.over, under: l.book.under });
+              n++; if (Math.abs(r.prob - l.prob) > 0.002 || r.grade !== l.grade) { bad++; if (ex.length < 8) ex.push(`${l.label} ${l.grade}->${r.grade} ${l.prob.toFixed(4)}->${r.prob.toFixed(4)}`); }
+            }
+            const out = `props re-priced ${n}, mismatches ${bad}\n${ex.join("\n")}`;
+            console.log(out); fs.writeFileSync("e2e-out/reprice-check.txt", out);
+          '
+      - name: Assemble site
+        run: mkdir -p _site && cp -r index.html manifest.webmanifest sw.js css js icons _site/
+      - name: Install Playwright
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium
+      - name: End-to-end in Google Chrome
+        run: E2E_CHANNEL=chrome NODE_PATH=/tmp/pw/node_modules node tools/e2e.cjs _site e2e-out
+      - name: Commit results
+        if: always()
+        run: |
+          mkdir -p e2e-out && cp picks.log e2e-out/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f e2e-out || true
+          git commit -qm "E2E results" || echo "nothing to commit"
+          git pull -q --rebase origin claude/moon-history || true
+          git push -q origin HEAD:claude/moon-history

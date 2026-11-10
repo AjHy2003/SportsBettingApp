@@ -80,6 +80,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history.json tracked.json
+          [ -f moonshots.json ] && git add moonshots.json
           [ -f notified.json ] && git add notified.json
           git diff --cached --quiet || { git commit -qm "Update pick history" && { git pull -q --rebase origin picks-data || true; } && git push -q origin picks-data; }
       - name: Assemble site
