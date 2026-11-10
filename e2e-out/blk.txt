@@ -1,0 +1,21 @@
+Brayden McNabb Under 1.5 Blocked Shots W 0 
+Sean Walker Over 1.5 Blocked Shots W 2 
+Matthew Schaefer Under 1.5 Blocked Shots L 2 
+Artem Zub Under 1.5 Blocked Shots W 1 
+Cale Makar Under 1.5 Blocked Shots L 3 
+Brayden McNabb Under 1.5 Blocked Shots W 0 
+Cale Makar Under 1.5 Blocked Shots L 2 
+Brayden McNabb Under 1.5 Blocked Shots W 0 
+Sean Walker Over 1.5 Blocked Shots W 2 
+Connor Murphy Over 1.5 Blocked Shots W 2 
+Andrew Peeke Under 1.5 Blocked Shots W 1 
+Artem Zub Under 1.5 Blocked Shots W 1 
+Matthew Schaefer Under 1.5 Blocked Shots L 2 
+Jaccob Slavin Over 1.5 Blocked Shots W 2 
+Justin Faulk Under 1.5 Blocked Shots L 3 
+total 1740
+drwxr-xr-x 2 runner runner    4096 Nov 10 00:32 .
+drwxr-xr-x 7 runner runner    4096 Nov 10 00:32 ..
+-rw-r--r-- 1 runner runner  183737 Nov 10 00:32 history.json
+-rw-r--r-- 1 runner runner 1108352 Nov 10 00:32 today.json
+-rw-r--r-- 1 runner runner  477270 Nov 10 00:32 tracked.json

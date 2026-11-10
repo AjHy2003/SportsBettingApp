@@ -1,0 +1,6 @@
+nba: 4 games, 395 legs, 266 alt-line legs (21 too-good-to-be-true rungs dropped so far)
+nfl: 1 games, 55 legs, 0 alt-line legs (21 too-good-to-be-true rungs dropped so far)
+ncaaf: 11 games, 66 legs, 0 alt-line legs (21 too-good-to-be-true rungs dropped so far)
+ncaab: 13 games, 74 legs, 0 alt-line legs (21 too-good-to-be-true rungs dropped so far)
+nhl: 3 games, 206 legs, 12 alt-line legs (21 too-good-to-be-true rungs dropped so far)
+learning: nba:prop:under 236-222 (177 player-games) k=0.14, nba:prop 328-328 (255 player-games) k=0.28, nfl:prop:under 12-22 (31 player-games) k=0.44, nfl:prop 16-33 (41 player-games) k=0.71, nfl:prop:over 4-11 (10 player-games) k=0.59, nba:prop:over 92-106 (78 player-games) k=0.11, nhl:prop:under 68-58 (108 player-games) k=0.16, nhl:prop 147-147 (240 player-games) k=0.49, nhl:prop:over 79-89 (132 player-games) k=0.76, ncaab:line 64-50 (63 player-games) k=0.96, nba:ml 4-17 (10 player-games) k=0.91, nba:line 15-17 (20 player-games) k=0.83, ncaab:ml 16-155 (128 player-games) k=0.50, ncaaf:line 16-15 (24 player-games) k=0.81, ncaaf:ml 4-14 (12 player-games) k=0.89, nhl:ml 2-6 (6 player-games) k=0.95, nfl:line 4-4 (6 player-games) k=0.95, nfl:ml 0-3 (1 player-games) k=0.99, nhl:line 3-4 (5 player-games) k=0.96
