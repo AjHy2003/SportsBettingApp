@@ -18,12 +18,13 @@ export async function renderRecord(ctx, q) {
   setTitle("Pick history");
   app.innerHTML = loading("Loading pick history…");
   const f = {
-    src: q.src === "all" ? "all" : "posted", grade: q.grade || "", days: q.days || "", sport: q.sport || "", type: q.type || "", res: q.res || "",
+    src: ["all", "moon"].includes(q.src) ? q.src : "posted", kind: q.kind || "", grade: q.grade || "", days: q.days || "", sport: q.sport || "", type: q.type || "", res: q.res || "",
     best: q.best === "1", pmin: q.pmin != null ? Number(q.pmin) : null, pmax: q.pmax != null ? Number(q.pmax) : null,
   };
-  const data = { posted: await getData("data/picks/history.json"), all: null };
+  const data = { posted: await getData("data/picks/history.json"), all: null, moon: null };
   if (!ctx.alive()) return;
   if (f.src === "all") data.all = await getData("data/picks/tracked.json");
+  if (f.src === "moon") data.moon = await getData("data/picks/moonshots.json");
   if (!ctx.alive()) return;
   let shown = PAGE;
 
@@ -54,15 +55,18 @@ export async function renderRecord(ctx, q) {
 
   function syncUrl() {
     const qs = new URLSearchParams();
-    if (f.src === "all") qs.set("src", "all");
-    for (const k of ["grade", "days", "sport", "type", "res"]) if (f[k]) qs.set(k, f[k]);
+    if (f.src !== "posted") qs.set("src", f.src);
+    for (const k of f.src === "moon" ? ["kind", "days", "res"] : ["grade", "days", "sport", "type", "res"]) if (f[k]) qs.set(k, f[k]);
     if (f.best) qs.set("best", "1");
     if (f.pmin != null) { qs.set("pmin", f.pmin); if (f.pmax != null) qs.set("pmax", f.pmax); }
     const h = `#/record${qs.toString() ? `?${qs}` : ""}`;
     if (location.hash !== h) history.replaceState(null, "", h);
   }
 
+  const srcChips = () => `<div class="chips"><button class="chip ${f.src === "posted" ? "on" : ""}" data-src="posted">Posted picks</button><button class="chip ${f.src === "all" ? "on" : ""}" data-src="all">Every leg the app showed</button><button class="chip ${f.src === "moon" ? "on" : ""}" data-src="moon">🚀 Daily moonshots</button></div>`;
+
   function renderFilters() {
+    if (f.src === "moon") return moonFilters();
     const all = rowsOf();
     // Counts on each chip: how many picks that choice would show with the other filters kept.
     const count = (key, val) => all.filter((p) => { const keep = f[key]; f[key] = val; const ok = matches(p); f[key] = keep; return ok; }).length;
@@ -74,7 +78,7 @@ export async function renderRecord(ctx, q) {
     if (f.best) extra.push(`⭐ Best bets only <button class="btn ghost sm" data-clear="best">✕</button>`);
     if (f.pmin != null) extra.push(`Model said ${Math.round(f.pmin * 100)}–${Math.round(Math.min(f.pmax ?? 1, 1) * 100)}% <button class="btn ghost sm" data-clear="prob">✕</button>`);
     $("#r-filters").innerHTML = `
-      <div class="chips"><button class="chip ${f.src === "posted" ? "on" : ""}" data-src="posted">Posted picks</button><button class="chip ${f.src === "all" ? "on" : ""}" data-src="all">Every leg the app showed</button></div>
+      ${srcChips()}
       ${f.src === "all" ? `<p class="small faint" style="margin:6px 0 0">Every A, B and C leg shown in tickets, same-game parlays and pick lists (and the moonshots' long shots) since Nov 2, not just the posted picks.</p>` : ""}
       ${row("Grade", "grade", grades)}${row("Period", "days", PERIODS)}${row("Sport", "sport", sports)}${row("Type", "type", TYPES)}${row("Result", "res", RESULTS)}
       ${f.src === "posted" ? `<div class="row" style="gap:8px;margin-top:8px"><span class="small faint" style="min-width:58px"></span><button class="chip ${f.best ? "on" : ""}" data-best="1">⭐ Best bets only</button></div>` : ""}
@@ -139,7 +143,76 @@ export async function renderRecord(ctx, q) {
     $("#r-more")?.addEventListener("click", () => { shown += PAGE; render(); });
   }
 
+  // ---------- 🚀 daily moonshots ----------
+  const KINDS = [["", "All"], ["all", "All sports"], ["basketball", "🏀 Basketball"], ["football", "🏈 Football"], ["hockey", "🏒 Hockey"]];
+  const MRES = [["", "All"], ["W", "Hit"], ["L", "Missed"], ["open", "Not settled"]];
+  const kindName = (k) => KINDS.find(([v]) => v === k)?.[1] || k;
+  const moonMatch = (t, skip = "") => {
+    if (skip !== "kind" && f.kind && t.kind !== f.kind) return false;
+    if (skip !== "days" && f.days && new Date(`${t.day}T23:59:00`) < now - Number(f.days) * 864e5) return false;
+    if (skip !== "res" && f.res) { if (f.res === "open" ? ["W", "L", "VOID"].includes(t.result) : t.result !== f.res) return false; }
+    return true;
+  };
+  function moonFilters() {
+    const all = data.moon?.tickets || [];
+    const count = (key, val) => all.filter((t) => { const keep = f[key]; f[key] = val; const ok = moonMatch(t); f[key] = keep; return ok; }).length;
+    const row = (label, key, opts) => `<div class="row" style="gap:8px;align-items:center;margin-top:8px"><span class="small faint" style="min-width:58px">${label}</span>
+      <div class="chips scroll" style="flex:1;min-width:0">${opts.map(([v, t]) => `<button class="chip ${String(f[key]) === v ? "on" : ""}" data-k="${key}" data-v="${esc(v)}">${esc(t)} <span class="cnt">${count(key, v)}</span></button>`).join("")}</div></div>`;
+    $("#r-filters").innerHTML = `${srcChips()}
+      <p class="small faint" style="margin:6px 0 0">The daily $10 → $10,000 moonshots (the all-sports one is the one in the notification), as they stood when their first game started, graded leg by leg. Logging started Nov 10.</p>
+      ${row("Sport", "kind", KINDS)}${row("Period", "days", PERIODS)}${row("Result", "res", MRES)}`;
+  }
+  const legIcon = (l) => (l.result === "W" ? "✅" : l.result === "L" ? "❌" : l.result === "P" || l.result === "VOID" ? "➖" : new Date(l.start) > Date.now() ? "🕒" : "⏳");
+  function moonSummary(ts) {
+    if (!data.moon) { $("#r-sum").innerHTML = `<div class="muted">The moonshot log isn't published yet; it appears after the next scan.</div>`; return; }
+    const done = ts.filter((t) => t.result === "W" || t.result === "L");
+    const staked = done.reduce((a, t) => a + t.stake, 0), back = done.reduce((a, t) => a + (t.paid || 0), 0);
+    const legs = ts.flatMap((t) => t.legs).filter((l) => l.result === "W" || l.result === "L");
+    const lw = legs.filter((l) => l.result === "W").length;
+    const misses = done.filter((t) => t.result === "L").map((t) => t.legs.filter((l) => l.result === "L").length);
+    const net = back - staked;
+    const kpi = (k, v, title = "") => `<div class="kpi"${title ? ` title="${esc(title)}"` : ""}><div class="k">${k}</div><div class="v">${v}</div></div>`;
+    $("#r-sum").innerHTML = `<h3 style="margin:0">${esc(f.kind ? kindName(f.kind) : "All")} moonshots</h3>
+      <div class="kpis">
+        ${kpi("Tickets", `${done.filter((t) => t.result === "W").length}-${done.filter((t) => t.result === "L").length}`, "Hit-missed")}
+        ${kpi("Net", `<span class="${net >= 0 ? "pos" : "neg"}">${net >= 0 ? "+" : "−"}$${Math.abs(net).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span> <small>on $${staked}</small>`, "Paid back minus $10 a ticket")}
+        ${kpi("Legs hit", `${legs.length ? pct(lw / legs.length) : "—"} <small>${lw}/${legs.length}</small>`)}
+        ${misses.length ? kpi("Closest", `${Math.min(...misses)} leg${Math.min(...misses) === 1 ? "" : "s"} <small>short</small>`, "Fewest losing legs on a missed ticket") : ""}
+      </div>${ts.some((t) => !t.result) ? `<p class="small faint" style="margin:8px 0 0">${ts.filter((t) => !t.result).length} not settled yet.</p>` : ""}`;
+  }
+  function moonList(ts) {
+    const box = $("#r-list");
+    if (!data.moon) { box.innerHTML = ""; return; }
+    if (!ts.length) { box.innerHTML = `<div class="muted">No moonshots match these filters${(data.moon.tickets || []).length ? "" : " yet: the first one is logged on the next scan"}.</div>`; return; }
+    box.innerHTML = ts.slice(0, shown).map((t, i) => {
+      const w = t.legs.filter((l) => l.result === "W").length, lost = t.legs.filter((l) => l.result === "L").length, graded = t.legs.filter((l) => l.result).length;
+      const status = t.result === "W" ? `<b class="pos">Hit · paid $${Math.round(t.paid).toLocaleString("en-US")}</b>`
+        : t.result === "L" ? `<b class="neg">Missed</b> <span class="small faint">· ${w} of ${t.legs.length} legs hit${lost === 1 ? " · 1 leg short" : ""}</span>`
+        : t.result === "VOID" ? `<b class="faint">Void</b>`
+        : graded ? `<b>In progress</b> <span class="small faint">· ${w} of ${t.legs.length} legs hit so far</span>`
+        : `<b class="faint">${new Date(t.legs[0]?.start) > Date.now() ? "Not started" : "Waiting on results"}</b>`;
+      const legRows = t.legs.map((l) => {
+        const href = l.kind === "prop" && l.playerId ? `#/l/${l.league}/p/${l.playerId}` : `#/l/${l.league}/g/${l.eventId}`;
+        return `<div class="row" style="gap:8px;align-items:flex-start;margin-top:6px"><span style="flex:0 0 auto">${legIcon(l)}</span><div style="flex:1;min-width:0"><a href="${href}">${esc(l.label)}</a> <span class="small muted">${M.fmtOdds(l.odds)} · ${esc(leagueName(l.league))}${l.matchup ? ` · ${esc(l.matchup)}` : ""}</span></div>${l.actual != null && l.actual !== "" ? `<span class="small faint" style="flex:0 0 auto">${l.kind === "prop" ? "had " : ""}${esc(l.actual)}</span>` : ""}</div>`;
+      }).join("");
+      return `<div style="${i ? "border-top:1px solid var(--line);padding-top:12px;margin-top:12px" : ""}">
+        <h3 style="margin:0">${esc(fmtDate(`${t.day}T12:00:00`, { weekday: "short", month: "short", day: "numeric" }))} · ${esc(kindName(t.kind))}</h3>
+        <div class="small muted">$${t.stake} → $${Math.round(t.payout).toLocaleString("en-US")} · ${M.fmtOdds(t.american)} · ${t.legs.length} legs · est. 1 in ${Math.round(1 / Math.max(t.prob, 1e-6)).toLocaleString("en-US")}${t.later ? " · includes later games" : ""}</div>
+        <div style="margin:4px 0 2px">${status}</div>
+        ${legRows}
+      </div>`;
+    }).join("") + (ts.length > shown ? `<div style="text-align:center;margin-top:12px"><button class="btn ghost" id="r-more">Show more (${ts.length - shown} left)</button></div>` : "");
+    $("#r-more")?.addEventListener("click", () => { shown += PAGE; render(); });
+  }
+
   function render() {
+    if (f.src === "moon") {
+      moonFilters();
+      const ts = (data.moon?.tickets || []).filter((t) => moonMatch(t)).sort((a, b) => b.day.localeCompare(a.day) || KINDS.findIndex(([v]) => v === a.kind) - KINDS.findIndex(([v]) => v === b.kind));
+      moonSummary(ts);
+      moonList(ts);
+      return;
+    }
     renderFilters();
     const rows = rowsOf().filter((p) => matches(p)).sort((a, b) => new Date(b.start) - new Date(a.start) || (a.label || "").localeCompare(b.label || ""));
     renderSummary(rows);
@@ -152,6 +225,9 @@ export async function renderRecord(ctx, q) {
     if (b.dataset.src) {
       f.src = b.dataset.src;
       if (f.src === "all" && !data.all) { $("#r-list").innerHTML = loading("Loading every leg…"); data.all = await getData("data/picks/tracked.json"); if (!ctx.alive()) return; }
+      if (f.src === "moon" && !data.moon) { $("#r-list").innerHTML = loading("Loading moonshots…"); data.moon = await getData("data/picks/moonshots.json"); if (!ctx.alive()) return; }
+      // A different view starts with no filters.
+      Object.assign(f, { kind: "", grade: "", days: "", sport: "", type: "", res: "", best: false, pmin: null, pmax: null });
       if (f.src === "posted" && f.grade === "ALT") f.grade = "";
       if (f.src === "all") f.best = false;
     } else if (b.dataset.k) f[b.dataset.k] = b.dataset.v;

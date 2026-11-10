@@ -76,6 +76,11 @@ const pages = [
     await pg.click('#r-filters .chip[data-src="all"]');
     await pg.waitForTimeout(1500);
     out.everyLeg = (await pg.innerText("#r-sum")).replace(/\s+/g, " ").slice(0, 120);
+    await pg.click('#r-filters .chip[data-src="moon"]');
+    await pg.waitForTimeout(1500);
+    out.moon = (await pg.innerText("#r-sum")).replace(/\s+/g, " ").slice(0, 160);
+    out.moonList = (await pg.innerText("#r-list")).replace(/\s+/g, " ").slice(0, 400);
+    if (!/moonshots/i.test(out.moon) || !/legs|logged on the next scan/.test(out.moonList)) throw new Error("moonshot history did not render");
     if (!/Grade A/i.test(out.gradeA) || !out.rows) throw new Error("pick history did not open filtered to grade A");
     return out;
   });

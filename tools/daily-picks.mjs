@@ -572,6 +572,55 @@ for (const [k, ids] of Object.entries({ all: Object.values(groups).flat(), ...gr
 }
 console.log(`moonshots: ${Object.entries(moonshots).map(([k, m]) => `${k} ${m.legs.length} legs 1 in ${oneIn(m.prob)}`).join(", ") || "none"}`);
 
+// ---------- daily moonshot log ----------
+// Each day's featured $10 -> $10,000 moonshots as they stood when their first game started
+// (later scans can't change them after that), graded leg by leg like the picks.
+const MOONS = path.join(path.dirname(HISTORY), "moonshots.json");
+const moonLog = (() => { try { return JSON.parse(fs.readFileSync(MOONS, "utf8")); } catch { return { tickets: [] }; } })();
+{
+  const byId = new Map([...legs, ...alts].map((l) => [l.id, l]));
+  const row = (l) => ({ id: l.id, league: l.league, eventId: l.eventId, start: l.start, matchup: l.matchup, kind: l.kind, marketKey: l.marketKey, playerId: l.playerId,
+    side: l.side, line: l.line, odds: l.odds, prob: Number(l.prob.toFixed(4)), label: l.label, alt: l.alt || undefined, result: null });
+  const stamp = new Date().toISOString();
+  const day = `${todayET.slice(0, 4)}-${todayET.slice(4, 6)}-${todayET.slice(6, 8)}`; // todayET is "20261110"
+  for (const [k, m] of Object.entries(moonshots)) {
+    const id = `${day}:${k}`, prev = moonLog.tickets.find((t) => t.id === id);
+    if (prev && prev.legs.some((l) => new Date(l.start) <= now)) continue; // its first game has started: locked
+    const rows = m.legs.map((lid) => byId.get(lid)).filter(Boolean).map(row);
+    if (rows.length !== m.legs.length) continue;
+    const t = { id, day, kind: k, issued: prev?.issued || stamp, updated: stamp, stake: 10, american: m.american, decimal: m.decimal, payout: m.payout, prob: Number(m.prob.toFixed(6)), later: m.later, legs: rows, result: null };
+    if (prev) Object.assign(prev, t); else moonLog.tickets.push(t);
+  }
+  // Grade every leg (so a lost ticket still shows how close it came), then the ticket: lost on
+  // any losing leg; won when every leg is graded and none lost (pushes and voids drop out).
+  const open = moonLog.tickets.filter((t) => t.legs.some((l) => !l.result));
+  const n = await gradePending({ picks: open.flatMap((t) => t.legs) });
+  for (const t of moonLog.tickets) {
+    const r = t.legs.map((l) => l.result);
+    if (r.includes("L")) t.result = "L";
+    else if (r.every(Boolean)) {
+      const won = t.legs.filter((l) => l.result === "W");
+      t.result = won.length ? "W" : "VOID";
+      t.paid = Number((t.stake * won.reduce((d, l) => d * decimalOdds(l.odds), 1)).toFixed(2));
+    }
+  }
+  moonLog.tickets = moonLog.tickets.filter((t) => !(now - new Date(`${t.day}T12:00:00Z`) > 400 * 864e5));
+  moonLog.updated = stamp;
+  fs.mkdirSync(path.dirname(MOONS), { recursive: true });
+  fs.writeFileSync(MOONS, JSON.stringify(moonLog));
+  console.log(`moonshot log: ${moonLog.tickets.length} tickets, ${n} legs graded this run`);
+}
+// Daily moonshots so far (the "all sports" one, the one in the notification).
+function moonRecord(log) {
+  const ts = log.tickets.filter((t) => t.kind === "all");
+  const done = ts.filter((t) => t.result === "W" || t.result === "L");
+  const legsDone = ts.flatMap((t) => t.legs).filter((l) => l.result === "W" || l.result === "L");
+  return { w: done.filter((t) => t.result === "W").length, l: done.filter((t) => t.result === "L").length, pending: ts.filter((t) => !t.result).length,
+    staked: done.reduce((s, t) => s + t.stake, 0), returned: done.reduce((s, t) => s + (t.paid || 0), 0),
+    legsW: legsDone.filter((l) => l.result === "W").length, legsL: legsDone.filter((l) => l.result === "L").length,
+    closest: done.filter((t) => t.result === "L").reduce((m, t) => Math.min(m, t.legs.filter((l) => l.result === "L").length), Infinity) };
+}
+
 // Best same-game parlays: up to 5 per day, so each day picked on the Today page has some.
 const sgps = games
   .map((g) => ({ game: g.key, matchup: g.matchup, league: g.league, day: etDate(new Date(g.start)), sgp: bestSameGame(legs.filter((l) => l.lean && l.grade === "A"), g.key, 3) || bestSameGame(legs.filter((l) => l.lean), g.key, 3) }))
@@ -603,6 +652,7 @@ const today = {
   generated: issued, date: todayET, games, legs: legs.map(slim), picks: picks.map((p) => p.id),
   alts: alts.map(slim),
   moonshots,
+  moonRecord: moonRecord(moonLog),
   featured: Object.fromEntries(Object.entries(featured).map(([k, v]) => [k, v ? { legs: v.legs.map((l) => l.id), american: v.american, prob: v.prob, ev: v.ev, day: v.day, sgp: v.sgp } : null])),
   sgps: sgps.map((x) => ({ game: x.game, matchup: x.matchup, league: x.league, legs: x.sgp.legs.map((l) => l.id), american: x.sgp.american, prob: x.sgp.prob, ev: x.sgp.ev })),
   books: BOOKS ? { fetchedAt: BOOKS.fetchedAt, remaining: BOOKS.remaining } : null,
@@ -617,6 +667,7 @@ fs.writeFileSync(path.join(outDir, "today.json"), JSON.stringify(today));
 fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
 // Every leg the app showed, for 📋 Pick history's "every leg" view.
 fs.writeFileSync(path.join(outDir, "tracked.json"), JSON.stringify({ updated: tracked.updated, picks: tracked.picks }));
+fs.writeFileSync(path.join(outDir, "moonshots.json"), JSON.stringify(moonLog));
 
 // Phone notification text.
 // Today's games lead; picks for later in the week fill in, marked with their day.

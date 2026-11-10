@@ -473,6 +473,13 @@ export async function renderToday(ctx, q) {
       box.innerHTML = `<h3>Track record</h3>${clvBlock ? `<div class="kpis">${clvBlock}</div>` : ""}<div class="muted small">Every pick posted here is logged and graded automatically after the game. The record builds from the first day.</div>${clvNote}`;
       return;
     }
+    // The daily $10 -> $10,000 moonshots (all sports): tickets hit-missed and dollars.
+    const moonTile = () => {
+      const m = today?.moonRecord;
+      if (!m) return "";
+      const net = m.returned - m.staked;
+      return `<a class="kpi kpi-link" href="#/record?src=moon" title="The daily $10 → $10,000 moonshot from the notification, graded leg by leg"><div class="k">Daily moonshots<span class="go">›</span></div><div class="v">${m.w}-${m.l} <small class="${net >= 0 ? "pos" : "neg"}">${m.w + m.l ? `${net >= 0 ? "+" : "−"}$${Math.abs(Math.round(net))}` : m.pending ? "first one pending" : ""}</small></div></a>`;
+    };
     // Every tile opens 📋 Pick history with those picks.
     const line = (lbl, x, href, title = "") => `<a class="kpi kpi-link" href="${href}"${title ? ` title="${esc(title)}"` : ""}><div class="k">${lbl}<span class="go">›</span></div><div class="v">${x.w}-${x.l} <small class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</small></div></a>`;
     const cal = (r.calibration || []).filter((b) => b.n);
@@ -500,7 +507,7 @@ export async function renderToday(ctx, q) {
     box.innerHTML = `<h3>Track record</h3>
       <div class="kpis">${line("Last 7 days", r.last7, "#/record?days=7")}${line("Last 30 days", r.last30, "#/record?days=30")}${line("All time", r.all, "#/record")}
         ${still.w + still.l && still.w + still.l < r.all.w + r.all.l ? line("Kinds it still posts", still, "#/record?type=current", "All time, without long-shot moneylines and NFL props, which the app no longer posts") : ""}
-        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g], `#/record?grade=${g}`) : "").join("")}${clvBlock}</div>
+        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g], `#/record?grade=${g}`) : "").join("")}${moonTile()}${clvBlock}</div>
       ${typeTable}
       ${cal.length ? `<h3 style="margin-top:14px">Calibration</h3><div class="table-wrap"><table><thead><tr><th>Model said</th><th class="r">Picks</th><th class="r">Expected hit %</th><th class="r">Actual hit %</th></tr></thead><tbody>
         ${cal.map((b) => `<tr><td><a href="#/record?pmin=${b.lo}&pmax=${b.hi >= 1 ? 1.01 : b.hi}">${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}% ›</a></td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
@@ -559,7 +566,9 @@ export async function renderToday(ctx, q) {
     const pool = [...allLegs, ...allAlts].filter((l) => inScope(l) && l.prob > 0 && l.odds != null && usableLeg(l) && !l.mismatch && !l.roleChange && (l.edge ?? 0) > -0.01 && l.odds >= -250);
     const m = pool.length ? buildMoonshot(pool, { stake: Number(state.moonStake), target: Number(state.moonTarget), perGame: Number(state.moonPerGame), exclude: moonExclude }) : null;
     const k$ = (x) => `$${x >= 1000 ? `${(x / 1000).toLocaleString("en-US")}k` : x}`;
-    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🚀 Moonshot</h3><span class="small muted">a lottery ticket built from the model's best long-shot legs</span></div>
+    const mr = today?.moonRecord;
+    const past = `<a class="small" href="#/record?src=moon">📜 Past moonshots${mr && mr.w + mr.l ? ` · ${mr.w}-${mr.l}` : ""} ›</a>`;
+    box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">🚀 Moonshot</h3><span class="small muted">a lottery ticket built from the model's best long-shot legs · ${past}</span></div>
       <div class="row" style="margin-top:10px;gap:14px">
         <div><div class="small muted">Bet</div><div class="chips" id="t-moon-stake">${MOON_STAKES.map((x) => `<button class="chip ${Number(state.moonStake) === x ? "on" : ""}" data-v="${x}">$${x}</button>`).join("")}</div></div>
         <div><div class="small muted">To win</div><div class="chips" id="t-moon-target">${MOON_TARGETS.map((x) => `<button class="chip ${Number(state.moonTarget) === x ? "on" : ""}" data-v="${x}">${k$(x)}</button>`).join("")}</div></div>
