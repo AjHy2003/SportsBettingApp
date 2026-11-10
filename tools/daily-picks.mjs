@@ -37,9 +37,9 @@ globalThis.fetch = async (url, opts) => {
 const { leagueById, MARKETS } = await import("../js/sports.js");
 const { api, standingsTable, parseProps, parseMilestones, loadGamelogs, pool, scheduleResults } = await import("../js/espn.js");
 const { impliedProb, fmtOdds, makeVerdict, expectedValue } = await import("../js/model.js");
-const { loadDeep } = await import("../js/deep.js");
+const { loadDeep, loadDeepPlayer } = await import("../js/deep.js");
 const { gameContext, defaultLines, evaluateLines, fmtSpread, guardLine } = await import("../js/gamemodel.js");
-const { loadPeople, propRows, scanRows } = await import("../js/scan.js");
+const { loadPeople, propRows, scanRows, mergeDeepStats } = await import("../js/scan.js");
 const { injuryReport } = await import("../js/context.js");
 const { gameWeather } = await import("../js/weather.js");
 const { marketValue } = await import("../js/props.js");
@@ -354,8 +354,17 @@ async function gradePending(history) {
           return;
         }
         const m = (MARKETS[L.markets] || []).find((x) => x.key === p.marketKey);
-        const v = m ? marketValue(m, g) : null;
-        if (v == null) return;
+        let v = m ? marketValue(m, g) : null;
+        // Stats ESPN's game logs leave out (NHL blocked shots, hits) come from the box
+        // scores the data pipeline collects, the same place the model read them from.
+        if (v == null && m) {
+          mergeDeepStats(L, [g], await loadDeepPlayer(L, p.playerId).catch(() => null));
+          v = marketValue(m, g);
+        }
+        if (v == null) {
+          if (now - new Date(p.start) > 3 * 864e5) { p.result = "VOID"; p.voided = "no stat to grade it"; graded++; }
+          return;
+        }
         p.actual = v;
         p.result = v === p.line ? "P" : (v > p.line) === (p.side === "OVER") ? "W" : "L";
       } else {
@@ -606,6 +615,8 @@ const outDir = path.join(SITE, "data", "picks");
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "today.json"), JSON.stringify(today));
 fs.writeFileSync(path.join(outDir, "history.json"), JSON.stringify(history));
+// Every leg the app showed, for 📋 Pick history's "every leg" view.
+fs.writeFileSync(path.join(outDir, "tracked.json"), JSON.stringify({ updated: tracked.updated, picks: tracked.picks }));
 
 // Phone notification text.
 // Today's games lead; picks for later in the week fill in, marked with their day.

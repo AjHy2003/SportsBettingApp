@@ -17,6 +17,7 @@ import { renderLiveGames } from "./views/livegames.js";
 import { initAccount } from "./account.js";
 import { renderSlip } from "./views/slip.js";
 import { renderCheck } from "./views/check.js";
+import { renderRecord } from "./views/record.js";
 
 const app = $("#app");
 let navToken = 0;
@@ -58,6 +59,7 @@ async function route() {
     if (parts[0] === "live") return renderLiveGames(ctx, q);
     if (parts[0] === "slip") return renderSlip(ctx, q);
     if (parts[0] === "check") return renderCheck(ctx, q);
+    if (parts[0] === "record") return renderRecord(ctx, q);
     if (parts[0] === "l") {
       const L = leagueById(parts[1]);
       if (!L) throw new Error("Unknown league");

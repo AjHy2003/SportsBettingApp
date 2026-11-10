@@ -553,3 +553,10 @@ tr.cold td { background: var(--under-bg); }
 .bal-chart path.up { stroke: var(--over); }
 .bal-chart path.down { stroke: var(--under); }
 .bal-chart .bal-base { stroke: var(--line); stroke-dasharray: 4 4; }
+
+/* ---------- clickable record tiles (open 📋 Pick history) ---------- */
+a.kpi-link { display: block; color: inherit; text-decoration: none; cursor: pointer; transition: border-color 0.12s, transform 0.12s; }
+a.kpi-link:hover { border-color: var(--accent); text-decoration: none; }
+a.kpi-link:active { transform: scale(0.98); }
+.kpi .go { float: right; color: var(--accent-2); font-size: 14px; line-height: 1; }
+a.pill { text-decoration: none; }
