@@ -18,6 +18,7 @@ import { moveText } from "../movement.js";
 import { bankroll, bankrollOk, suggestedBudget, spend, openBankrollSettings, bankrollMoney } from "../bankroll.js";
 import { toPick } from "../slip.js";
 import { repriceProp, repriceGame, currentGameLines, currentProps } from "../reprice.js";
+import { betType, typeHref } from "../record.js";
 
 const SPORTS = [
   { id: "all", label: "All", leagues: ["nba", "ncaab", "nfl", "ncaaf", "nhl"] },
@@ -84,7 +85,7 @@ export async function renderToday(ctx, q) {
     <div class="crumbs"><a href="#/">Home</a> › Today</div>
     <div class="row" style="justify-content:space-between">
       <h1>🔥 Today's picks</h1>
-      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
+      <div class="small muted">${today ? `Updated ${fmtDate(today.generated, { weekday: "short", month: "short", day: "numeric" })} ${fmtTime(today.generated)}${stale ? ` · <span class="neg">not refreshed today yet</span>` : ""}${today.books ? ` · game lines checked across every major book at ${fmtTime(today.books.fetchedAt)}` : ""} · <a href="#/record">📋 Pick history</a> · <a href="#/trends">📈 Trends</a> · <a href="#/live">📡 Live</a>` : ""}${rec && rec.w + rec.l ? ` · Last 30 days <b>${rec.w}-${rec.l}</b> <span class="${rec.units >= 0 ? "pos" : "neg"}">${signed(rec.units, 1)}u</span>` : ""}</div>
     </div>
     ${today ? `<div class="live-bar" id="t-live"></div><div id="t-live-changes"></div>` : ""}
     <a class="check-cta" href="#/check">🔎 <b>Betting at FanDuel or another book?</b> <span class="muted">Check your slip at their exact lines and prices ›</span></a>
@@ -431,8 +432,8 @@ export async function renderToday(ctx, q) {
     const cell = (x) => (x.w + x.l ? `${x.w}-${x.l} <span class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</span>` : "—");
     return `<h3 style="margin-top:14px">📋 Every leg the app graded</h3>
       <p class="small muted" style="margin:0 0 6px">Not just the top picks: every A, B and C leg shown in tickets, same-game parlays and pick lists${t.since ? ` since ${fmtDate(t.since)}` : ""}, graded after the games.</p>
-      <div class="kpis" style="margin-top:0">${["A", "B", "C"].map((g) => `<div class="kpi"><div class="k">Grade ${g}</div><div class="v" style="font-size:16px">${cell(t.byGrade[g])}</div></div>`).join("")}
-        <div class="kpi"><div class="k">Moonshot long shots</div><div class="v" style="font-size:16px">${cell(t.alt)}</div></div></div>`;
+      <div class="kpis" style="margin-top:0">${["A", "B", "C"].map((g) => `<a class="kpi kpi-link" href="#/record?src=all&grade=${g}"><div class="k">Grade ${g}<span class="go">›</span></div><div class="v" style="font-size:16px">${cell(t.byGrade[g])}</div></a>`).join("")}
+        <a class="kpi kpi-link" href="#/record?src=all&grade=ALT"><div class="k">Moonshot long shots<span class="go">›</span></div><div class="v" style="font-size:16px">${cell(t.alt)}</div></a></div>`;
   }
 
   // What the model has learned from its graded picks, per league and bet type.
@@ -472,7 +473,8 @@ export async function renderToday(ctx, q) {
       box.innerHTML = `<h3>Track record</h3>${clvBlock ? `<div class="kpis">${clvBlock}</div>` : ""}<div class="muted small">Every pick posted here is logged and graded automatically after the game. The record builds from the first day.</div>${clvNote}`;
       return;
     }
-    const line = (lbl, x) => `<div class="kpi"><div class="k">${lbl}</div><div class="v">${x.w}-${x.l} <small class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</small></div></div>`;
+    // Every tile opens 📋 Pick history with those picks.
+    const line = (lbl, x, href, title = "") => `<a class="kpi kpi-link" href="${href}"${title ? ` title="${esc(title)}"` : ""}><div class="k">${lbl}<span class="go">›</span></div><div class="v">${x.w}-${x.l} <small class="${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</small></div></a>`;
     const cal = (r.calibration || []).filter((b) => b.n);
     const clvCell = (p) => {
       const c = p.clv;
@@ -482,14 +484,10 @@ export async function renderToday(ctx, q) {
     };
     // Where the record comes from, by bet type. Kinds the app no longer posts are marked so
     // they don't hide how the picks it still makes are doing (or flatter them).
-    const typeOf = (p) => (p.kind === "ml" && (p.odds ?? 0) >= 150 ? ["Long-shot moneylines (+150 and up)", "not posted now"]
-      : p.kind === "prop" && (p.league === "nfl" || p.league === "ncaaf") ? ["NFL props", "not posted now"]
-      : p.kind === "prop" ? [`${leagueName(p.league)} props`, ""]
-      : p.kind === "ml" ? ["Moneylines (under +150)", ""] : ["Spreads & totals", ""]);
     const types = new Map();
     for (const p of graded.filter((x) => x.result === "W" || x.result === "L")) {
-      const [name, gone] = typeOf(p);
-      const x = types.get(name) || { name, gone, w: 0, l: 0, units: 0, be: 0 };
+      const { name, gone } = betType(p);
+      const x = types.get(name) || { name, gone, href: typeHref(p), w: 0, l: 0, units: 0, be: 0 };
       if (p.result === "W") { x.w++; x.units += M.payout(p.odds ?? -110); } else { x.l++; x.units -= 1; }
       x.be += M.impliedProb(p.odds ?? -110);
       types.set(name, x);
@@ -497,20 +495,21 @@ export async function renderToday(ctx, q) {
     const rowsT = [...types.values()].sort((a, b) => (a.gone ? 1 : 0) - (b.gone ? 1 : 0) || b.w + b.l - (a.w + a.l));
     const still = rowsT.filter((x) => !x.gone).reduce((s, x) => ({ w: s.w + x.w, l: s.l + x.l, units: s.units + x.units }), { w: 0, l: 0, units: 0 });
     const typeTable = rowsT.length > 1 ? `<h3 style="margin-top:14px">By bet type</h3><div class="table-wrap"><table><thead><tr><th>Bet type</th><th class="r">Record</th><th class="r">Hit</th><th class="r">Needed</th><th class="r">Units</th></tr></thead><tbody>
-        ${rowsT.map((x) => `<tr${x.gone ? ' class="faint"' : ""}><td style="white-space:normal;min-width:120px">${esc(x.name)}${x.gone ? `<div class="small">${x.gone}</div>` : ""}</td><td class="r">${x.w}-${x.l}</td><td class="r">${pct(x.w / (x.w + x.l))}</td><td class="r">${pct(x.be / (x.w + x.l))}</td><td class="r ${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</td></tr>`).join("")}
-      </tbody></table></div><p class="small faint" style="margin:4px 0 0">Needed = the hit rate the prices required to break even. Long-shot moneylines and NFL props stay in the all-time record; the app no longer posts them.</p>` : "";
+        ${rowsT.map((x) => `<tr${x.gone ? ' class="faint"' : ""}><td style="white-space:normal;min-width:120px"><a href="${x.href}">${esc(x.name)} ›</a>${x.gone ? `<div class="small">${x.gone}</div>` : ""}</td><td class="r">${x.w}-${x.l}</td><td class="r">${pct(x.w / (x.w + x.l))}</td><td class="r">${pct(x.be / (x.w + x.l))}</td><td class="r ${x.units >= 0 ? "pos" : "neg"}">${signed(x.units, 1)}u</td></tr>`).join("")}
+      </tbody></table></div><p class="small faint" style="margin:4px 0 0">Needed = the hit rate the prices required to break even. Long-shot moneylines and NFL props stay in the all-time record; the app no longer posts them. Tap any tile or row to see the picks.</p>` : "";
     box.innerHTML = `<h3>Track record</h3>
-      <div class="kpis">${line("Last 7 days", r.last7)}${line("Last 30 days", r.last30)}${line("All time", r.all)}
-        ${still.w + still.l && still.w + still.l < r.all.w + r.all.l ? `<div class="kpi" title="All time, without long-shot moneylines and NFL props, which the app no longer posts"><div class="k">Kinds it still posts</div><div class="v">${still.w}-${still.l} <small class="${still.units >= 0 ? "pos" : "neg"}">${signed(still.units, 1)}u</small></div></div>` : ""}
-        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g]) : "").join("")}${clvBlock}</div>
+      <div class="kpis">${line("Last 7 days", r.last7, "#/record?days=7")}${line("Last 30 days", r.last30, "#/record?days=30")}${line("All time", r.all, "#/record")}
+        ${still.w + still.l && still.w + still.l < r.all.w + r.all.l ? line("Kinds it still posts", still, "#/record?type=current", "All time, without long-shot moneylines and NFL props, which the app no longer posts") : ""}
+        ${["A", "B", "C"].map((g) => r.all.byGrade[g].w + r.all.byGrade[g].l ? line(`Grade ${g}`, r.all.byGrade[g], `#/record?grade=${g}`) : "").join("")}${clvBlock}</div>
       ${typeTable}
       ${cal.length ? `<h3 style="margin-top:14px">Calibration</h3><div class="table-wrap"><table><thead><tr><th>Model said</th><th class="r">Picks</th><th class="r">Expected hit %</th><th class="r">Actual hit %</th></tr></thead><tbody>
-        ${cal.map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
+        ${cal.map((b) => `<tr><td><a href="#/record?pmin=${b.lo}&pmax=${b.hi >= 1 ? 1.01 : b.hi}">${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}% ›</a></td><td class="r">${b.n}</td><td class="r">${pct(b.predicted, 1)}</td><td class="r ${b.actual >= b.predicted - 0.03 ? "pos" : "neg"}">${pct(b.actual, 1)}</td></tr>`).join("")}
       </tbody></table></div><p class="small faint" style="margin:6px 0 0">Small samples swing a lot; read this after a few hundred picks.</p>` : ""}
       ${learnBlock()}
       ${trackedBlock()}
       ${clvNote}
-      <div class="table-wrap" style="margin-top:10px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r" title="Line movement after the pick">CLV</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
+      <div class="row" style="justify-content:space-between;margin-top:14px"><h3 style="margin:0">Recent picks</h3><a href="#/record">See all ${graded.length} ›</a></div>
+      <div class="table-wrap" style="margin-top:6px"><table><thead><tr><th>Date</th><th>Pick</th><th class="r">Odds</th><th class="r">Grade</th><th class="r" title="Line movement after the pick">CLV</th><th class="r">Actual</th><th>Result</th></tr></thead><tbody>
         ${graded.slice(0, 25).map((p) => `<tr><td>${fmtDate(p.start)}</td><td>${esc(p.label)} <span class="faint">${esc(leagueName(p.league))}</span></td><td class="r">${M.fmtOdds(p.odds)}</td><td class="r">${esc(p.grade)}</td><td class="r">${clvCell(p)}</td><td class="r">${esc(p.actual ?? "")}</td><td class="${p.result === "W" ? "o" : p.result === "L" ? "u" : "p"}">${p.result}</td></tr>`).join("")}
       </tbody></table></div>`;
   }
@@ -521,7 +520,7 @@ export async function renderToday(ctx, q) {
     const best = choosePicks(legsInSport().filter(isBestBet), 8);
     const past = (history?.picks || []).filter((p) => (p.result === "W" || p.result === "L") && (p.best || wasBestBet(p)));
     const w = past.filter((p) => p.result === "W").length, units = past.reduce((u, p) => u + (p.result === "W" ? M.payout(p.odds ?? -110) : -1), 0);
-    const rec = past.length ? `<span class="pill ${units >= 0 ? "pos" : "neg"}" title="Graded picks that met the best-bet bar">so far ${w}-${past.length - w} · ${signed(units, 1)}u</span>` : "";
+    const rec = past.length ? `<a class="pill ${units >= 0 ? "pos" : "neg"}" href="#/record?best=1" title="Graded picks that met the best-bet bar: tap to see them">so far ${w}-${past.length - w} · ${signed(units, 1)}u ›</a>` : "";
     if (!best.length) {
       box.innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="margin:0">⭐ Best bets · ${esc(scopeLabel())}</h3>${rec}</div><div class="muted small" style="margin-top:6px">None right now: no grade A pick here has a 10%+ edge with the line holding. That's normal on some days; it's better to skip than to force it.</div>`;
       return;

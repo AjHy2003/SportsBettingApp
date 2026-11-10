@@ -64,6 +64,21 @@ const pages = [
   }
   // Today page: default ticket, a $5 basketball-only parlay, then a same-game parlay.
   await visit("today", "#/today");
+  // 📋 Pick history: a Grade A tile on Today opens it filtered; the filters and every-leg view work.
+  await visit("record", "#/today", async (pg) => {
+    const tile = await pg.$('#t-record a.kpi-link[href="#/record?grade=A"]');
+    if (!tile) return { tile: false };
+    await tile.click();
+    await pg.waitForFunction(() => document.querySelector("#r-sum .kpis"), null, { timeout: 15000 });
+    const out = { url: pg.url().split("#")[1], gradeA: (await pg.innerText("#r-sum")).replace(/\s+/g, " ").slice(0, 200), rows: await pg.$$eval("#r-list .tp-row", (x) => x.length) };
+    await pg.click('#r-filters .chip[data-k="res"][data-v="L"]');
+    out.lost = (await pg.innerText("#r-sum")).replace(/\s+/g, " ").slice(0, 120);
+    await pg.click('#r-filters .chip[data-src="all"]');
+    await pg.waitForTimeout(1500);
+    out.everyLeg = (await pg.innerText("#r-sum")).replace(/\s+/g, " ").slice(0, 120);
+    if (!/Grade A/i.test(out.gradeA) || !out.rows) throw new Error("pick history did not open filtered to grade A");
+    return out;
+  });
   await visit("today-bball-5-parlay", "#/today?sport=basketball", async (pg) => {
     await pg.click('#t-budget .chip[data-b="5"]');
     await pg.click('#t-mode button[data-m="parlay"]');
