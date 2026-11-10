@@ -1,7 +1,10 @@
-total 1748
-drwxr-xr-x 2 runner runner    4096 Nov 10 00:51 .
-drwxr-xr-x 7 runner runner    4096 Nov 10 00:51 ..
--rw-r--r-- 1 runner runner  183865 Nov 10 00:51 history.json
--rw-r--r-- 1 runner runner      51 Nov 10 00:51 moonshots.json
--rw-r--r-- 1 runner runner 1111822 Nov 10 00:51 today.json
--rw-r--r-- 1 runner runner  477966 Nov 10 00:51 tracked.json
+2026-11-09:all 7 legs 100888 null Emil Heineman Over 0.5 Assists 285 - | Joseph Woll Over 22.5 Goalie Saves -105 - | EWU +17.5 -118 - | ILST +15.5 -115 - | CLT +4.5 -115 - | MIN +3 102 - | Spencer Jones 15+ Pts + Reb 930 -
+2026-11-09:basketball 5 legs 101022 null EWU +17.5 -118 - | ILST +15.5 -115 - | CLT +4.5 -115 - | Jamal Murray 45+ Pts + Reb + Ast 800 - | Khaman Maluach 12+ Rebounds 1640 -
+2026-11-09:football 11 legs 100630 null Under 47.5 -108 - | PITT ML -170 - | Over 49.5 -108 - | USF +4 -110 - | MASS +14.5 -112 - | SAC +18.5 -115 - | OHIO ML -118 - | AKR +14 -112 - | Under 44.5 -112 - | MIN +3 102 - | BUFF -2.5 -112 -
+total 1552
+drwxr-xr-x 2 runner runner   4096 Nov 10 01:00 .
+drwxr-xr-x 7 runner runner   4096 Nov 10 01:00 ..
+-rw-r--r-- 1 runner runner 183862 Nov 10 01:00 history.json
+-rw-r--r-- 1 runner runner   6613 Nov 10 01:00 moonshots.json
+-rw-r--r-- 1 runner runner 908288 Nov 10 01:00 today.json
+-rw-r--r-- 1 runner runner 478312 Nov 10 01:00 tracked.json

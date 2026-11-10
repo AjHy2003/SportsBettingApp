@@ -4,19 +4,19 @@
    "A": 0,
    "B": 0,
    "C": 2,
-   "PASS": 8
-  },
-  "nba:prop:UNDER": {
-   "A": 0,
-   "B": 0,
-   "C": 0,
-   "PASS": 135
+   "PASS": 5
   },
   "nba:prop:OVER": {
    "A": 0,
    "B": 0,
    "C": 0,
-   "PASS": 183
+   "PASS": 174
+  },
+  "nba:prop:UNDER": {
+   "A": 0,
+   "B": 0,
+   "C": 0,
+   "PASS": 128
   },
   "nfl:line": {
    "A": 0,
@@ -33,29 +33,29 @@
   "ncaab:line": {
    "A": 0,
    "B": 0,
-   "C": 3,
-   "PASS": 23
+   "C": 2,
+   "PASS": 14
   },
   "nhl:line": {
    "A": 0,
    "B": 0,
    "C": 0,
-   "PASS": 9
+   "PASS": 6
   },
   "nhl:prop:OVER": {
    "A": 0,
    "B": 0,
-   "C": 6,
-   "PASS": 73
+   "C": 4,
+   "PASS": 50
   },
   "nhl:prop:UNDER": {
    "A": 0,
    "B": 0,
    "C": 0,
-   "PASS": 109
+   "PASS": 72
   }
  },
- "legsWithKs": 607,
+ "legsWithKs": 480,
  "learn": {
   "nba:prop:under": {
    "n": 458,
@@ -229,30 +229,30 @@
    "k": 0.9569
   }
  },
- "picks": 13,
+ "picks": 10,
  "best": [],
  "alts": [
-  "Kyrie Irving 8+ Assists 960 model 10% vs 9%",
-  "Kyrie Irving 5+ 3-Pointers Made 356 model 22% vs 22%",
-  "Kyrie Irving 40+ Pts + Ast 1100 model 8% vs 8%",
-  "Kyrie Irving 35+ Pts + Reb 454 model 18% vs 18%",
-  "Kyrie Irving 12+ Reb + Ast 475 model 18% vs 17%",
-  "Kyrie Irving 10+ Reb + Ast 190 model 35% vs 34%",
-  "Kyrie Irving 40+ Pts + Reb + Ast 486 model 17% vs 17%",
-  "Kyrie Irving 45+ Pts + Reb + Ast 1140 model 8% vs 8%",
-  "Kelly Oubre Jr. 10+ Points 165 model 39% vs 38%",
-  "Kelly Oubre Jr. 12+ Points 298 model 26% vs 25%",
-  "Kelly Oubre Jr. 4+ Rebounds 183 model 36% vs 35%",
-  "Kelly Oubre Jr. 5+ Rebounds 382 model 21% vs 21%",
-  "Kelly Oubre Jr. 15+ Pts + Reb 265 model 28% vs 27%",
-  "Kelly Oubre Jr. 20+ Pts + Reb 890 model 11% vs 10%",
-  "Pascal Siakam 5+ Assists 313 model 25% vs 24%",
-  "Pascal Siakam 4+ Assists 142 model 42% vs 41%",
-  "Pascal Siakam 11+ Rebounds 950 model 10% vs 10%",
-  "Pascal Siakam 10+ Rebounds 574 model 15% vs 15%",
-  "Pascal Siakam 12+ Reb + Ast 235 model 30% vs 30%",
-  "Pascal Siakam 15+ Reb + Ast 850 model 11% vs 11%"
+  "Devin Booker 30+ Points 260 model 28% vs 28%",
+  "Devin Booker 35+ Points 630 model 14% vs 14%",
+  "Devin Booker 35+ Pts + Ast 229 model 31% vs 30%",
+  "Devin Booker 45+ Pts + Ast 1200 model 8% vs 8%",
+  "Devin Booker 40+ Pts + Reb 700 model 13% vs 13%",
+  "Devin Booker 50+ Pts + Reb + Ast 1300 model 7% vs 7%",
+  "Dillon Brooks 18+ Points 169 model 38% vs 37%",
+  "Dillon Brooks 20+ Points 260 model 29% vs 28%",
+  "Dillon Brooks 5+ Rebounds 195 model 34% vs 34%",
+  "Dillon Brooks 6+ Rebounds 386 model 21% vs 21%",
+  "Dillon Brooks 3+ 3-Pointers Made 197 model 34% vs 34%",
+  "Dillon Brooks 4+ 3-Pointers Made 502 model 17% vs 17%",
+  "Dillon Brooks 20+ Pts + Ast 160 model 39% vs 38%",
+  "Dillon Brooks 25+ Pts + Ast 446 model 19% vs 18%",
+  "Dillon Brooks 25+ Pts + Reb 304 model 26% vs 25%",
+  "Dillon Brooks 20+ Pts + Reb 112 model 48% vs 47%",
+  "Dillon Brooks 25+ Pts + Reb + Ast 198 model 35% vs 34%",
+  "Dillon Brooks 30+ Pts + Reb + Ast 505 model 17% vs 17%",
+  "De'Aaron Fox 18+ Points 184 model 35% vs 35%",
+  "De'Aaron Fox 7+ Rebounds 770 model 12% vs 11%"
  ],
- "nAlts": 278,
+ "nAlts": 233,
  "moon": []
 }
