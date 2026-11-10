@@ -582,12 +582,13 @@ const moonLog = (() => { try { return JSON.parse(fs.readFileSync(MOONS, "utf8"))
   const row = (l) => ({ id: l.id, league: l.league, eventId: l.eventId, start: l.start, matchup: l.matchup, kind: l.kind, marketKey: l.marketKey, playerId: l.playerId,
     side: l.side, line: l.line, odds: l.odds, prob: Number(l.prob.toFixed(4)), label: l.label, alt: l.alt || undefined, result: null });
   const stamp = new Date().toISOString();
+  const day = `${todayET.slice(0, 4)}-${todayET.slice(4, 6)}-${todayET.slice(6, 8)}`; // todayET is "20261110"
   for (const [k, m] of Object.entries(moonshots)) {
-    const id = `${todayET}:${k}`, prev = moonLog.tickets.find((t) => t.id === id);
+    const id = `${day}:${k}`, prev = moonLog.tickets.find((t) => t.id === id);
     if (prev && prev.legs.some((l) => new Date(l.start) <= now)) continue; // its first game has started: locked
     const rows = m.legs.map((lid) => byId.get(lid)).filter(Boolean).map(row);
     if (rows.length !== m.legs.length) continue;
-    const t = { id, day: todayET, kind: k, issued: prev?.issued || stamp, updated: stamp, stake: 10, american: m.american, decimal: m.decimal, payout: m.payout, prob: Number(m.prob.toFixed(6)), later: m.later, legs: rows, result: null };
+    const t = { id, day, kind: k, issued: prev?.issued || stamp, updated: stamp, stake: 10, american: m.american, decimal: m.decimal, payout: m.payout, prob: Number(m.prob.toFixed(6)), later: m.later, legs: rows, result: null };
     if (prev) Object.assign(prev, t); else moonLog.tickets.push(t);
   }
   // Grade every leg (so a lost ticket still shows how close it came), then the ticket: lost on
@@ -603,7 +604,7 @@ const moonLog = (() => { try { return JSON.parse(fs.readFileSync(MOONS, "utf8"))
       t.paid = Number((t.stake * won.reduce((d, l) => d * decimalOdds(l.odds), 1)).toFixed(2));
     }
   }
-  moonLog.tickets = moonLog.tickets.filter((t) => now - new Date(`${t.day}T12:00:00Z`) < 400 * 864e5);
+  moonLog.tickets = moonLog.tickets.filter((t) => !(now - new Date(`${t.day}T12:00:00Z`) > 400 * 864e5));
   moonLog.updated = stamp;
   fs.mkdirSync(path.dirname(MOONS), { recursive: true });
   fs.writeFileSync(MOONS, JSON.stringify(moonLog));
