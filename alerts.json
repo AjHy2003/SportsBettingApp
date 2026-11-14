@@ -1,10 +1,4 @@
 {
- "nba:401909295:4066262:ra:UNDER:move": {
-  "level": "move",
-  "why": "price now -107",
-  "at": "2026-11-06T21:33:30.139Z",
-  "start": "2026-11-07T03:00Z"
- },
  "ncaaf:401858517:spread:B:move": {
   "level": "move",
   "why": "now +19.5",
@@ -64,5 +58,11 @@
   "why": "now +29.5",
   "at": "2026-11-13T21:59:57.929Z",
   "start": "2026-11-14T01:00Z"
+ },
+ "ncaaf:401858522:spread:B:move": {
+  "level": "move",
+  "why": "now +14",
+  "at": "2026-11-14T06:46:07.258Z",
+  "start": "2026-11-14T17:00Z"
  }
 }
