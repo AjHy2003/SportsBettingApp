@@ -1,10 +1,4 @@
 {
- "ncaaf:401858517:spread:B:move": {
-  "level": "move",
-  "why": "now +19.5",
-  "at": "2026-11-07T20:15:46.294Z",
-  "start": "2026-11-07T21:15Z"
- },
  "ncaaf:401864535:total:B:move": {
   "level": "move",
   "why": "total now 50.5",
@@ -70,5 +64,11 @@
   "why": "now +16.5",
   "at": "2026-11-14T20:46:27.391Z",
   "start": "2026-11-14T23:00Z"
+ },
+ "nba:401909981:spread:A:move": {
+  "level": "move",
+  "why": "now +8.5",
+  "at": "2026-11-15T00:21:23.650Z",
+  "start": "2026-11-15T00:30Z"
  }
 }
