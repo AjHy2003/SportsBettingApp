@@ -1,10 +1,4 @@
 {
- "nhl:401892680:4352722:pts:OVER:move": {
-  "level": "move",
-  "why": "now 0.5",
-  "at": "2026-11-10T00:17:39.596Z",
-  "start": "2026-11-10T01:00Z"
- },
  "ncaab:401921733:spread:B:move": {
   "level": "move",
   "why": "now +18.5",
