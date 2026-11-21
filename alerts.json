@@ -1,10 +1,4 @@
 {
- "ncaaf:401858522:spread:B:move": {
-  "level": "move",
-  "why": "now +14",
-  "at": "2026-11-14T06:46:07.258Z",
-  "start": "2026-11-14T17:00Z"
- },
  "ncaaf:401860914:spread:B:move": {
   "level": "move",
   "why": "now +16.5",
@@ -46,5 +40,23 @@
   "why": "total now 171.5",
   "at": "2026-11-18T22:57:42.769Z",
   "start": "2026-11-19T00:00Z"
+ },
+ "ncaaf:401856872:spread:A:move": {
+  "level": "move",
+  "why": "now +8.5",
+  "at": "2026-11-21T21:41:00.957Z",
+  "start": "2026-11-22T02:00Z"
+ },
+ "ncaab:401919849:spread:A:move": {
+  "level": "move",
+  "why": "now +10.5",
+  "at": "2026-11-21T21:41:01.185Z",
+  "start": "2026-11-21T22:00Z"
+ },
+ "ncaab:401917538:total:A:move": {
+  "level": "move",
+  "why": "total now 134.5",
+  "at": "2026-11-21T21:41:01.217Z",
+  "start": "2026-11-21T21:30Z"
  }
 }
