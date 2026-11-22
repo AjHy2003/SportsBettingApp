@@ -1,10 +1,4 @@
 {
- "ncaab:401917531:total:A:move": {
-  "level": "move",
-  "why": "total now 138.5",
-  "at": "2026-11-15T21:04:46.361Z",
-  "start": "2026-11-15T21:00Z"
- },
  "ncaab:401920706:spread:B:move": {
   "level": "move",
   "why": "now +22.5",
@@ -46,5 +40,11 @@
   "why": "total now 134.5",
   "at": "2026-11-21T21:41:01.217Z",
   "start": "2026-11-21T21:30Z"
+ },
+ "ncaab:401917541:spread:A:move": {
+  "level": "move",
+  "why": "now -7.5",
+  "at": "2026-11-22T21:51:18.866Z",
+  "start": "2026-11-23T00:00Z"
  }
 }
